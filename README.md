@@ -42,3 +42,8 @@ $ python subrake.py -d shellvoide.com -w small
 $ python subrake.py -d google.com -w large -t 30
 $ python subrake.py -d starbucks.com -w large -t 30 -o /output.txt
 ```
+
+## Support
+EMAIL: admin@shellvoide.com <br />
+Website: https://www.shellvoide.com <br />
+Twitter: @hash3liZer <br />
