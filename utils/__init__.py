@@ -1,1 +1,1 @@
-
+from utils.macros import USERAGENT
