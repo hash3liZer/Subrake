@@ -18,7 +18,7 @@ Description:
 
 Syntax: 
     $ python subrake -d shellvoide.com -w small     // SMALL wordlist scan
-    $ python subrake -d shellvoidecom -w large --threads 30
+    $ python subrake -d shellvoide.com -w large --threads 30
 
 Options:
    Args               Description                      Default
