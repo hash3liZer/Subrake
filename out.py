@@ -12,7 +12,7 @@ class TABULATOR:
 		self.get_headers()
 
 	def get_headers(self):
-		_headers = "{:<15}\t{:<10}\t{:<14}\t{:<22}".format( self.hd[0], self.hd[1], self.hd[2], self.hd[3] )
+		_headers = "{:<15}\t{:<10}\t{:<14}\t{:<18}\t{:<22}".format( self.hd[0], self.hd[1], self.hd[2], self.hd[3], self.hd[4] )
 		self.pull.normal( _headers )
 
 	def exit(self):
@@ -22,6 +22,6 @@ class TABULATOR:
 		self.__TABS.append(_list)
 
 	def push(self, _list):
-		_str = "{:<15}\t{:<10}\t{:<14}\t{:<22}".format( _list[0], _list[1], _list[2], _list[3] )
+		_str = "{:<15}\t{:<10}\t{:<14}\t{:<18}\t{:<22}".format( _list[0], _list[1], _list[2], _list[3], _list[4] )
 		self.pull.normal(_str)
 		

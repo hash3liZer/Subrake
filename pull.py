@@ -97,6 +97,12 @@ class PULLY:
 		print "%s[*]%s %s" % (self.BOLD+self.YELLOW, self.END, statement)
 		return
 
+	def indent(self, statement, *args, **kwargs):
+		if kwargs.has_key("spaces"):
+			print (" "*kwargs["spaces"]) + "%s-%s %s" % (self.YELLOW, self.END, statement)
+		else:
+			self.error("Spaces not specified...")
+
 	def linebreak(self):
 		sys.stdout.write("\n")
 
