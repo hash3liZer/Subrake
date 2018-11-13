@@ -297,11 +297,14 @@ class ONLINE:
 				self.SUBDOMAINS.append(data)
 
 	def pushtoscreen(self, _subs, service, error):
-		_counter = []
+		_counter, _count = [], 0
+		for sub in _subs:
+			if sub not in _counter:
+				_count += 1
+				_counter.append(sub)
 
-		string = "{:<14}\t{:<28}".format(service, str(len(_subs)))
+		string = "{:<14}\t{:<28}".format(service, str(_count))
 		pull.indent(string, spaces=4)
-
 
 def _domainer(_dm):
 	if _dm != None:
