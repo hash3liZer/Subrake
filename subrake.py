@@ -266,8 +266,8 @@ class Scanner:
 		self.domain = _dm
 		self.ports = _ports
 		self.threads = 10
-		self.library = self.parse( _lib )
 		self.d_ip = _ip
+		self.library = self.parse( _lib )
 		self.formatter()
 
 	def parse(self, _lib):
