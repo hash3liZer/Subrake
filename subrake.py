@@ -9,10 +9,8 @@ import time
 import ssl
 import threading
 import signal
-import dns.resolver
+from dns import resolver
 from pull import PULLY
-from utils import USERAGENT
-from out import TABULATOR
 from handlers import GOOGLE
 from handlers import BING
 from handlers import YAHOO
@@ -25,254 +23,64 @@ from handlers import THREATCROWD
 from handlers import CRTSEARCH
 from BeautifulSoup import BeautifulSoup as soup
 
-class PULLER:
+pull = PULLY()
 
-	CODE = 'ERR'
-	SERVER = 'NONE'
+class NameServer:
 
-	def __init__(self, _dm, _head):
-		self.headers = _head
-		self.subdomain = _dm
-		self.simplify(_head)
-
-	def simplify(self, _hd):
-		for ln in _hd.splitlines():
-			if ln.startswith("HTTP/"):
-				self.CODE = ln.split(" ")[1]
-			elif ln.startswith("Server:"):
-				_sv = ln.split(": ")[1].strip("\r")
-				self.SERVER = _sv.split(" ")[0]
-
-class CNAMES:
-
-	__LIST = {}
-	__CNAMES = {}
-
-	def add(self, _lis):
-		self.__LIST[_lis[-1]] = _lis[:-1]
-
-	def count(self):
-		return len(self.__LIST)
-
-	def push_headers(self):
-		print "{:<10}\t{:<22}\t{:<10}".format(pull.DARKCYAN+"[HTTP/HTTPS]", "SUBDOMAIN", "CNAME"+pull.END)
-
-	def cname(self, _sub):
-		_cn = ' '
-		try:
-			_cn = dns.resolver.query(_sub, "CNAME")[0]
-		except dns.resolver.NoAnswer, _err:
-			pass
-		return _cn
-
-	def push(self):
-		for _sub, _ls in self.__LIST.items():
-			_cn = self.cname(_sub)
-			print "{:<10}\t{:<22}\t{:<10}".format(_ls[1], _sub, _cn)
-			self.__CNAMES[_sub] = _cn
-
-	def save(self, _fl):
-		_file = open(_fl, 'w')
-		_file.write( ",".join(["RESOLUTION", "[HTTP/HTTPS]", "SERVER", "SUBDOMAIN", "CNAME\n"]) )
-		for _sub, _ls in self.__LIST.items():
-			_towrite = ",".join([ _ls[0], _ls[1], _ls[2], _sub, str(self.__CNAMES[_sub])+"\n" ])
-			_file.write(_towrite)
-		_file.close()
-
-class LISTER:
-
-	__SUBS = {}
-	__SUBS_EIGTY = {}
-	__SUBS_FORTY = {}
-	__COUNT = 0
-	__DATA = {}
-	#STRUCTURE
-	#'sub': [ (http, https), ('ERR', 'ERR'), ('NONE', 'NONE') ]
-
-	def __init__(self, _dm, _wd, _subs, _th):
-		self.domain = _dm
-		self.wordlist = _wd
-		self.threads = _th
-		self.sources = self.sourcer(_subs)
-		self.online_subs = self.onliner(_subs)
-		self.agent = USERAGENT()
-		self.bind_thread_lock()
-		signal.signal(signal.SIGINT, self.sig_handler)
-		self.tab = TABULATOR( [pull.DARKCYAN+'RESOLUTION', '[HTTP/HTTPS]', 'SERVER', 'SOURCE', 'SUBDOMAIN'+pull.END], pull)
-
-	def bind_thread_lock(self):
-		self.lock = threading.Semaphore(value=1)
-
-	def sourcer(self, _subs):
-		_lss = {}
-		for sub, source in _subs:
-			if sub != "":
-				_lss[sub] = source
-		return _lss
-
-	def onliner(self, _subs):
-		_lss = []
-		for sub, source in _subs:
-			if sub != "":
-				_lss.append(sub)
-		return _lss
-
-	def sig_handler(self, sig, frame):
-		sys.exit(0)
-
-	def pause(self):
-		while self.__COUNT > 0:
-			time.sleep(1)
-
-	def passer(self):
-		_file = open(self.wordlist)
-		_lns = _file.read().splitlines()
-		for sub in self.online_subs:
-			_lns.append(sub)
-		for _ln in _lns:
-			if _ln.endswith(self.domain):
-				self.__SUBS[ _ln.rstrip(".%s\n" % self.domain) ] = ['ERR', 'NONE']
-				self.__SUBS_EIGTY[ _ln.rstrip(".%s\n" % self.domain) ] = ['ERR', 'NONE']
-				self.__SUBS_FORTY[ _ln.rstrip(".%s\n" % self.domain) ] = ['ERR', 'NONE']
-				self.__DATA[ _ln.rstrip(".%s\n" % self.domain) ] = [ ['ERR', 'NONE'], [ 'ERR', 'ERR' ], [ 'NONE', 'NONE' ] ]
-			else:
-				self.__SUBS[ _ln.rstrip("\n") ] = ['ERR', 'NONE']
-				self.__SUBS_EIGTY[ _ln.rstrip("\n") ] = ['ERR', 'NONE']
-				self.__SUBS_FORTY[ _ln.rstrip("\n") ] = ['ERR', 'NONE']
-				self.__DATA[ _ln.rstrip("\n") ] = [ ['ERR', 'NONE'], [ 'ERR', 'ERR' ], [ 'NONE', 'NONE' ] ]
-
-	def ip(self, _sb):
-		_ip = ''
-		try:	
-			_ip = socket.gethostbyname(_sb)
-			if _ip != "218.93.250.18":
-				return pull.GREEN+_ip+pull.END
-			return _ip
-		except:
-			return _ip
-
-	def brute(self):
-		for _sub, _fds in self.__SUBS.items():
-			_subdomain = "%s.%s" % (_sub, self.domain)
-			_t = threading.Thread(target=self.handler, args=(_sub, self.domain,),)
-			_t.daemon = True
-			_t.start()
-
-			if self.__COUNT >= self.threads:
-				while self.__COUNT >= self.threads:
-					pass
-
-	def server(self, _server):
-		_ret = 'NONE'
-		if _server[0] != 'NONE' and _server[1] == 'NONE':
-			_ret = pull.RED+_server[0]+pull.END
-		elif _server[0] == 'NONE' and _server[1] != 'NONE':
-			_ret = pull.RED+_server[1]+pull.END
-		elif _server[0] != 'NONE' and _server[1] != 'NONE':
-			_ret = pull.RED+_server[0]+pull.END
-		return _ret
-
-	def get_source(self, _sub):
-		if self.sources.has_key(_sub):
-			return pull.PURPLE+self.sources[_sub]+pull.END
-		else:
-			return pull.BLUE+"wordlist"+pull.END
-
-	def codes(self, _a):
-		try:
-			_a = int(_a)
-			if _a >= 200 and _a < 300:
-				return pull.GREEN+  str(_a)  +pull.END
-			elif _a >= 300 and _a < 400:
-				return pull.YELLOW+  str(_a)  +pull.END
-			elif _a == 404:
-				return pull.RED+  str(_a)  +pull.END
-			else:
-				return str(_a)
-		except:
-			return str(_a)
-
-	def putin(self, _subdomain, _codes, _server):
-		_tosend = [ self.ip(_subdomain), "[%s/%s]" % ( self.codes(_codes[0]), self.codes(_codes[1]) ), \
-					"%s" % self.server(_server), self.get_source(_subdomain), _subdomain]
-
-		if _codes[0] != 'ERR' or _codes[1] != 'ERR':
-			cnames.add(_tosend)
-
-		self.lock.acquire()
-		self.tab.addin(_tosend)
-		self.tab.push(_tosend)
-		self.lock.release()
-
-	def handler(self, _sb, _dm):
-		self.__COUNT += 1
-
-		self.__DATA[_sb][0][0] = self.request("%s.%s" % (_sb, _dm), 80, _sb)   #HTTP
-		self.__DATA[_sb][0][1] = self.request("%s.%s" % (_sb, _dm), 443, _sb)   #HTTPS
-
-		self.__DATA[_sb][1][0] = self.__DATA[_sb][0][0][0]
-		self.__DATA[_sb][1][1] = self.__DATA[_sb][0][1][0]
-
-		self.__DATA[_sb][2][0] = self.__DATA[_sb][0][0][1]
-		self.__DATA[_sb][2][1] = self.__DATA[_sb][0][1][1]
-
-		self.putin("%s.%s" % (_sb, _dm), self.__DATA[_sb][1], self.__DATA[_sb][2])
-
-		self.__COUNT -= 1
-
-	def request(self, _sb, _port, _part):
-		_req = "GET / HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\n\r\n" % (_sb, self.agent.random())
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
-		s.settimeout(5)
-		try:
-			if _port == 443:
-				s = ssl.wrap_socket(s, ssl_version=ssl.PROTOCOL_TLS)
-			s.connect((_sb, _port))
-			s.send(_req)
-			_res = s.recv(10000)
-			for n in range(0, 4):
- 				if "\r\n\r\n" in _res:
- 					self.close(s)
- 					_sold = PULLER( _sb, _res.split("\r\n\r\n")[0] )
- 					if _port == 80:
- 						self.__SUBS_EIGTY[_part][0], self.__SUBS[_part][1] = _sold.CODE, _sold.SERVER
- 					else:
- 						self.__SUBS_FORTY[_part][0], self.__SUBS[_part][1] = _sold.CODE, _sold.SERVER
- 					break
- 				else:
-					_res = s.recv(10000)
-		except:
-			self.close(s)
-		if _port == 80:
-			return ( self.__SUBS_EIGTY[_part][0], self.__SUBS[_part][1] )
-		else:
-			return ( self.__SUBS_FORTY[_part][0], self.__SUBS[_part][1] )
-
-	def close(self, _sock):  
-		_sock.close()
-
-class ONLINE:
-
-	SUBDOMAINS = []
-	THREADS = 0
-	AGENT = USERAGENT()
-	HEADERS = {
-		'User-Agent' : '',
-		'Referer' : '',
-	}
+	RECORDS = []
 
 	def __init__(self, _dm):
 		self.domain = _dm
-		self.google = GOOGLE(self, _dm, self.HEADERS, self.AGENT.random())
-		self.bing = BING(self, _dm, self.HEADERS, self.AGENT.random())
-		self.yahoo = YAHOO(self, _dm, self.HEADERS, self.AGENT.random())
-		self.ask = ASK(self, _dm, self.HEADERS, self.AGENT.random())
-		self.baidu = BAIDU(self, _dm, self.HEADERS, self.AGENT.random())
-		self.netcraft = NETCRAFT(self, _dm, self.HEADERS, self.AGENT.random())
-		self.dnsdumpster = DNSDUMPSTER(self, _dm, self.HEADERS, self.AGENT.random())
-		self.virustotal = VIRUSTOTAL(self, _dm, self.HEADERS, self.AGENT.random())
-		self.threatcrowd = THREATCROWD(self, _dm, self.HEADERS, self.AGENT.random())
-		self.crtsearch = CRTSEARCH(self, _dm, self.HEADERS, self.AGENT.random())
+		self.servers = self.query(_dm, "NS")
+		self.mailserver = self.query(_dm, "MX")
+		self.texts = self.query(_dm, "TXT")
+
+	def query(self, _dm, _type):
+		_ret = []
+		try:
+			_ret = resolver.query(_dm, _type)
+		except:
+			pass
+		return _ret
+
+	def push(self):
+		for ns in self.servers:
+			self.RECORDS.append( "NS  - " + str(ns) )
+			pull.slash( "NS  - " + str(ns) )
+		for mx in self.mailserver:
+			self.RECORDS.append( "MX  - " + str(mx) )
+			pull.slash( "MX  - " + str(mx) )
+		for txt in self.texts:
+			self.RECORDS.append( "TXT - " + str(txt) )
+			pull.slash( "TXT - " + str(txt) )
+
+	def def_ip(self):
+		def randomString(stringLength=12):
+			letters = string.ascii_lowercase
+			return ''.join(random.choice(letters) for i in range(stringLength))
+
+		try:
+			_ip = socket.gethostbyname( "%s.%s" % (randomString, self.domain) )
+		except:
+			_ip = "218.93.250.18"
+		return _ip
+
+class Online:
+
+	SUBDOMAINS = []
+	THREADS    = 0
+
+	def __init__(self, _dm):
+		self.domain = _dm
+		self.google = GOOGLE( self, _dm )
+		self.bing = BING( self, _dm )
+		self.yahoo = YAHOO( self, _dm )
+		self.ask = ASK( self, _dm )
+		self.baidu = BAIDU( self, _dm )
+		self.netcraft = NETCRAFT( self, _dm )
+		self.dnsdumpster = DNSDUMPSTER( self, _dm )
+		self.virustotal = VIRUSTOTAL( self, _dm )
+		self.crt = CRTSEARCH( self, _dm )
 
 	def enumerate(self):
 		self.google.execute()
@@ -281,128 +89,541 @@ class ONLINE:
 		self.ask.execute()
 		self.baidu.execute()
 		self.netcraft.execute()
-		self.dnsdumpster.execute()
+		#self.dnsdumpster.execute()
 		self.virustotal.execute()
-		self.threatcrowd.execute()
-		self.crtsearch.execute()
+		self.crt.execute()
 
-	def wait(self):
+	def acquire(self):
+		return self.SUBDOMAINS
+
+	def move(self, _name, _ls):
+		def push():
+			string = "{:<14}\t{:<28}".format(_name, len(_ls))
+			pull.indent( string, spaces=4 )
+			return 0
+
+		for ls in _ls:
+			if ls not in self.SUBDOMAINS:
+				self.SUBDOMAINS.append( ls )
+
+		return push()
+
+	def pause(self):
 		while self.THREADS > 0:
 			pass
+		return
 
-	def add(self, _subs, service):
-		for sub in _subs:
-			if sub not in self.SUBDOMAINS:
-				data = (sub, service)
-				self.SUBDOMAINS.append(data)
+class Brute:
 
-	def pushtoscreen(self, _subs, service, error):
-		_counter, _count = [], 0
-		for sub in _subs:
-			if sub not in _counter:
-				_count += 1
-				_counter.append(sub)
+	THREADS = 0
+	AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"
+	FRESOL = "{:<18.15}"
+	FCODE  = "{:<18.17}"
+	FSERVER= "{:<21.20}"
+	FSUBDOM= "{:<%i.%i}"
+	LOCK = threading.Semaphore( value = 1 )
+	LIBRARY = {
+	}
 
-		string = "{:<14}\t{:<28}".format(service, str(_count))
-		pull.indent(string, spaces=4)
+	def __init__( self, _dm, _wd, _ip, _sb, _th ):
+		self.domain = _dm
+		self.max = _th
+		self.ip = _ip
+		self.subdomains = self.parse( _wd, _sb )
+		self.format = self.formate()
 
-def _domainer(_dm):
-	if _dm != None:
-		if re.match("^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$", _dm.lower(), re.I):
-			return _dm.lower()
+	def parse(self, _wd, _sb):
+		_list = list(_wd) + list(_sb)
+		for _ls in _list:
+			_list[ _list.index(_ls) ] = (_ls + ".%s" % self.domain) if not _ls.endswith( ".%s"%self.domain ) else _ls  
+		return list( set( _list ) )
+
+	def formate(self):
+		def count():
+			_count = 16
+			for _ls in self.subdomains:
+				if len( _ls.rstrip( "." + self.domain )) > _count:
+					_count = len( _ls.rstrip( "." + self.domain ) )
+			return _count
+
+		self.FSUBDOM = self.FSUBDOM % ( count(), count() + 1 )
+		print pull.DARKCYAN + self.FRESOL.format( "RESOLUTION" ) + self.FCODE.format( "[HTTP/HTTPS]" ) \
+				+ self.FSUBDOM.format( "SUBDOMAIN" ) + self.FSERVER.format( "SERVER" ) + pull.END
+
+	def simplify(self, _resp):
+		_polls = {
+			'code': 'ERR',
+			'server': 'NONE',
+		}
+		_headers = _resp.split("\r\n\r\n")[0]
+		for _ln in _headers.splitlines():
+			if _ln.startswith( "HTTP/" ):
+				_polls[ 'code' ] = _ln.split( " " )[1].strip( "\r" )
+			elif _ln.startswith( "Server:" ):
+				_polls[ 'server' ] = _ln.split( ": " )[1]
+		return _polls
+
+	def push(self, _subdomain):
+		def ip():
+			_ip = ''
+			try:	
+				_ip = socket.gethostbyname(_subdomain)
+				self.LIBRARY[_subdomain]['ip'] = _ip
+				if _ip != self.ip:
+					_ip = pull.GREEN + self.FRESOL.format( _ip ) + pull.END
+					return _ip
+			except Exception, e:
+				pass
+			return self.FRESOL.format(_ip)
+
+		def code( _code ):
+			if _code != "ERR":
+				_code = int( _code )
+				if _code >= 200 and _code < 300:
+					return pull.GREEN + "{:<3.3}".format( str( _code ) ) + pull.END
+				elif _code >= 300 and _code < 400:
+					return pull.YELLOW + "{:<3.3}".format( str( _code ) ) + pull.END
+				elif _code >= 400 and _code < 600:
+					return pull.RED + "{:<3.3}".format( str( _code ) ) + pull.END
+			else:
+				return "{:<3.3}".format( str( _code ) )
+
+		def server( _s1, _s2 ):
+			if _s1 != "NONE" and _s2 != "NONE":
+				return pull.CYAN + self.FSERVER.format( _s2 ) + pull.END
+			elif _s1 == "NONE" and _s2 != "NONE":
+				return pull.CYAN + self.FSERVER.format( _s2 ) + pull.END
+			elif _s1 != "NONE" and _s2 == "NONE":
+				return pull.CYAN + self.FSERVER.format( _s1 ) + pull.END
+			else:
+				return self.FSERVER.format( _s1 )
+
+		if self.LIBRARY.has_key( _subdomain ):
+			if self.LIBRARY[_subdomain].has_key( 80 ) and self.LIBRARY[_subdomain].has_key( 443 ):
+				self.LOCK.acquire( )
+				print ip() + "{:<1.1}".format("[") + code( self.LIBRARY[_subdomain][80]['code'] ) + "{:<1.1}".format("/") + code( self.LIBRARY[_subdomain][443]['code'] ) + "{:<10.10}".format("]") \
+						+ self.FSUBDOM.format( _subdomain.rstrip( '.' + self.domain ) ) + server( self.LIBRARY[_subdomain][80]['server'], self.LIBRARY[_subdomain][443]['server'] )
+				self.LOCK.release()
+			else:
+				pull.error( "Some internal parts are being missed. Rerun the script!" ); sys.exit( -1 )
+
+	def handler(self, _subdomain, _baseclass):
+		_baseclass.THREADS += 1
+
+		self.LIBRARY[ _subdomain ] = { 80: { 'code': 'ERR', 'server': 'NONE' }, 443: { 'code': 'ERR', 'server': 'NONE' }, 'ip': '' }
+		self.request( _subdomain )
+		self.push( _subdomain )
+
+		_baseclass.THREADS -= 1
+
+	def request(self, _subdomain):
+		_req = "GET / HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nOrigin: http://%s\r\n\r\n" % (_subdomain, self.AGENT, _subdomain)
+		
+		def connect(_pt):
+			_s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+			_s.settimeout( 10 )
+			try:
+				if _pt == 443:
+					_s =  ssl.wrap_socket(_s, ssl_version=ssl.PROTOCOL_TLS)
+				_s.connect((_subdomain, _pt))
+				_s.send( _req )
+				_rec = _s.recv( 1000 )
+				while "\r\n\r\n" not in _rec:
+					_rec += _s.recv( 1000 )
+				self.LIBRARY[ _subdomain ][ _pt ] = self.simplify( _rec )
+				_s.close()
+			except:
+				pass
+
+		connect(80)
+		connect(443)
+
+	def brute(self):
+		for _ls in self.subdomains:
+			_t = threading.Thread( target=self.handler, args=(_ls, self) )
+			_t.daemon = True
+			_t.start()
+
+			while self.THREADS >= self.max:
+				pass
+
+	def pause(self):
+		while self.THREADS > 0:
+			time.sleep(8)
+
+class Scanner:
+
+	COUNTER = 0
+	FCODE  = "{:<18.17}"
+	FSUBDOM= "{:<%i.%i}"
+	FPORTS = "{:<%i.%i}"
+	FCNAME = "{:<}"
+	PORTS_TEMP = []
+	PORTS_COUNT = 0
+	LOCK = threading.Semaphore( value=1 )
+
+	def __init__(self, _dm, _ports, _th, _lib, _ip):
+		self.domain = _dm
+		self.ports = _ports
+		self.threads = 10
+		self.library = self.parse( _lib )
+		self.d_ip = _ip
+		self.formatter()
+
+	def parse(self, _lib):
+		_list = {}
+		for (_sub, _values) in _lib.items():
+			if _lib[_sub][80]['code'] != 'ERR' or _lib[_sub][443]['code'] != 'ERR' or _lib[_sub]['ip'] != self.d_ip:
+				_list[_sub] = _values
+		return _list
+
+	def formatter(self):
+		def subcount():
+			_count = 13
+			for (_lib, _val) in self.library.items():
+				if len(_lib.rstrip( "." + self.domain )) > _count:
+					_count = len(_lib.rstrip( "." + self.domain ))
+			return _count
+
+		def portcount():
+			_count = 14
+			if len( self.ports ) > _count and len( self.ports ) < 24:
+				_count = len( self.ports )
+			elif len( self.ports ) > 24:
+				_count = 23
+			return _count
+
+		self.FSUBDOM = self.FSUBDOM % ( subcount() + 1, subcount() )
+		self.FPORTS  = self.FPORTS % ( portcount() + 1, portcount() )
+		print pull.DARKCYAN + self.FCODE.format( "[HTTP/HTTPS]" ) + self.FSUBDOM.format( "SUBDOMAIN" ) + self.FPORTS.format( "PORTS" ) \
+				+ self.FCNAME.format( "CNAME" ) + pull.END
+
+	def porter(self, _subdomain):
+		_pts = []
+		def port(_pt):
+			self.PORTS_COUNT += 1
+			try:
+				_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+				_s.settimeout( 4 )
+				_s.connect((_subdomain, _pt))
+				self.PORTS_TEMP.append( str(_pt) )
+			except:
+				pass
+			self.PORTS_COUNT -= 1
+
+		def wait():
+			while self.PORTS_COUNT > 0:
+				time.sleep(2)
+
+		for _pt in self.ports:
+			_t = threading.Thread( target=port, args=(_pt,) )
+			_t.daemon = True
+			_t.start()
+
+			while self.PORTS_COUNT > 10:
+				time.sleep(2)
+
+		wait(); _pts = list( set( self.PORTS_TEMP ) )
+		self.library[_subdomain]['misc']['ports'] = ",".join( _pts )
+
+	def cnamer(self, _subdomain):
+		_cn = ''
+		try:
+			_cn = resolver.query( _subdomain, "CNAME" )[0]
+		except:
+			pass
+		self.library[_subdomain]['misc']['cname'] = _cn
+
+	def push(self, _subdomain, _c1, _c2):
+		def code(_code):
+			if _code != "ERR":
+				_code = int( _code )
+				if _code >= 200 and _code < 300:
+					return pull.GREEN + "{:<3.3}".format( str( _code ) ) + pull.END
+				elif _code >= 300 and _code < 400:
+					return pull.YELLOW + "{:<3.3}".format( str( _code ) ) + pull.END
+				elif _code >= 400 and _code < 600:
+					return pull.RED + "{:<3.3}".format( str( _code ) ) + pull.END
+			else:
+				return "{:<3.3}".format( str( _code ) )
+
+		def port( _pts ):
+			if _pts:
+				return pull.BLUE + self.FPORTS.format( _pts ) + pull.END
+			else:
+				return self.FPORTS.format( _pts )
+
+		def cname( _cname ):
+			if _cname:
+				return pull.RED + self.FCNAME.format( str(_cname) ) + pull.END
+			else:
+				return self.FCNAME.format( _cname )
+
+		self.LOCK.acquire()
+		print "{:<1.1}".format('[') + code(_c1) + "{:<1.1}".format('/') + code(_c2) + "{:<10.10}".format(']') + self.FSUBDOM.format(_subdomain.rstrip("." + self.domain) ) \
+				+ port( self.library[_subdomain]['misc']['ports'] ) + cname( self.library[_subdomain]['misc']['cname'] )
+		self.LOCK.release()
+
+	def handler(self, _subdomain, _c1, _c2):
+		self.COUNTER += 1
+
+		self.library[_subdomain]["misc"] = { 'ports': '', 'cname': '' }
+		self.porter( _subdomain )
+		self.cnamer( _subdomain )
+		self.push( _subdomain, _c1, _c2 )
+
+		self.COUNTER -= 1
+
+	def scan(self):
+		for (_lib, _val) in self.library.items():
+			_t = threading.Thread( target=self.handler, args=(_lib, _val[80]['code'], _val[443]['code']) )
+			_t.daemon = True
+			_t.start()
+
+			while self.COUNTER >= self.threads:
+				time.sleep(3)
+
+	def pause(self):
+		while self.COUNTER > 0:
+			time.sleep(5)
+
+class Output:
+
+	FRESOL = "{:<18.15}"
+	FCODE  = "{:<18.17}"
+	FSUBDOM= "{:<%i.%i}"
+	FPORTS = "{:<%i.%i}"
+	FSERVER= "{:<}"
+	FCNAME = "{:<}"
+
+	def __init__(self, _dm, _lib, _file, _fm, _records):
+		self.domain = _dm
+		self.format = _fm
+		self.records = _records
+		self.library = _lib
+		self.filename = _file
+		self.file = self.opener( _file )
+		self.formatter()
+
+	def opener(self, _fl):
+		_file = open( _fl, "w" )
+		return _file
+		
+	def formatter(self):
+		_count = 13
+		_porte = 8
+		for (_lib, _val) in self.library.items():
+			if len( _lib.rstrip( "." + self.domain ) ) > _count:
+				_count = len( _lib.rstrip( "." + self.domain ) )
+			if len(self.library[_lib]['misc']['ports']) > _porte:
+				_porte = len(self.library[_lib]['misc']['ports'])
+		
+		self.FSUBDOM = self.FSUBDOM % ( _count + 1, _count )	
+		self.FPORTS  = self.FPORTS  % ( _porte + 1, _porte )	
+
+	def server(self, _s1, _s2):
+		if _s1 != "NONE" and _s2 != "NONE":
+			return _s2
+		elif _s1 == "NONE" and _s2 != "NONE":
+			return _s2
+		elif _s1 != "NONE" and _s2 == "NONE":
+			return _s1
 		else:
-			pull.error("Invalid Domain Name. Not Valid \"%s\"" % (pull.RED+_dm.lower()+pull.END))
-			sys.exit(-1)
-	else:
-		pull.error("Domain Name not specified. Specify -d, --domain option")
-		sys.exit(-1)
+			return _s1
+		
+	def write(self):
+		def simple():
+			self.file.write( "Project - %s\n\n" % self.domain )
+			self.file.write( "DNS Records" )
+			self.file.write( "\n" )
+			for _rec in self.records:
+				self.file.write( _rec )
+				self.file.write( "\n" )
+			self.file.write("\n")
+			self.file.write( self.FRESOL.format("RESOLUTION") + self.FCODE.format("[HTTP/HTTPS]") + self.FSUBDOM.format("SUBDOMAIN") + self.FPORTS.format("PORTS") + self.FSERVER.format("SERVER") )
+			self.file.write( "\n" )
+			for (_lib, _values) in self.library.items():
+				self.file.write( self.FRESOL.format( self.library[_lib]['ip'] ) + self.FCODE.format( "[%s/%s]" % (self.library[_lib][80]['code'], \
+								self.library[_lib][443]['code'])) + self.FSUBDOM.format( _lib.rstrip( "." + self.domain ) ) + self.FPORTS.format( self.library[_lib]['misc']['ports'] ) + \
+								self.FSERVER.format( self.server(self.library[_lib][80]['server'], self.library[_lib][443]['server'] )))
+				self.file.write("\n")
+			self.file.write( "\n" )
+			self.file.write( self.FCODE.format( "[HTTP/HTTPS]" ) + self.FSUBDOM.format( "SUBDOMAIN" ) + self.FPORTS.format( "PORTS" ) + self.FCNAME.format( "CNAME" ) )
+			self.file.write( "\n" )
+			for (_lib, _values) in self.library.items():
+				self.file.write( self.FCODE.format( "[%s/%s]" % (self.library[_lib][80]['code'], self.library[_lib][443]['code'])) + self.FSUBDOM.format( _lib.rstrip( "." + self.domain ) ) + \
+							     self.FPORTS.format( self.library[_lib]['misc']['ports'] ) + self.FCNAME.format( str(self.library[_lib]['misc']['cname']) ) )
+				self.file.write("\n")
 
-def nameservers(_dm):
-	ns = []
-	try:
-		ns = dns.resolver.query(_dm, "NS")
-	except:
-		pull.error("Error Locating NameServeres. Skipping ... %s[Failed]%s" % (pull.RED, pull.END))
-	return ns
+		def csv():
+			self.file.write( "DNS Records" )
+			self.file.write( "\n" )
+			for _rec in self.records:
+				self.file.write( _rec )
+				self.file.write( "\n" )
+			self.file.write("\n")
+			self.file.write( ",".join( ["RESOLUTION","[HTTP/HTTPS]","PORTS","SERVER","SUBDOMAIN","CNAME"] ) )
+			self.file.write( "\n" )
+			for (_lib, _values) in self.library.items():
+				self.file.write( self.library[_lib]['ip'] + "," + "[%s/%s]" % (self.library[_lib][80]['code'], self.library[_lib][443]['code']) + "," + \
+								 self.library[_lib]['misc']['ports'].replace(",", ".") + "," + _lib.rstrip( "." + self.domain ) + "," + str(self.library[_lib]['misc']['cname']))
+				self.file.write( "\n" )
 
-def _wordlister(_wd):
-	if _wd == '':
-		pull.error("Dictionary Not Specified. Specify -w, --wordlist option. Available Dictionaries are: ")
-		pull.slash("Large -> large %s[257]%s Entries" % (pull.DARKCYAN, pull.END))
-		pull.slash("Small -> small %s[8215]%s Entries" % (pull.DARKCYAN, pull.END))
-		sys.exit(-1)
+		if self.library:
+			if self.format == "simple":
+				simple()
+			elif self.format == "csv":
+				csv()
 
-	elif _wd == 'small':
-		return os.path.join( os.getcwd(), 'wordlists/small.lst' )
+	def push(self):
+		pull.indent( "Saved - %s" % self.filename, spaces=4 )
 
-	elif _wd == 'large':
-		return os.path.join( os.getcwd(), 'wordlists/large.lst' )
+class Parser:
 
-	elif not os.path.isfile(_wd):
-		pull.error("No Such File: %s[%s]%s" % (pull.RED, _wd, pull.END))
-		sys.exit(-1)
+	def __init__(self, _opts, _args):
+		self.signal = signal.signal( signal.SIGINT, self.sig_handler )
+		self.options = _opts
+		self.arguments = _args
+		self.help = _opts.help
+		self.domain = self.parse_domain(_opts.domain)
+		self.b_wordlist = self.parse_b_wordlist(_opts.bruteforce)
+		self.wordlist = self.parse_wordlist(_opts.wordlist)
+		self.threads = self.parse_threads(_opts.threads)
+		self.output = self.parse_output(_opts.output)
+		self.format = self.parse_format(_opts.format)
+		self.b_ports = _opts.portscan
+		self.ports = self.parse_ports(_opts.ports)
+		self.online = self.parse_online(_opts.online)
 
-	else:
-		return _wd
+	def parse_domain(self, _dm):
+		if _dm != None:
+			if re.match("^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$", _dm.lower(), re.I):
+				return _dm.lower()
+			else:
+				pull.error("Invalid Domain Name. Not Valid \"%s\"" % (pull.RED + _dm.lower() + pull.END)); sys.exit(-1)
+		else:
+			pull.error("Domain Name not specified. Specify -d, --domain option"); sys.exit(-1)
 
-def count_dict(_wd):
-	_file = open(_wd, 'r')
-	return len(_file.readlines())
+	def parse_b_wordlist(self, _b):
+		return _b
+
+	def parse_wordlist(self, _wd):
+		_list = []
+		if not self.b_wordlist:
+			if not _wd:
+				pull.error("Dictionary Not Specified. Specify -w, --wordlist option"); sys.exit(-1)
+			else:
+				for _ls in set(_wd.split(",")):
+					if not os.path.isfile(_ls):
+						pull.error("No Such File: %s[%s]%s" % (pull.RED, _ls, pull.END)); sys.exit(-1)
+					else:
+						_file = open(_ls, 'r')
+						for _ln in _file.read().splitlines():
+							_list.append(_ln)
+		return list(set(_list))
+
+	def parse_threads(self, _th):
+		if type(_th) == int:
+			return _th
+		else:
+			pull.error("Not a Valid Value. Specify a valid integer for -t, --threads."); sys.exit(-1)
+
+	def parse_output(self, _out):
+		if _out:
+			try:
+				_file = open( _out, "w" )
+				_file.close()
+			except Exception, e:
+				pull.error( e ); pull.exit()
+			return _out
+		else:
+			return False
+
+	def parse_format(self, _fm):
+		_fms = ['csv', 'simple']
+		if _fm in _fms:
+			return _fm
+		else:
+			pull.error("Unknown Format Specified: %s" % _fm); sys.exit(-1)
+
+	def parse_ports(self, _pts):
+		_list = []
+		if not self.b_ports:
+			if _pts:
+				for pt in _pts.split(","):
+					try:
+						if len(pt.split("-")) > 1:
+							(_s, _e) = pt.split( "-" )
+							for n in range( int(_s), int(_e) ):
+								_list.append( n )
+						elif int(pt) > 0 and int(pt) < 65536:
+							_list.append( int(pt) )
+						else:
+							pull.error("Not a Valid Port! %s" % pt); sys.exit(-1)
+					except ValueError:
+						pull.error("Not a Valid Port! %s" % pt); sys.exit(-1)
+		return list(set(_list))
+
+	def parse_online(self, _bool):
+		if _bool:
+			return True
+		return False
+
+	def sig_handler(self, _sig, _fr):
+		sys.exit(0)
 
 def main():
-	parser = optparse.OptionParser(add_help_option=False)
+	parser = optparse.OptionParser( add_help_option=False )
 
 	parser.add_option('-h', '--help', dest='help', action='store_true', default=False)
 	parser.add_option('-d', '--domain', dest="domain", type="string", help="Domain Name")
 	parser.add_option('-w', '--wordlist', dest="wordlist", default='', type="string", help="Wordlist")
 	parser.add_option('-t', '--threads', dest="threads", type="int", default=25, help="Threads")
-	parser.add_option('-o', '--output', dest="save", type="string", help="Save")
+	parser.add_option('-o', '--output', dest="output", type="string", default=False, help="Save")
+	parser.add_option(''  , '--output-fm', dest="format", default="simple", type="string", help="Format")
+	parser.add_option('-p', '--ports', dest="ports", type="string", default=dports, help="ports")
+	parser.add_option(''  , '--skip-online', dest="online", action="store_true", default=False, help="Online")
+	parser.add_option(''  , '--skip-wordlist', dest="bruteforce", action="store_true", default=False, help="Wordlist")
+	parser.add_option(''  , '--skip-ports', dest="portscan", action="store_true", default=False, help="Port Scan")
 
 	(options, args) = parser.parse_args()
 
+	pull.logo()
+
 	if options.help:
-		pull.help()
-		sys.exit(0)
+		pull.help(); sys.exit(0)
+	else:
+		parser, subs = Parser(options, args), []
+		pull.right("Enumerating DNS Records ..."); pull.linebreak()
+		nservers = NameServer( parser.domain )
+		nservers.push()
+		ip = nservers.def_ip()
 
-	_dm = _domainer(options.domain)
-	_wd = _wordlister(options.wordlist)
-	pull.right("Identifying NameServers ...\n")
-	_nm = nameservers(_dm)
-	for nm in _nm:
-		pull.slash(nm)
+		if not parser.online:
+			pull.linebreak(); pull.right("Enumerating Subdomains Online ..."); pull.linebreak()
+			online = Online( parser.domain )
+			online.enumerate()
+			online.pause()
+			subs = online.acquire()
 
-	pull.linebreak()
-	pull.right("Enumerating Subdomains Online ...")
-	pull.linebreak()
-	_online = ONLINE(_dm)
-	_online.enumerate()
-	_online.wait()
+		pull.linebreak(); pull.right("Enumerating Subdomains ..."); pull.linebreak()
+		bruteforcer = Brute( parser.domain, parser.wordlist, ip, subs, parser.threads )
+		bruteforcer.brute()
+		bruteforcer.pause()
 
-	pull.linebreak()
-	pull.right("Enumerating Subdomains from Dictionary %s[%d]%s" % (pull.DARKCYAN, count_dict(_wd), pull.END))
-	pull.linebreak()
+		pull.linebreak(); pull.right("Identifying Services ..."); pull.linebreak()
+		scanner = Scanner( parser.domain, parser.ports, parser.threads, bruteforcer.LIBRARY, ip )
+		scanner.scan()
+		scanner.pause()
 
-	_orator = LISTER(_dm, _wd, _online.SUBDOMAINS, options.threads)
-	_orator.passer()
-	_orator.brute()
-	_orator.pause()
-
-	pull.linebreak()
-	pull.right("Enumerating CNAME Records ... %s[%s]%s" % (pull.DARKCYAN, cnames.count(), pull.END))
-	pull.linebreak()
-
-	cnames.push_headers()
-	cnames.push()
-
-	if options.save != None:
-		pull.linebreak()
-		pull.right("Saving Output to File ... %s[%s]%s" % (pull.DARKCYAN, options.save, pull.END))
-		pull.linebreak()
-
-		cnames.save(options.save)
+		if parser.output:
+			pull.linebreak(); pull.right("Saving Output ..."); pull.linebreak()
+			output = Output( parser.domain, scanner.library, parser.output, parser.format, nservers.RECORDS )
+			output.write()
+			output.push()
+			pull.linebreak()
 
 if __name__ == "__main__":
-	pull = PULLY()
-	cnames = CNAMES()
-	pull.logo()
+	dports = """21-23,25-26,53,81,110-111,113,135,139,143,179,199,445,465,514-515,548,554,587,646,993,995,1025-1027,
+			1433,1720,1723,2000-2001,3306,3389,5060,5666,5900,6001,8000,8008,8080,8443,8888,10000,32768,49152,49154"""
 	main()
