@@ -30,11 +30,13 @@ Options:
                         can be specified as `small` and
                         `large`.                          NONE
    -t, --threads        Number of threads to spawn         25
-   -o, --output         Push discovered subdomains to
+   -o, --output         Push discovered information to
                         an output file in csv 
                         or simple format                  NONE
-       --output-fm      Output format. Possible Values
-                        are simple and csv                simple
+   -s, --output-subs    Push discovered subdomains to
+                        an output file                    NONE
+   -f, --format         Output format. Possible Values
+                        are simple and csv               simple
    -p, --ports          Comma-seperated ports to scan.
                         50 most common used ports are      50
                         scanned by default                 

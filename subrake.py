@@ -478,6 +478,26 @@ class Output:
 	def push(self):
 		pull.indent( "Saved - %s" % self.filename, spaces=4 )
 
+class Spooner:
+
+	def  __init__(self, _dm, _lib, _file):
+		self.domain = _dm
+		self.library = _lib
+		self.filename = _file
+		self.file = self.opener( _file )
+
+	def opener(self, _fl):
+		_file = open( _fl, "w" )
+		return _file
+
+	def write(self):
+		for (_lib, _values) in self.library.items():
+			self.file.write( _lib + "\n" )
+		self.file.close()
+
+	def push(self):
+		pull.indent( "Saved - %s" % self.filename, spaces=4 )
+
 class Parser:
 
 	def __init__(self, _opts, _args):
@@ -490,6 +510,7 @@ class Parser:
 		self.wordlist = self.parse_wordlist(_opts.wordlist)
 		self.threads = self.parse_threads(_opts.threads)
 		self.output = self.parse_output(_opts.output)
+		self.outputsubs = self.parse_output(_opts.outputsubs)
 		self.format = self.parse_format(_opts.format)
 		self.b_ports = _opts.portscan
 		self.ports = self.parse_ports(_opts.ports)
@@ -580,7 +601,8 @@ def main():
 	parser.add_option('-w', '--wordlist', dest="wordlist", default='', type="string", help="Wordlist")
 	parser.add_option('-t', '--threads', dest="threads", type="int", default=25, help="Threads")
 	parser.add_option('-o', '--output', dest="output", type="string", default=False, help="Save")
-	parser.add_option(''  , '--output-fm', dest="format", default="simple", type="string", help="Format")
+	parser.add_option('-s', '--output-subs', dest="outputsubs", type="string", default=False, help="Output Subdomains")
+	parser.add_option('-f', '--format', dest="format", default="simple", type="string", help="Format")
 	parser.add_option('-p', '--ports', dest="ports", type="string", default=dports, help="ports")
 	parser.add_option(''  , '--skip-online', dest="online", action="store_true", default=False, help="Online")
 	parser.add_option(''  , '--skip-wordlist', dest="bruteforce", action="store_true", default=False, help="Wordlist")
@@ -621,6 +643,12 @@ def main():
 			output = Output( parser.domain, scanner.library, parser.output, parser.format, nservers.RECORDS )
 			output.write()
 			output.push()
+
+		if parser.outputsubs:
+			pull.linebreak(); pull.right("Saving Subdomains ..."); pull.linebreak()
+			spooner = Spooner( parser.domain, scanner.library, parser.outputsubs )
+			spooner.write()
+			spooner.push()
 			pull.linebreak()
 
 if __name__ == "__main__":
