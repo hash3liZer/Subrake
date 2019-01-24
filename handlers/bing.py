@@ -13,19 +13,23 @@ class BING:
 	TIMEOUT = 10
 	RESPONSE = ""
 	SUBDOMAINS = []
+	AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"
+	HEADERS = {
+		'User-Agent' : '',
+		'Referer' : '',
+	}
 
-	def __init__(self, _class, _dm, _hd, _ag):
+	def __init__(self, _class, _dm):
 		self.session = requests.Session()
 		self.baseclass = _class
 		self.domain = _dm
-		self.URL = self.URL % (self.domain)
-		self.REGEXP = self.REGEXP % (self.domain)
-		self.headers = self.headerer(_hd, _ag)
-		self.agent = _ag
+		self.url = self.URL % (self.domain)
+		self.regexp = self.REGEXP % (self.domain)
+		self.headers = self.headerer(self.HEADERS, self.AGENT)
 
 	def headerer(self, headers, _ag):
 		headers['User-Agent'] = _ag
-		headers['Referer'] = self.URL
+		headers['Referer'] = self.url
 		return headers
 
 	def execute(self):
@@ -37,7 +41,7 @@ class BING:
 		self.baseclass.THREADS += 1
 
 		try:
-			req = self.session.get(self.URL, headers=self.headers, cookies=self.COOKIES, timeout=self.TIMEOUT)
+			req = self.session.get(self.url, headers=self.headers, cookies=self.COOKIES, timeout=self.TIMEOUT)
 			if req.status_code < 400:
 				self.RESPONSE = req.text
 				self.extract()
@@ -50,13 +54,14 @@ class BING:
 
 	def append(self, error=False):
 		self.LOCK.acquire()
-		self.baseclass.add( self.SUBDOMAINS, self.SERVICE )
-		self.baseclass.pushtoscreen( self.SUBDOMAINS, self.SERVICE, error )
+		self.baseclass.move( self.SERVICE, self.SUBDOMAINS )
 		self.LOCK.release()
 
 	def extract(self):
 		_html = soup(self.RESPONSE)
 		for cite in _html.findAll("cite"):
-			sub = re.search(self.REGEXP, cite.text, re.IGNORECASE)
+			sub = re.search(self.regexp, cite.text, re.IGNORECASE)
 			if sub:
-				self.SUBDOMAINS.append(sub.group())
+				_sub = sub.group()
+				if _sub not in self.SUBDOMAINS:
+					self.SUBDOMAINS.append(_sub)

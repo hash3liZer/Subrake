@@ -15,15 +15,19 @@ class DNSDUMPSTER:
 	TIMEOUT = 10
 	RESPONSE = ""
 	SUBDOMAINS = []
+	AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"
+	HEADERS = {
+		'User-Agent' : '',
+		'Referer' : '',
+	}
 
-	def __init__(self, _class, _dm, _hd, _ag):
+	def __init__(self, _class, _dm):
 		self.session = requests.Session()
 		self.baseclass = _class
 		self.domain = _dm
 		self.DATA['targettip'] = self.domain
-		self.REGEXP = self.REGEXP % (self.domain)
-		self.headers = self.headerer(_hd, _ag)
-		self.agent = _ag
+		self.regexp = self.REGEXP % (self.domain)
+		self.headers = self.headerer( self.HEADERS, self.AGENT )
 
 	def headerer(self, headers, _ag):
 		headers['User-Agent'] = _ag
@@ -62,12 +66,12 @@ class DNSDUMPSTER:
 
 	def append(self, error=False):
 		self.LOCK.acquire()
-		self.baseclass.add( self.SUBDOMAINS, self.SERVICE )
-		self.baseclass.pushtoscreen( self.SUBDOMAINS, self.SERVICE, error )
+		self.baseclass.move( self.SERVICE, self.SUBDOMAINS )
 		self.LOCK.release()
 
 	def extract(self):
 		links = re.findall(r"<td class=\"col-md-4\">(.*?)<br>", self.RESPONSE)
 		for link in links:
 			if link.endswith(self.domain):
-				self.SUBDOMAINS.append(link)
+				if link not in self.SUBDOMAINS:
+					self.SUBDOMAINS.append(link)
