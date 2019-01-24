@@ -21,17 +21,26 @@ Syntax:
     $ python subrake -d shellvoide.com -w large --threads 30
 
 Options:
-   Args               Description                      Default
-   -h, --help         Show this manual                  NONE
-   -d, --domain       Target domain. Possible
-                      example: [example.com]            NONE
-   -w, --wordlist     Wordlist for subdomains
-                      to test. Two internal wordlists
-                      can be specified as `small` and
-                      `large`.                          NONE
-   -t, --threads      Number of threads to spawn         25
-   -o, --output       Push discovered subdomains to
-                      an output file in csv format      NONE
+   Args                 Description                      Default
+   -h, --help           Show this manual                  NONE
+   -d, --domain         Target domain. Possible
+                        example: [example.com]            NONE
+   -w, --wordlist       Wordlist for subdomains
+                        to test. Two internal wordlists
+                        can be specified as `small` and
+                        `large`.                          NONE
+   -t, --threads        Number of threads to spawn         25
+   -o, --output         Push discovered subdomains to
+                        an output file in csv 
+                        or simple format                  NONE
+       --output-fm      Output format. Possible Values
+                        are simple and csv                simple
+   -p, --ports          Comma-seperated ports to scan.
+                        50 most common used ports are      50
+                        scanned by default                 
+       --skip-ports     Skip Port Scanning.               FALSE
+       --skip-online    Skip Online Subdomain Scan        FALSE
+       --skip-wordlist  Skip Wordlist Scan                FALSE
 """
 
 class PULLY:
