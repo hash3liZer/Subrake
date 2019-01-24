@@ -13,34 +13,45 @@ Running Your First scan. Clone into the repository and launch the script:
 ```
 $ git clone https://github.com/hash3liZer/Subrake.git
 $ cd Subrake/
-$ python subrake.py -d [target.com] -w [small/large] [...options]
+$ python subrake.py -d [target.com] [...options]
 ```
 ## Options
 ```
 Syntax: 
-    $ python subrake -d shellvoide.com -w small     // SMALL wordlist scan
-    $ python subrake -d shellvoide.com -w large --threads 30
+    $ python subrake -d shellvoide.com -w wordlist/small.lst
+    $ python subrake -d shellvoide.com --skip-wordlist -p 22,8080,8000 --threads 30
 
 Options:
    Args               Description                      Default
-   -h, --help         Show this manual                  NONE
-   -d, --domain       Target domain. Possible
-                      example: [example.com]            NONE
-   -w, --wordlist     Wordlist for subdomains
-                      to test. Two internal wordlists
-                      can be specified as `small` and
-                      `large`.                          NONE
-   -t, --threads      Number of threads to spawn         25
-   -o, --output       Push discovered subdomains to
-                      an output file in csv format      NONE
+   -h, --help           Show this manual                  NONE
+   -d, --domain         Target domain. Possible
+                        example: [example.com]            NONE
+   -w, --wordlist       Wordlist for subdomains
+                        to test. Two internal wordlists
+                        can be specified as `small` and
+                        `large`.                          NONE
+   -t, --threads        Number of threads to spawn         25
+   -o, --output         Push discovered information to
+                        an output file in csv 
+                        or simple format                  NONE
+   -s, --output-subs    Push discovered subdomains to
+                        an output file                    NONE
+   -f, --format         Output format. Possible Values
+                        are simple and csv               simple
+   -p, --ports          Comma-seperated ports to scan.
+                        50 most common used ports are      50
+                        scanned by default                 
+       --skip-ports     Skip Port Scanning.               FALSE
+       --skip-online    Skip Online Subdomain Scan        FALSE
+       --skip-wordlist  Skip Wordlist Scan                FALSE
 ```
 
 ## Examples
 Here are some of common examples:
 ```
-$ python subrake.py -d shellvoide.com -w small
-$ python subrake.py -d google.com -w large -t 30
-$ python subrake.py -d starbucks.com -w large -t 30 -o /output.txt
+$ python subrake.py -d shellvoide.com -w wordlist/small.lst
+$ python subrake.py -d google.com --skip-wordlist -t 30
+$ python subrake.py -d starbucks.com -w wordlist/small.lst --skip-port -t 30 -o /output.txt -s subdomains.txt
 ```
 
 ## Support
