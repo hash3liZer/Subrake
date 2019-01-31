@@ -34,10 +34,9 @@ Options:
    -o, --output         Push discovered information to
                         an output file in csv 
                         or simple format                  NONE
-   -s, --output-subs    Push discovered subdomains to
-                        an output file                    NONE
-   -f, --format         Output format. Possible Values
-                        are simple and csv               simple
+   -f, --format         Output Format (multiple). 
+                        Possible Values are simple,
+                        csv, subdomains, status           NONE
    -p, --ports          Comma-seperated ports to scan.
                         50 most common used ports are      50
                         scanned by default                 
@@ -50,7 +49,7 @@ Options:
 Here are some of common examples:
 ```
 $ python subrake.py -d shellvoide.com -w wordlist/small.lst
-$ python subrake.py -d google.com --skip-wordlist -t 30
+$ python subrake.py -d google.com --skip-wordlist -t 30 -o output -f simple,csv,status
 $ python subrake.py -d starbucks.com -w wordlist/small.lst --skip-port -t 30 -o /output.txt -s subdomains.txt
 ```
 

@@ -258,8 +258,8 @@ class Scanner:
 	FSUBDOM= "{:<%i.%i}"
 	FPORTS = "{:<%i.%i}"
 	FCNAME = "{:<}"
-	PORTS_TEMP = []
-	PORTS_COUNT = 0
+	PORTS_COLLECTOR = {}
+	PORTS_COUNTER   = {}
 	LOCK = threading.Semaphore( value=1 )
 
 	def __init__(self, _dm, _ports, _th, _lib, _ip):
@@ -298,33 +298,38 @@ class Scanner:
 		print pull.DARKCYAN + self.FCODE.format( "[HTTP/HTTPS]" ) + self.FSUBDOM.format( "SUBDOMAIN" ) + self.FPORTS.format( "PORTS" ) \
 				+ self.FCNAME.format( "CNAME" ) + pull.END
 
-	def porter(self, _subdomain):
-		_pts = []
-		def port(_pt):
-			self.PORTS_COUNT += 1
-			try:
-				_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-				_s.settimeout( 4 )
-				_s.connect((_subdomain, _pt))
-				self.PORTS_TEMP.append( str(_pt) )
-			except:
-				pass
-			self.PORTS_COUNT -= 1
+	def porter_extension(self, _subdomain, _pt):
+		self.PORTS_COUNTER[ _subdomain ] += 1
+
+		try:
+			_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			_s.settimeout( 4 )
+			_s.connect((_subdomain, _pt))
+			self.PORTS_COLLECTOR[ _subdomain ].append( str(_pt) )
+		except:
+			pass
+
+		self.PORTS_COUNTER[ _subdomain ] -= 1
+
+	def porter(self, _subdomain,):
+
+		self.PORTS_COLLECTOR[ _subdomain ] = []
+		self.PORTS_COUNTER  [ _subdomain ] = 0
 
 		def wait():
-			while self.PORTS_COUNT > 0:
+			while self.PORTS_COUNTER[ _subdomain ] > 0:
 				time.sleep(2)
 
 		for _pt in self.ports:
-			_t = threading.Thread( target=port, args=(_pt,) )
+			_t = threading.Thread( target=self.porter_extension, args=(_subdomain,_pt,) )
 			_t.daemon = True
 			_t.start()
 
-			while self.PORTS_COUNT > 10:
-				time.sleep(2)
+			while self.PORTS_COUNTER[ _subdomain ] > 10:
+				time.sleep( 2 )
 
-		wait(); _pts = list( set( self.PORTS_TEMP ) )
-		self.library[_subdomain]['misc']['ports'] = ",".join( _pts )
+		wait()
+		self.library[ _subdomain ][ 'misc' ][ 'ports' ] = ",".join( self.PORTS_COLLECTOR[ _subdomain ] )
 
 	def cnamer(self, _subdomain):
 		_cn = ''
@@ -391,112 +396,111 @@ class Output:
 
 	FRESOL = "{:<18.15}"
 	FCODE  = "{:<18.17}"
-	FSUBDOM= "{:<%i.%i}"
+	FSERVER= "{:<%i.%i}"
 	FPORTS = "{:<%i.%i}"
-	FSERVER= "{:<}"
+	FSUBDOM= "{:<%i.%i}"
 	FCNAME = "{:<}"
 
-	def __init__(self, _dm, _lib, _file, _fm, _records):
+	def __init__(self, _dm, _output, _fms, _library):
 		self.domain = _dm
-		self.format = _fm
-		self.records = _records
-		self.library = _lib
-		self.filename = _file
-		self.file = self.opener( _file )
+		self.file   = _output
+		self.formats= _fms
+		self.library = _library
 		self.formatter()
 
-	def opener(self, _fl):
-		_file = open( _fl, "w" )
-		return _file
-		
+	def opener(self, _out):
+		 _fl = open( _out, 'w' )
+		 return _fl
+
 	def formatter(self):
-		_count = 13
-		_porte = 8
-		for (_lib, _val) in self.library.items():
-			if len( _lib.rstrip( "." + self.domain ) ) > _count:
-				_count = len( _lib.rstrip( "." + self.domain ) )
-			if len(self.library[_lib]['misc']['ports']) > _porte:
-				_porte = len(self.library[_lib]['misc']['ports'])
-		
-		self.FSUBDOM = self.FSUBDOM % ( _count + 1, _count )	
-		self.FPORTS  = self.FPORTS  % ( _porte + 1, _porte )	
+		def porter():
+			_count = 8
+			for ( _lib, _values ) in self.library.items():
+				if len(_values[ 'misc' ][ 'ports' ]) > _count:
+					_count = len(_values[ 'misc' ][ 'ports' ])
+			return _count
 
-	def server(self, _s1, _s2):
-		if _s1 != "NONE" and _s2 != "NONE":
-			return _s2
-		elif _s1 == "NONE" and _s2 != "NONE":
-			return _s2
-		elif _s1 != "NONE" and _s2 == "NONE":
-			return _s1
-		else:
-			return _s1
-		
-	def write(self):
-		def simple():
-			self.file.write( "Project - %s\n\n" % self.domain )
-			self.file.write( "DNS Records" )
-			self.file.write( "\n" )
-			for _rec in self.records:
-				self.file.write( _rec )
-				self.file.write( "\n" )
-			self.file.write("\n")
-			self.file.write( self.FRESOL.format("RESOLUTION") + self.FCODE.format("[HTTP/HTTPS]") + self.FSUBDOM.format("SUBDOMAIN") + self.FPORTS.format("PORTS") + self.FSERVER.format("SERVER") )
-			self.file.write( "\n" )
-			for (_lib, _values) in self.library.items():
-				self.file.write( self.FRESOL.format( self.library[_lib]['ip'] ) + self.FCODE.format( "[%s/%s]" % (self.library[_lib][80]['code'], \
-								self.library[_lib][443]['code'])) + self.FSUBDOM.format( _lib.rstrip( "." + self.domain ) ) + self.FPORTS.format( self.library[_lib]['misc']['ports'] ) + \
-								self.FSERVER.format( self.server(self.library[_lib][80]['server'], self.library[_lib][443]['server'] )))
-				self.file.write("\n")
-			self.file.write( "\n" )
-			self.file.write( self.FCODE.format( "[HTTP/HTTPS]" ) + self.FSUBDOM.format( "SUBDOMAIN" ) + self.FPORTS.format( "PORTS" ) + self.FCNAME.format( "CNAME" ) )
-			self.file.write( "\n" )
-			for (_lib, _values) in self.library.items():
-				self.file.write( self.FCODE.format( "[%s/%s]" % (self.library[_lib][80]['code'], self.library[_lib][443]['code'])) + self.FSUBDOM.format( _lib.rstrip( "." + self.domain ) ) + \
-							     self.FPORTS.format( self.library[_lib]['misc']['ports'] ) + self.FCNAME.format( str(self.library[_lib]['misc']['cname']) ) )
-				self.file.write("\n")
+		def server():
+			_count = 10
+			for ( _lib, _values ) in self.library.items():
+				if len( _values[ 80 ][ 'server' ]) > _count:
+					_count = len( _values[ 80 ][ 'server' ])
+				if len( _values[ 443 ][ 'server' ]) > _count:
+					_count = len( _values[ 443 ][ 'server' ])
+			return _count
 
-		def csv():
-			self.file.write( "DNS Records" )
-			self.file.write( "\n" )
-			for _rec in self.records:
-				self.file.write( _rec )
-				self.file.write( "\n" )
-			self.file.write("\n")
-			self.file.write( ",".join( ["RESOLUTION","[HTTP/HTTPS]","PORTS","SERVER","SUBDOMAIN","CNAME"] ) )
-			self.file.write( "\n" )
-			for (_lib, _values) in self.library.items():
-				self.file.write( self.library[_lib]['ip'] + "," + "[%s/%s]" % (self.library[_lib][80]['code'], self.library[_lib][443]['code']) + "," + \
-								 self.library[_lib]['misc']['ports'].replace(",", ".") + "," + _lib.rstrip( "." + self.domain ) + "," + str(self.library[_lib]['misc']['cname']))
-				self.file.write( "\n" )
+		def subdomain():
+			_count = 14
+			for ( _lib, _values ) in self.library.items():
+				if len(_lib.rstrip( self.domain )) > _count:
+					_count = len(_lib.rstrip( self.domain ))
+			return _count
 
-		if self.library:
-			if self.format == "simple":
-				simple()
-			elif self.format == "csv":
-				csv()
+		self.FSERVER = self.FSERVER % ( server() + 1, server() )
+		self.FPORTS  = self.FPORTS  % ( porter() + 1, porter() )
+		self.FSUBDOM = self.FSUBDOM % ( subdomain() + 1, subdomain() )
 
-	def push(self):
-		pull.indent( "Saved - %s" % self.filename, spaces=4 )
+	def o_simple(self):
+		def server(_s1, _s2):
+			if _s1 != "NONE" and _s2 != "NONE":
+				return self.FSERVER.format( _s2 )
+			elif _s1 == "NONE" and _s2 != "NONE":
+				return self.FSERVER.format( _s2 )
+			elif _s1 != "NONE" and _s2 == "NONE":
+				return self.FSERVER.format( _s1 )
+			else:
+				return self.FSERVER.format( _s1 )
 
-class Spooner:
-
-	def  __init__(self, _dm, _lib, _file):
-		self.domain = _dm
-		self.library = _lib
-		self.filename = _file
-		self.file = self.opener( _file )
-
-	def opener(self, _fl):
-		_file = open( _fl, "w" )
-		return _file
-
-	def write(self):
+		_file = self.opener( self.file + "-simple.txt" )
+		_line = self.FRESOL.format( "RESOLUTION" ) + self.FCODE.format( "[HTTP/HTTPS]" ) + self.FSERVER.format( "SERVER" ) + self.FPORTS.format( "PORTS" ) + self.FSUBDOM.format( "SUBDOMAIN" ) + \
+				self.FCNAME.format( "CNAME" )
+		_file.write( _line )
+		_file.write( "\n\n" )
 		for (_lib, _values) in self.library.items():
-			self.file.write( _lib + "\n" )
-		self.file.close()
+			_line = self.FRESOL.format( _values[ 'ip' ] ) + "{:<1.1}".format( "[" ) + "{:<3.3}".format( _values[ 80 ][ 'code' ] ) + "{:<1.1}".format( "/" ) + "{:<3.3}".format( _values[ 443 ][ 'code' ] ) + \
+					"{:<10.10}".format( "]" ) + self.FSERVER.format( server( _values[ 80 ][ 'server' ], _values[ 443 ][ 'server' ] ) ) + self.FPORTS.format( _values[ 'misc' ][ 'ports' ] ) + \
+					self.FSUBDOM.format( _lib.rstrip( self.domain ) ) + self.FCNAME.format( _values[ 'misc' ][ 'cname' ] )
+			_file.write( _line )
+			_file.write("\n")
+		self.push( self.file + "-subdomains.txt", "SIMPLE" )
 
-	def push(self):
-		pull.indent( "Saved - %s" % self.filename, spaces=4 )
+	def o_csv(self):
+		_file = self.opener( self.file + "-csv.csv" )
+		for ( _lib, _values ) in self.library.items():
+			_line = _values['ip'] + "," + "[" + _values[ 80 ][ 'code' ] + "/" + _values[ 443 ][ 'code' ] + "]" + "," + "[" + _values[ 80 ][ 'server' ] + "/" + _values[ 443 ][ 'server' ] + "]" \
+					+ "," + _values[ 'misc' ][ 'ports' ].replace( ",", "." ) + "," + _values[ 'misc' ][ 'cname' ] + "," + _lib
+			_file.write( _line )
+			_file.write( "\n" )
+		self.push( self.file + ".csv", "CSV" )
+
+	def o_codes(self):
+		_file = self.opener( self.file + "-codes.txt" )
+		for ( _lib, _values ) in self.library.items():
+			_line = _lib + "," + "[" + _values[ 80 ][ 'code' ] + "/" + _values[ 443 ][ 'code' ] + "]"
+			_file.write( _line )
+			_file.write( "\n" )
+		self.push( self.file + "-codes.txt", "STATUS" )
+
+	def o_subdomains(self):
+		_file = self.opener( self.file + "-subdomains.txt" )
+		for ( _lib, _values ) in self.library.items():
+			_file.write( _lib )
+			_file.write( "\n" )
+		self.push( self.file + "-subdomains.txt", "SUBDOMAINS" )
+
+	def output(self):
+		for _fm in self.formats:
+			if _fm == "simple":
+				self.o_simple()
+			elif _fm == "csv":
+				self.o_csv()
+			elif _fm == "status":
+				self.o_codes()
+			elif _fm == "subdomains":
+				self.o_subdomains()
+
+	def push(self, _name, _type):
+		pull.indent( "%s%s%s - Written Output to %s" % (pull.GREEN, _type, pull.END, _name), spaces=4 )
 
 class Parser:
 
@@ -510,7 +514,6 @@ class Parser:
 		self.wordlist = self.parse_wordlist(_opts.wordlist)
 		self.threads = self.parse_threads(_opts.threads)
 		self.output = self.parse_output(_opts.output)
-		self.outputsubs = self.parse_output(_opts.outputsubs)
 		self.format = self.parse_format(_opts.format)
 		self.b_ports = _opts.portscan
 		self.ports = self.parse_ports(_opts.ports)
@@ -551,21 +554,19 @@ class Parser:
 
 	def parse_output(self, _out):
 		if _out:
-			try:
-				_file = open( _out, "w" )
-				_file.close()
-			except Exception, e:
-				pull.error( e ); pull.exit()
 			return _out
 		else:
 			return False
 
-	def parse_format(self, _fm):
-		_fms = ['csv', 'simple']
-		if _fm in _fms:
-			return _fm
-		else:
-			pull.error("Unknown Format Specified: %s" % _fm); sys.exit(-1)
+	def parse_format(self, _fmss):
+		_fms = ['simple', 'csv', 'status', 'subdomains']
+		_lis = []
+		for _fm in _fmss.split(","):
+			if _fm not in _fms:
+				pull.error( "Format not supported: %s" % _fm ); sys.exit( -1 )
+			else:
+				_lis.append( _fm )
+		return _lis
 
 	def parse_ports(self, _pts):
 		_list = []
@@ -633,23 +634,19 @@ def main():
 		bruteforcer.brute()
 		bruteforcer.pause()
 
+		time.sleep(1)
+
 		pull.linebreak(); pull.right("Identifying Services ..."); pull.linebreak()
 		scanner = Scanner( parser.domain, parser.ports, parser.threads, bruteforcer.LIBRARY, ip )
 		scanner.scan()
 		scanner.pause()
 
 		if parser.output:
-			pull.linebreak(); pull.right("Saving Output ..."); pull.linebreak()
-			output = Output( parser.domain, scanner.library, parser.output, parser.format, nservers.RECORDS )
-			output.write()
-			output.push()
-
-		if parser.outputsubs:
-			pull.linebreak(); pull.right("Saving Subdomains ..."); pull.linebreak()
-			spooner = Spooner( parser.domain, scanner.library, parser.outputsubs )
-			spooner.write()
-			spooner.push()
+			pull.linebreak(); pull.right("Output..."); pull.linebreak()
+			output = Output( parser.domain, parser.output, parser.format, scanner.library )
+			output.output()
 			pull.linebreak()
+
 
 if __name__ == "__main__":
 	dports = """21-23,25-26,53,81,110-111,113,135,139,143,179,199,445,465,514-515,548,554,587,646,993,995,1025-1027,
