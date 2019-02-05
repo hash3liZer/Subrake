@@ -468,7 +468,7 @@ class Output:
 		_file = self.opener( self.file + "-csv.csv" )
 		for ( _lib, _values ) in self.library.items():
 			_line = _values['ip'] + "," + "[" + _values[ 80 ][ 'code' ] + "/" + _values[ 443 ][ 'code' ] + "]" + "," + "[" + _values[ 80 ][ 'server' ] + "/" + _values[ 443 ][ 'server' ] + "]" \
-					+ "," + _values[ 'misc' ][ 'ports' ].replace( ",", "." ) + "," + _values[ 'misc' ][ 'cname' ] + "," + _lib
+					+ "," + _values[ 'misc' ][ 'ports' ].replace( ",", "." ) + "," + str(_values[ 'misc' ][ 'cname' ]) + "," + _lib
 			_file.write( _line )
 			_file.write( "\n" )
 		self.push( self.file + ".csv", "CSV" )
