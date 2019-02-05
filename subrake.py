@@ -142,8 +142,8 @@ class Brute:
 		def count():
 			_count = 16
 			for _ls in self.subdomains:
-				if len( _ls.rstrip( "." + self.domain )) > _count:
-					_count = len( _ls.rstrip( "." + self.domain ) )
+				if len( _ls[: -len("."+self.domain) ] ) > _count:
+					_count = len( _ls[: -len("."+self.domain) ] )
 			return _count
 
 		self.FSUBDOM = self.FSUBDOM % ( count(), count() + 1 )
@@ -202,7 +202,7 @@ class Brute:
 			if self.LIBRARY[_subdomain].has_key( 80 ) and self.LIBRARY[_subdomain].has_key( 443 ):
 				self.LOCK.acquire( )
 				print ip() + "{:<1.1}".format("[") + code( self.LIBRARY[_subdomain][80]['code'] ) + "{:<1.1}".format("/") + code( self.LIBRARY[_subdomain][443]['code'] ) + "{:<10.10}".format("]") \
-						+ self.FSUBDOM.format( _subdomain.rstrip( '.' + self.domain ) ) + server( self.LIBRARY[_subdomain][80]['server'], self.LIBRARY[_subdomain][443]['server'] )
+						+ self.FSUBDOM.format( _subdomain[: -len("."+self.domain) ] ) + server( self.LIBRARY[_subdomain][80]['server'], self.LIBRARY[_subdomain][443]['server'] )
 				self.LOCK.release()
 			else:
 				pull.error( "Some internal parts are being missed. Rerun the script!" ); sys.exit( -1 )
@@ -281,8 +281,8 @@ class Scanner:
 		def subcount():
 			_count = 13
 			for (_lib, _val) in self.library.items():
-				if len(_lib.rstrip( "." + self.domain )) > _count:
-					_count = len(_lib.rstrip( "." + self.domain ))
+				if len( _lib[: -len("."+self.domain) ] ) > _count:
+					_count = len( _lib[: -len("."+self.domain) ] )
 			return _count
 
 		def portcount():
@@ -365,7 +365,7 @@ class Scanner:
 				return self.FCNAME.format( _cname )
 
 		self.LOCK.acquire()
-		print "{:<1.1}".format('[') + code(_c1) + "{:<1.1}".format('/') + code(_c2) + "{:<10.10}".format(']') + self.FSUBDOM.format(_subdomain.rstrip("." + self.domain) ) \
+		print "{:<1.1}".format('[') + code(_c1) + "{:<1.1}".format('/') + code(_c2) + "{:<10.10}".format(']') + self.FSUBDOM.format( _subdomain[: -len("."+self.domain) ] ) \
 				+ port( self.library[_subdomain]['misc']['ports'] ) + cname( self.library[_subdomain]['misc']['cname'] )
 		self.LOCK.release()
 
@@ -432,8 +432,8 @@ class Output:
 		def subdomain():
 			_count = 14
 			for ( _lib, _values ) in self.library.items():
-				if len(_lib.rstrip( self.domain )) > _count:
-					_count = len(_lib.rstrip( self.domain ))
+				if len( _lib[: -len("."+self.domain) ] ) > _count:
+					_count = len( _lib[: -len("."+self.domain) ] )
 			return _count
 
 		self.FSERVER = self.FSERVER % ( server() + 1, server() )
@@ -459,7 +459,7 @@ class Output:
 		for (_lib, _values) in self.library.items():
 			_line = self.FRESOL.format( _values[ 'ip' ] ) + "{:<1.1}".format( "[" ) + "{:<3.3}".format( _values[ 80 ][ 'code' ] ) + "{:<1.1}".format( "/" ) + "{:<3.3}".format( _values[ 443 ][ 'code' ] ) + \
 					"{:<10.10}".format( "]" ) + self.FSERVER.format( server( _values[ 80 ][ 'server' ], _values[ 443 ][ 'server' ] ) ) + self.FPORTS.format( _values[ 'misc' ][ 'ports' ] ) + \
-					self.FSUBDOM.format( _lib.rstrip( self.domain ) ) + self.FCNAME.format( _values[ 'misc' ][ 'cname' ] )
+					self.FSUBDOM.format( _lib[: -len("."+self.domain) ] ) + self.FCNAME.format( _values[ 'misc' ][ 'cname' ] )
 			_file.write( _line )
 			_file.write("\n")
 		self.push( self.file + "-subdomains.txt", "SIMPLE" )
