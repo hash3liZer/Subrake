@@ -7,8 +7,10 @@ import sys
 import socket
 import time
 import ssl
+import random
 import threading
 import signal
+import string
 from dns import resolver
 from pull import PULLY
 from handlers import GOOGLE
@@ -60,10 +62,25 @@ class NameServer:
 			return ''.join(random.choice(letters) for i in range(stringLength))
 
 		try:
-			_ip = socket.gethostbyname( "%s.%s" % (randomString, self.domain) )
+			_ip = socket.gethostbyname( "%s.%s" % (randomString(), self.domain) )
+			pull.slash( "Wildcard Detected - %s" % _ip )
 		except:
-			_ip = "218.93.250.18"
+			_ip = ""
+			pull.slash( "No Wildcard Detected." )
 		return _ip
+
+	def def_cn(self):
+		def randomString(stringLength=12):
+			letters = string.ascii_lowercase
+			return ''.join(random.choice(letters) for i in range(stringLength))
+
+		_cn = self.query( "%s.%s" % (randomString(), self.domain), "CNAME" )
+		if _cn:
+			pull.slash( "Subdomain Redirection Found! Omitting Results with CNAMES to %s" % str(_cn[0]) )
+			return str(_cn[0])
+		else:
+			pull.slash( "Subdomain Redirection not Found!" )
+			return ""
 
 class Online:
 
@@ -262,11 +279,12 @@ class Scanner:
 	PORTS_COUNTER   = {}
 	LOCK = threading.Semaphore( value=1 )
 
-	def __init__(self, _dm, _ports, _th, _lib, _ip):
+	def __init__(self, _dm, _ports, _th, _lib, _ip, _cn):
 		self.domain = _dm
 		self.ports = _ports
 		self.threads = 10
 		self.d_ip = _ip
+		self.d_cn = _cn
 		self.library = self.parse( _lib )
 		self.formatter()
 
@@ -337,7 +355,8 @@ class Scanner:
 			_cn = resolver.query( _subdomain, "CNAME" )[0]
 		except:
 			pass
-		self.library[_subdomain]['misc']['cname'] = _cn
+		self.library[_subdomain]['misc']['cname'] = str(_cn)
+		return str(_cn)
 
 	def push(self, _subdomain, _c1, _c2):
 		def code(_code):
@@ -374,8 +393,11 @@ class Scanner:
 
 		self.library[_subdomain]["misc"] = { 'ports': '', 'cname': '' }
 		self.porter( _subdomain )
-		self.cnamer( _subdomain )
-		self.push( _subdomain, _c1, _c2 )
+		_cn = self.cnamer( _subdomain )
+		if _cn == self.d_cn:
+			del self.library[ _subdomain ]
+		else:
+			self.push( _subdomain, _c1, _c2 )
 
 		self.COUNTER -= 1
 
@@ -620,7 +642,10 @@ def main():
 		pull.right("Enumerating DNS Records ..."); pull.linebreak()
 		nservers = NameServer( parser.domain )
 		nservers.push()
+
+		pull.linebreak(); pull.right("Identifying Redirection for Preventing False Positives"); pull.linebreak()
 		ip = nservers.def_ip()
+		cn = nservers.def_cn()
 
 		if not parser.online:
 			pull.linebreak(); pull.right("Enumerating Subdomains Online ..."); pull.linebreak()
@@ -637,7 +662,7 @@ def main():
 		time.sleep(1)
 
 		pull.linebreak(); pull.right("Identifying Services ..."); pull.linebreak()
-		scanner = Scanner( parser.domain, parser.ports, parser.threads, bruteforcer.LIBRARY, ip )
+		scanner = Scanner( parser.domain, parser.ports, parser.threads, bruteforcer.LIBRARY, ip, cn )
 		scanner.scan()
 		scanner.pause()
 
