@@ -394,7 +394,7 @@ class Scanner:
 		self.library[_subdomain]["misc"] = { 'ports': '', 'cname': '' }
 		self.porter( _subdomain )
 		_cn = self.cnamer( _subdomain )
-		if _cn == self.d_cn:
+		if (self.d_cn) and (_cn == self.d_cn):
 			del self.library[ _subdomain ]
 		else:
 			self.push( _subdomain, _c1, _c2 )
