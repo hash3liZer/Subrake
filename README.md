@@ -1,5 +1,13 @@
-# Subrake
-A powerful low-level subdomain scanner for reconnaissance purposes. It enumerates HTTP/HTTPS codes and CNAME records and is 2.x to 3.x times faster.
+<h1 align="center"> 
+    <img src="https://user-images.githubusercontent.com/29171692/57194511-2a146000-6f61-11e9-82e3-b04e58d72ae7.png" alt="subrake" /> <br>    
+    SUBRAKE
+</h1>
+<h4 align="center"> A Powerful Subdomain Enumeration Tool for Reconnaissance. </h4>
+<p align="center">
+    <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="lisence" /></a>
+</p>
+
+[![asciicast](https://asciinema.org/a/ccHuIkpEjVIVwpxIqkVASGW0N.svg)](https://asciinema.org/a/ccHuIkpEjVIVwpxIqkVASGW0N)
 
 ## Description
 Subrake is a powerful tool for enumerating subdomains, HTTP and HTTPS return codes, possible servers returned via headers and
@@ -42,9 +50,9 @@ Options:
 ## Examples
 Here are some of common examples:
 ```
-$ python subrake.py -d shellvoide.com -w wordlist/small.lst
-$ python subrake.py -d google.com --skip-wordlist -t 30 -o output -f simple,csv,status
-$ python subrake.py -d starbucks.com -w wordlist/small.lst --skip-port -t 30 -o /output.txt -s subdomains.txt
+$ python subrake.py -d shellvoide.com --wordlist wordlists/small.lst
+$ python subrake.py -d google.com -t 30 -o output.txt -f --search -w myrandomlist.txt
+$ python subrake.py -d starbucks.com -w wordlists/small.lst -t 30 -o output.txt --csv output.csv --scan-ports
 ```
 
 ## Support
