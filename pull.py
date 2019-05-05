@@ -60,6 +60,37 @@ class PULLY:
 	END = '\033[0m'
 	LINEUP = '\033[F'
 
+	MIXTURE = {
+		'WHITE': '\033[0m',
+		'PURPLE': '\033[95m',
+		'CYAN': '\033[96m',
+		'DARKCYAN': '\033[36m',
+		'BLUE': '\033[94m',
+		'GREEN': '\033[92m',
+		'YELLOW': '\033[93m',
+		'RED': '\033[91m',
+		'BOLD': '\033[1m',
+		'UNDERLINE': '\033[4m',
+		'END': '\033[0m',
+		'LINEUP': '\033[F'
+	}
+
+	VACANT = {
+		'WHITE': '',
+		'PURPLE': '',
+		'CYAN': '',
+		'DARKCYAN': '',
+		'BLUE': '',
+		'GREEN': '',
+		'YELLOW': '',
+		'RED': '',
+		'BOLD': '',
+		'UNDERLINE': '',
+		'END': '',
+		'LINEUP': ''
+	}
+
+
 	def __init__(self):
 		if not self.support_colors:
 			self.win_colors()
@@ -86,47 +117,82 @@ class PULLY:
 		self.BOLD = ''
 		self.UNDERLINE = ''
 		self.END = ''
+		self.MIXTURE = {
+			'WHITE': '',
+			'PURPLE': '',
+			'CYAN': '',
+			'DARKCYAN': '',
+			'BLUE': '',
+			'GREEN': '',
+			'YELLOW': '',
+			'RED': '',
+			'BOLD': '',
+			'UNDERLINE': '',
+			'END': '',
+			'LINEUP': ''
+		}
 
-	def error(self, statement, *args, **kwargs):
-		print "%s[!]%s %s" % (self.BOLD+self.RED, self.END, statement)
-		return
+		for (key, val) in self.MIXTURE.items():
+			self.MIXTURE[ key ] = ''
 
-	def up(self, statement, *args, **kwargs):
-		print "%s[^]%s %s" % (self.BOLD+self.BLUE, self.END, statement)
-		return
+	def gthen(self, _tshow, cc='', *colors):
+		for color in colors:
+			cc += color
+		print "%s[>]%s %s" % ( cc, self.END, _tshow )
 
-	def normal(self, statement, *args, **kwargs):
-		print statement
+	def lthen(self, _tshow, cc='', *colors):
+		for color in colors:
+			cc += color
+		print "%s[<]%s %s" % ( cc, self.END, _tshow )
 
-	def right(self, statement, *args, **kwargs):
-		print "%s[>]%s %s" % (self.DARKCYAN, self.END, statement)
+	def brick(self, _tshow, cc='', *colors):
+		for color in colors:
+			cc += color
+		sys.exit( "%s[~]%s %s" % ( cc, self.END, _tshow ) )
 
-	def slash(self, statement, *args, **kwargs):
-		print "%s - %s %s" % (self.YELLOW, self.END, statement)
+	def slasher(self, _tshow, cc='', *colors):
+		for color in colors:
+			cc += color
+		print "    %s-%s %s" % ( cc, self.END, _tshow )
 
-	def info(self, statement, *args, **kwargs):
-		print "%s[*]%s %s" % (self.BOLD+self.YELLOW, self.END, statement)
-		return
+	def psheada(self, color, **headfms):
+		rs = headfms[ 'rs' ]	# Resolution
+		cd = headfms[ 'cd' ]	# Codes
+		sv = headfms[ 'sv' ]	# Server
+		sb = headfms[ 'sb' ]	# Subdomain
 
-	def indent(self, statement, *args, **kwargs):
-		if kwargs.has_key("spaces"):
-			print (" "*kwargs["spaces"]) + "%s-%s %s" % (self.YELLOW, self.END, statement)
-		else:
-			self.error("Spaces not specified...")
+		print color + rs.format( "RESOLUTION" ) + cd.format( "[HTTP/HTTPS]" ) + sb.format( "SUBOMAIN" ) + sv.format( "SERVER" ) + self.END
 
-	def linebreak(self):
-		sys.stdout.write("\n")
+	def psrowa(self, color, **rowhvals):
+		rsv = rowhvals[ 'rsv' ]
+		cdv = rowhvals[ 'cdv' ]
+		svv = rowhvals[ 'svv' ]
+		sbv = rowhvals[ 'sbv' ]
 
-	def lineup(self, time=0):
-		if time != 0:
-			for n in range(0, time):
-				sys.stdout.write(self.LINEUP)
-		else:
-			sys.stdout.write(self.LINEUP)
+		print rsv + cdv + sbv + svv
+
+	def psheadb(self, color, **headfms):
+		cdh = headfms[ 'cdh' ]
+		sbh = headfms[ 'sbh' ]
+		pth = headfms[ 'pth' ]
+		cnh = headfms[ 'cnh' ]
+
+		print color + cdh.format( "[HTTP/HTTPS]" ) + sbh.format( "SUBDOMAIN" ) + pth.format( "PORTS" ) + cnh.format( "CNAME" ) + self.END
+
+	def psrowb(self, color, **rowfms):
+		cdv = rowfms[ 'cdv' ]
+		sbv = rowfms[ 'sbv' ]
+		ptv = rowfms[ 'ptv' ]
+		cnv = rowfms[ 'cnv' ]
+
+		print cdv + sbv + ptv + cnv
+
+	def linebreak(self, _num = 1):
+		sys.stdout.write( "\n" * _num )
 
 	def logo(self):
 		_tochoose = [self.BLUE, self.YELLOW, self.RED, self.DARKCYAN, self.GREEN]
-		print __logo__ % (self.BOLD+random.choice(_tochoose), self.END, self.BOLD, self.END)
+		print __logo__ % (self.BOLD + random.choice(_tochoose), self.END, self.BOLD, self.END)
 
 	def help(self):
 		print __help__
