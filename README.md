@@ -1,5 +1,5 @@
 <h1 align="center"> 
-    <img src="https://user-images.githubusercontent.com/29171692/57194511-2a146000-6f61-11e9-82e3-b04e58d72ae7.png" alt="subrake" /> <br>    
+    <img src="https://user-images.githubusercontent.com/29171692/57197739-5392b300-6f84-11e9-9191-4e38f3edc583.png" alt="subrake" /> <br>    
     SUBRAKE
 </h1>
 <h4 align="center"> A Powerful Subdomain Enumeration Tool for Reconnaissance. </h4>
@@ -10,18 +10,32 @@
 [![asciicast](https://asciinema.org/a/ccHuIkpEjVIVwpxIqkVASGW0N.svg)](https://asciinema.org/a/ccHuIkpEjVIVwpxIqkVASGW0N)
 
 ## Description
-Subrake is a powerful tool for enumerating subdomains, HTTP and HTTPS return codes, possible servers returned via headers and
-CNAME records. The connection required parts of the script are implemented in low-level sockets which make it 2.x to 3.x times faster
-than other commonly used tools.  On initial start, it would locate the name servers of the target domain and then enumerate
-subdomains according to a given list. You can provide a list using `--wordlist` option like you can provide output of sublister. You can also make it search for subdomains on internet using `--search` option.
+A Powerful Subdomain Scanner & Validator Written in sockets which makes it a lot more faster and easier to manage. It works by enumerating subdomains by searching them on web and by using local wordlists. It further identify the assets of a domain based on their ip and `CNAME` records and identify subdomains which are using the same IP addresses. It also scan ports if are given and enumerte possible server engines used on assets using the `SERVER` header returned in the response. It also enumerates possible returned HTTP status codes on port 80 and 443. 
 
-## Syntax
-Running Your First scan. Clone into the repository and launch the script: 
+## Key Features
+<ul>
+    <li> Use built-in low level sockets to connect subdomains and other assets </li>
+    <li> Search Subdomains Online on the Web. </li>
+    <li> Validate Subdomains Using associated IP address. </li>
+    <li> Identify False Positives. </li>
+    <li> Internal Filtering using <b>--filter</b> option </li>
+    <li> Store data in plain text and CSV formats. </li>
+    <li> Built-in Port Scanning </li>
+</ul>
+
+## Installation
+Subrake is totally based on internal python libraries except for `dnspyhon` module which you will have to install through `pip` or your local package manager. 
+```
+$ pip install dnspython
+```
+
+You can take a start by cloning the source. 
 ```
 $ git clone https://github.com/hash3liZer/Subrake.git
 $ cd Subrake/
-$ python subrake.py -d [target.com] [...options]
+$ python subrake -d yourdomain.tld -w wordlists/small.lst
 ```
+
 ## Options
 ```
 Syntax: 
@@ -55,7 +69,14 @@ $ python subrake.py -d google.com -t 30 -o output.txt -f --search -w myrandomlis
 $ python subrake.py -d starbucks.com -w wordlists/small.lst -t 30 -o output.txt --csv output.csv --scan-ports
 ```
 
-## Support
-EMAIL: admin@shellvoide.com <br />
-Website: https://www.shellvoide.com <br />
-Twitter: @hash3liZer <br />
+## Contribution
+You can contribute to the project in many ways:
+<ul>
+    <li> Report Bugs </li>
+    <li> Fork the project and start building on your own. </li>
+    <li> Suggestions for making it better </li>
+</ul>
+
+Have any further Question? You can hit me up on Twitter and Email: <br>
+Email: admin@shellvoide.com <br>
+Twitter: [@hash3liZer](https://twitter.com/hash3liZer)
