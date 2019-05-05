@@ -17,32 +17,26 @@ Description:
             A subdomain Enumeration tool for identifying subdomains, their response codes on HTTP and HTTPS, Possible used server using headers and CNAMES of identified subdomains.
 
 Syntax: 
-    $ python subrake -d shellvoide.com -w small     // SMALL wordlist scan
-    $ python subrake -d shellvoide.com -w large --threads 30
+    $ python subrake -d shellvoide.com -w [ Sublister Output ]
+    $ python subrake -d shellvoide.com -d shellvoide.com --wordlist wordlist/small.lst --filter --csv output.csv
 
 Options:
-   Args                 Description                      Default
+   Args               Description                      Default
    -h, --help           Show this manual                  NONE
    -d, --domain         Target domain. Possible
                         example: [example.com]            NONE
-   -w, --wordlist       Wordlist for subdomains
-                        to test. Two internal wordlists
-                        can be specified as `small` and
-                        `large`.                          NONE
+   -w, --wordlists      Wordlists containing subdomains
+                        to test. Multiple wordlists can
+                        be specified.                     NONE                      
    -t, --threads        Number of threads to spawn         25
-   -o, --output         Push discovered information to
-                        an output file in csv 
-                        or simple format                  NONE
-   -s, --output-subs    Push discovered subdomains to
-                        an output file                    NONE
-   -f, --format         Output format. Possible Values
-                        are simple and csv               simple
-   -p, --ports          Comma-seperated ports to scan.
-                        50 most common used ports are      50
-                        scanned by default                 
-       --skip-ports     Skip Port Scanning.               FALSE
-       --skip-online    Skip Online Subdomain Scan        FALSE
-       --skip-wordlist  Skip Wordlist Scan                FALSE
+   -o, --output         Store output in a seperate file   NONE
+   -c, --csv            Store output in CSV format        NONE
+   -p, --ports          Comma-seperated ports to scan.    NONE
+                        Depends on --scan-ports. 
+   -s, --search         Search for subdomains Online      FALSE
+       --filter         Filter subdomains with same IP    FALSE
+       --scan-ports     Turns on the port scanning 
+                        feature                           FALSE
 """
 
 class PULLY:

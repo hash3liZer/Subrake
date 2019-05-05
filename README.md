@@ -1,12 +1,11 @@
 # Subrake
-A powerful low-level socket scanner for enumerating subdomains, HTTP/HTTPS codes and CNAME records. 2.x to 3.x times faster.
+A powerful low-level subdomain scanner for reconnaissance purposes. It enumerates HTTP/HTTPS codes and CNAME records and is 2.x to 3.x times faster.
 
 ## Description
 Subrake is a powerful tool for enumerating subdomains, HTTP and HTTPS return codes, possible servers returned via headers and
 CNAME records. The connection required parts of the script are implemented in low-level sockets which make it 2.x to 3.x times faster
 than other commonly used tools.  On initial start, it would locate the name servers of the target domain and then enumerate
-subdomains according to a given list. For the purpose, two lists are currently provided, named `small` and `large` and directly be
-specified by the names with `-w, --wordlist` option. It is still in beta version and various errors are to be expected. 
+subdomains according to a given list. You can provide a list using `--wordlist` option like you can provide output of sublister. You can also make it search for subdomains on internet using `--search` option.
 
 ## Syntax
 Running Your First scan. Clone into the repository and launch the script: 
@@ -18,31 +17,26 @@ $ python subrake.py -d [target.com] [...options]
 ## Options
 ```
 Syntax: 
-    $ python subrake -d shellvoide.com -w wordlist/small.lst
-    $ python subrake -d shellvoide.com --skip-wordlist -p 22,8080,8000 --threads 30
+    $ python subrake -d shellvoide.com -w [ Sublister Output ]
+    $ python subrake -d shellvoide.com -d shellvoide.com --wordlist wordlist/small.lst --filter --csv output.csv
 
 Options:
    Args               Description                      Default
    -h, --help           Show this manual                  NONE
    -d, --domain         Target domain. Possible
                         example: [example.com]            NONE
-   -w, --wordlist       Wordlist for subdomains
-                        to test. Two internal wordlists
-                        can be specified as `small` and
-                        `large`.                          NONE
+   -w, --wordlists      Wordlists containing subdomains
+                        to test. Multiple wordlists can
+                        be specified.                     NONE                      
    -t, --threads        Number of threads to spawn         25
-   -o, --output         Push discovered information to
-                        an output file in csv 
-                        or simple format                  NONE
-   -f, --format         Output Format (multiple). 
-                        Possible Values are simple,
-                        csv, subdomains, status           NONE
-   -p, --ports          Comma-seperated ports to scan.
-                        50 most common used ports are      50
-                        scanned by default                 
-       --skip-ports     Skip Port Scanning.               FALSE
-       --skip-online    Skip Online Subdomain Scan        FALSE
-       --skip-wordlist  Skip Wordlist Scan                FALSE
+   -o, --output         Store output in a seperate file   NONE
+   -c, --csv            Store output in CSV format        NONE
+   -p, --ports          Comma-seperated ports to scan.    NONE
+                        Depends on --scan-ports. 
+   -s, --search         Search for subdomains Online      FALSE
+       --filter         Filter subdomains with same IP    FALSE
+       --scan-ports     Turns on the port scanning 
+                        feature                           FALSE
 ```
 
 ## Examples
