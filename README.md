@@ -24,9 +24,9 @@ A Powerful Subdomain Scanner & Validator Written in sockets which makes it a lot
 </ul>
 
 ## Installation
-Subrake is totally based on internal python libraries except for `dnspyhon` module which you will have to install through `pip` or your local package manager. 
+Install the required modules from `requirements.txt` file: 
 ```
-$ pip install dnspython
+$ pip install -r requirements.txt
 ```
 
 You can take a start by cloning the source. 
