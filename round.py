@@ -51,8 +51,7 @@ class ROUNDER:
 		_ip = ''
 		try:	
 			toput = socket.gethostbyname( hostname )
-			if toput != defip:
-				_ip = toput
+			_ip = toput
 		except Exception, e:
 			pass
 		return _ip
@@ -92,19 +91,22 @@ class ROUNDER:
 
 		return retlist
 
-	def formatrsv(self, ip, cplate):
-		return cplate[ 'YELLOW' ] + self.FRESOL.format( ip ) + cplate[ 'END' ]
+	def formatrsv(self, ip, defip, cplate):
+		if ip == defip:
+			return cplate[ 'YELLOW' ] + self.FRESOL.format( ip ) + cplate[ 'END' ]
+		else:
+			return cplate[ 'RED' ] + cplate[ 'BOLD' ] + self.FRESOL.format( ip ) + cplate[ 'END' ]
 
 	def formatcdv(self, ca, cb, cplate):
 		def code( _code ):
 			if _code != "ERR":
 				_code = int( _code )
 				if _code >= 200 and _code < 300:
-					return cplate[ 'GREEN' ] + "{:<3.3}".format( str( _code ) ) + cplate[ 'END' ]
+					return cplate[ 'GREEN' ] + cplate[ 'BOLD' ] + "{:<3.3}".format( str( _code ) ) + cplate[ 'END' ]
 				elif _code >= 300 and _code < 400:
-					return cplate[ 'YELLOW' ] + "{:<3.3}".format( str( _code ) ) + cplate[ 'END' ]
+					return cplate[ 'YELLOW' ] + cplate[ 'BOLD' ] + "{:<3.3}".format( str( _code ) ) + cplate[ 'END' ]
 				elif _code >= 400 and _code < 600:
-					return cplate[ 'RED' ] + "{:<3.3}".format( str( _code ) ) + cplate[ 'END' ]
+					return cplate[ 'RED' ] + cplate[ 'BOLD' ] + "{:<3.3}".format( str( _code ) ) + cplate[ 'END' ]
 			else:
 				return "{:<3.3}".format( str( _code ) )
 
@@ -113,11 +115,11 @@ class ROUNDER:
 	def formatsvv(self, sa, sb, cplate):
 		def server( _s1, _s2 ):
 			if _s1 != "NONE" and _s2 != "NONE":
-				return cplate[ 'BLUE' ] + self.FSERVER.format( _s2 ) + cplate[ 'END' ]
+				return cplate[ 'BLUE' ] + cplate[ 'BOLD' ] + self.FSERVER.format( _s2 ) + cplate[ 'END' ]
 			elif _s1 == "NONE" and _s2 != "NONE":
-				return cplate[ 'BLUE' ] + self.FSERVER.format( _s2 ) + cplate[ 'END' ]
+				return cplate[ 'BLUE' ] + cplate[ 'BOLD' ] + self.FSERVER.format( _s2 ) + cplate[ 'END' ]
 			elif _s1 != "NONE" and _s2 == "NONE":
-				return cplate[ 'BLUE' ] + self.FSERVER.format( _s1 ) + cplate[ 'END' ]
+				return cplate[ 'BLUE' ] + cplate[ 'BOLD' ] + self.FSERVER.format( _s1 ) + cplate[ 'END' ]
 			else:
 				return self.FSERVER.format( _s1 )
 

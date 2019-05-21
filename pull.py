@@ -41,6 +41,8 @@ Options:
 
 class PULLY:
 
+	LFLUSH = ">"
+
 	WHITE = '\033[0m'
 	PURPLE = '\033[95m'
 	CYAN = '\033[96m'
@@ -148,6 +150,16 @@ class PULLY:
 		for color in colors:
 			cc += color
 		print "    %s-%s %s" % ( cc, self.END, _tshow )
+
+	def lflush(self, _tshow, cc='', *colors):
+		for color in colors:
+			cc += color
+		sys.stdout.write( "%s[%s]%s %s\r" % ( cc, self.LFLUSH, self.END, _tshow ) )
+
+		if self.LFLUSH == ">":
+			self.LFLUSH = "<"
+		elif self.LFLUSH == "<":
+			self.LFLUSH = ">"
 
 	def psheada(self, color, **headfms):
 		rs = headfms[ 'rs' ]	# Resolution

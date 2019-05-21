@@ -198,13 +198,15 @@ class ENGINE:
 		self.RECORD[ _subdomain ][ 443  ] = rtval
 		self.RECORD[ _subdomain ][ 'ip' ] = roll.iplocator( _subdomain, self.defip )
 
-		rsv = roll.formatrsv( self.RECORD[ _subdomain ][ 'ip' ], pull.MIXTURE )
+		rsv = roll.formatrsv( self.RECORD[ _subdomain ][ 'ip' ], self.defip, pull.MIXTURE )
 		cdv = roll.formatcdv( self.RECORD[ _subdomain ][ 80 ][ 'cd' ], self.RECORD[ _subdomain ][ 443 ][ 'cd' ], pull.MIXTURE )
 		svv = roll.formatsvv( self.RECORD[ _subdomain ][ 80 ][ 'sv' ], self.RECORD[ _subdomain ][ 443 ][ 'sv' ], pull.MIXTURE )
 		sbv = roll.formatsbv( self.domain, _subdomain )
 
 		self.LOCK.acquire()
-		pull.psrowa( '', rsv=rsv, cdv=cdv, svv=svv, sbv=sbv )
+		pull.lflush("STATUS! Remain [%d] Total [%d]" % ( ( len(self.checklist) - (self.checklist.index( _subdomain )+1) ), len(self.checklist) ) , pull.DARKCYAN, pull.BOLD)
+		if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
+			pull.psrowa( '', rsv=rsv, cdv=cdv, svv=svv, sbv=sbv )
 		self.LOCK.release()
 
 		self.CTHREADS -= 1
@@ -224,9 +226,10 @@ class ENGINE:
 	def engrosser(self, _subdomain, _tsc, _ports):
 		self.CTHREADS += 1
 
-		self.RECORD[ _subdomain ][ 'cname' ] = roll.cnlocator( _subdomain, self.defcn )
-		if _tsc:
-			self.RECORD[ _subdomain ][ 'ports' ] = roll.ptlocator( _subdomain, _ports )
+		if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
+			self.RECORD[ _subdomain ][ 'cname' ] = roll.cnlocator( _subdomain, self.defcn )
+			if _tsc:
+				self.RECORD[ _subdomain ][ 'ports' ] = roll.ptlocator( _subdomain, _ports )
 
 		cdv = roll.formatcdv( self.RECORD[ _subdomain ][ 80 ][ 'cd' ], self.RECORD[ _subdomain ][ 443 ][ 'cd' ], pull.MIXTURE )
 		sbv = roll.formatsbv( self.domain, _subdomain )
@@ -234,7 +237,8 @@ class ENGINE:
 		cnv = roll.formatcnv( self.RECORD[ _subdomain ][ 'cname' ], pull.MIXTURE )
 
 		self.LOCK.acquire()
-		pull.psrowb( '', cdv=cdv, sbv=sbv, ptv=ptv, cnv=cnv )
+		if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
+			pull.psrowb( '', cdv=cdv, sbv=sbv, ptv=ptv, cnv=cnv )
 		self.LOCK.release()
 
 		self.CTHREADS -= 1
@@ -283,7 +287,7 @@ class WRITER:
 			]))
 			for (subdomain, fdict) in self.record.items():
 				fl.write( "".join([
-					roll.formatrsv(fdict['ip'], pull.VACANT),
+					roll.formatrsv(fdict['ip'], self.defipa, pull.VACANT),
 					roll.formatcdv(fdict[80]['cd'], fdict[443]['cd'], pull.VACANT),
 					roll.formatsvv(fdict[80]['sv'], fdict[443]['sv'], pull.VACANT),
 					roll.formatsbv(self.domain, subdomain),
@@ -327,18 +331,18 @@ class WRITER:
 				"\n"
 			]) )
 			for (ip, subdomains) in self.BASKETA.items():
-				fl.write( "IP: %s\n" % ip  )
-				for subdomain in subdomains:
-					fl.write( "".join([
-						roll.formatrsv( self.record[ subdomain ]['ip'], pull.VACANT ),
-						roll.formatcdv( self.record[ subdomain ][80]['cd'], self.record[ subdomain ][443]['cd'], pull.VACANT ),
-						roll.formatsvv( self.record[ subdomain ][80]['sv'], self.record[ subdomain ][443]['sv'], pull.VACANT ),
-						roll.formatsbv( self.domain, subdomain ),
-						"{:<28.27}".format( self.record[ subdomain ][ 'cname' ] ),
-						roll.formatptv( self.record[ subdomain ]['ports'], pull.VACANT ),
-						"\n"
-					]) )
-				fl.write( "\n" )
+				if ip != self.defipa:
+					for subdomain in subdomains:
+						fl.write( "".join([
+							roll.formatrsv( self.record[ subdomain ]['ip'], self.defipa, pull.VACANT ),
+							roll.formatcdv( self.record[ subdomain ][80]['cd'], self.record[ subdomain ][443]['cd'], pull.VACANT ),
+							roll.formatsvv( self.record[ subdomain ][80]['sv'], self.record[ subdomain ][443]['sv'], pull.VACANT ),
+							roll.formatsbv( self.domain, subdomain ),
+							"{:<28.27}".format( self.record[ subdomain ][ 'cname' ] ),
+							roll.formatptv( self.record[ subdomain ]['ports'], pull.VACANT ),
+							"\n"
+						]) )
+					fl.write( "\n" )
 
 	def flwritecsv(self):
 		if self.csvout:
@@ -354,17 +358,17 @@ class WRITER:
 			roll.FCODE   = "{:<}"
 			roll.FSERVER = "{:<}"
 			for (ip, subdomains) in self.BASKETA.items():
-				fl.writerow([ "IP: %s" % ip ])
-				for subdomain in subdomains:
-					fl.writerow([
-						self.record[ subdomain ][ 'ip' ],
-						roll.formatcdv( self.record[ subdomain ][80]['cd'], self.record[ subdomain ][443]['cd'], pull.VACANT ),
-						roll.formatsvv( self.record[ subdomain ][80]['sv'], self.record[ subdomain ][443]['sv'], pull.VACANT ),
-						subdomain,
-						self.record[ subdomain ][ 'cname' ],
-						",".join( self.record[ subdomain ]['ports'] )
-					])
-				fl.writerow([ " " ])
+				if ip != self.defipa:
+					for subdomain in subdomains:
+						fl.writerow([
+							self.record[ subdomain ][ 'ip' ],
+							roll.formatcdv( self.record[ subdomain ][80]['cd'], self.record[ subdomain ][443]['cd'], pull.VACANT ),
+							roll.formatsvv( self.record[ subdomain ][80]['sv'], self.record[ subdomain ][443]['sv'], pull.VACANT ),
+							subdomain,
+							self.record[ subdomain ][ 'cname' ],
+							",".join( self.record[ subdomain ]['ports'] )
+						])
+					fl.writerow([ " " ])
 
 	def engage(self):
 		for (subdomain, fdict) in self.record.items():
