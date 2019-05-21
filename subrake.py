@@ -1,7 +1,9 @@
+import sys
+if sys.version_info[0] != 2:
+	sys.exit( "[~] Currently only works with Python Version 2." )
 import optparse
 import re
 import os
-import sys
 import socket
 import time
 import ssl
