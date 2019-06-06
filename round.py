@@ -73,7 +73,7 @@ class ROUNDER:
 				s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
 				s.settimeout( 5 )
 				s.connect( (hostname, pt) )
-				retlist.append( pt )
+				retlist.append( str(pt) )
 			except:
 				pass
 			sclass.PTHREADS -= 1
@@ -89,7 +89,7 @@ class ROUNDER:
 		while self.PTHREADS > 0:
 			pass
 
-		return retlist
+		return list(set(retlist))
 
 	def formatrsv(self, ip, defip, cplate):
 		if ip == defip:
