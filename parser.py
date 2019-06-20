@@ -39,7 +39,7 @@ class PARSER:
 		else:
 			for fl in set( _wds.split(",") ):
 				if not os.path.isfile( fl ):
-					pull.brick( "Invalid! Not Found: " % fl, pull.BOLD, pull.RED )
+					pull.brick( "Invalid! Not Found: %s" % fl, pull.BOLD, pull.RED )
 				else:
 					_file = open( fl, 'r' )
 					for _ln in _file.read().splitlines():
