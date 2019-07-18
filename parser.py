@@ -20,6 +20,7 @@ class PARSER:
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.online     = self.parse_online(    _opts.online    )
 		self.scan       = _opts.scan
+		self.subs       = _opts.subs
 		self.filter     = _opts.filter
 
 	def parse_domain(self, _dm):

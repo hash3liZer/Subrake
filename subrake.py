@@ -265,10 +265,11 @@ class WRITER:
 	BASKETB = {}
 	RECORD  = {}
 
-	def __init__(self, _dom, _out, _csv, _rec, _dip, _dcn):
+	def __init__(self, _dom, _out, _csv, _sub, _rec, _dip, _dcn):
 		self.domain = _dom
 		self.output = _out
 		self.csvout = _csv
+		self.subdos = _sub
 		self.record = _rec
 		self.defipa = _dip
 		self.defcna = _dcn
@@ -370,6 +371,12 @@ class WRITER:
 						])
 					fl.writerow([ " " ])
 
+	def writesubs(self):
+		if self.subdos:
+			fl = open( self.subdos, 'w' )
+			for (subdomain, fdict) in self.record.items():
+				fl.write( subdomain + "\n" )
+
 	def engage(self):
 		for (subdomain, fdict) in self.record.items():
 			if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa:
@@ -405,6 +412,7 @@ def main():
 	parser.add_option('-p', '--ports', dest="ports", type="string", default=roll.PORTS)
 	parser.add_option('-s', '--search', dest="online", action="store_true", default=False)
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
+	parser.add_option(''  , '--subs', dest="subs", type="string", default="")
 	parser.add_option(''  , '--scan-ports', dest="scan", action="store_true", default=False)
 
 	(options, args) = parser.parse_args()
@@ -451,7 +459,7 @@ def main():
 		eenge.engross( parser.scan, parser.ports )
 		pull.linebreak( 1 )
 
-		fpush = WRITER(parser.domain, parser.output, parser.csv, eenge.get(), dip, dcn)
+		fpush = WRITER(parser.domain, parser.output, parser.csv, parser.subs, eenge.get(), dip, dcn)
 
 		if parser.filter:
 			pull.gthen( "Filtering Items for You. Suitable for larger assets -><-", pull.BOLD, pull.DARKCYAN )
@@ -470,6 +478,9 @@ def main():
 				pull.linebreak()
 				fpush.nmwritetxt()
 				fpush.nmwritecsv()
+
+		if parser.subs:
+			fpush.writesubs()
 
 		pull.lthen( "DONE!", pull.BOLD, pull.RED )
 
