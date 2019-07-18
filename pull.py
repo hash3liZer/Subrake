@@ -35,6 +35,8 @@ Options:
                         Depends on --scan-ports. 
    -s, --search         Search for subdomains Online      FALSE
        --filter         Filter subdomains with same IP    FALSE
+       --subs           Store Validated Subdomains in a
+                        seperate file                     NONE
        --scan-ports     Turns on the port scanning 
                         feature                           FALSE
 """
