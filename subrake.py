@@ -375,7 +375,8 @@ class WRITER:
 		if self.subdos:
 			fl = open( self.subdos, 'w' )
 			for (subdomain, fdict) in self.record.items():
-				fl.write( subdomain + "\n" )
+				if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa:
+					fl.write( subdomain + "\n" )
 
 	def engage(self):
 		for (subdomain, fdict) in self.record.items():
