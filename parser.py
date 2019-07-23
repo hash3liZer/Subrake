@@ -25,7 +25,7 @@ class PARSER:
 
 	def parse_domain(self, _dm):
 		if _dm:
-			if re.match("^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$", _dm.lower(), re.I):
+			if re.match("^([a-z0-9|-]+\.)*[a-z0-9|-]+\.[a-z]+$", _dm.lower(), re.I):
 				return _dm.lower()
 			else:
 				pull.brick( "MISCONF! Invalid Domain Received.", pull.BOLD, pull.RED )
