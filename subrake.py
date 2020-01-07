@@ -8,6 +8,7 @@ import socket
 import time
 import ssl
 import csv
+import requests
 import random
 import threading
 import string
@@ -30,6 +31,37 @@ from BeautifulSoup import BeautifulSoup as soup
 pull = PULLY()
 roll = ROUNDER()
 
+class NMHANDLER:
+
+	def __init__(self, dm):
+		self.domain = dm
+
+	def query(self, _dm, _type):
+		_ret = []
+		try:
+			_ret = resolver.query(_dm, _type)
+		except:
+			pass
+		return _ret
+
+	def def_ip(self):
+		try:
+			_ip = socket.gethostbyname( "%s.%s" % ( roll.rstring( ) , self.domain ) )
+			pull.slasher( "Wildcard: * -> Resolving -> %s" % ( pull.YELLOW + _ip + pull.END ), pull.BOLD, pull.YELLOW )
+		except:
+			pull.slasher( "Wildcard: * -> Resolving -> NONE", pull.BOLD, pull.YELLOW )
+			_ip = ""
+		return _ip
+
+	def def_cn(self):
+		_cn = self.query( "%s.%s" % ( roll.rstring( ) , self.domain ), "CNAME" )
+		if _cn:
+			pull.slasher( "Redirect: * -> Resolving -> %s" % ( pull.YELLOW + str(_cn[0]) + pull.END ), pull.BOLD, pull.YELLOW )
+			return str(_cn[0])
+		else:
+			pull.slasher( "Redirect: * -> Resolving -> NONE", pull.BOLD, pull.YELLOW )
+			return ""
+
 class NAMESERVER:
 
 	RECORDS = []
@@ -38,7 +70,7 @@ class NAMESERVER:
 		self.domain = _dm
 		self.nameservers = self.query(_dm, "NS")
 		self.mailservers = self.query(_dm, "MX")
-		self.txtrecords = self.query(_dm, "TXT")
+		#self.txtrecords = self.query(_dm, "TXT")
 
 	def save(self, _ty, _vals):
 		for _rec in _vals:
@@ -53,7 +85,8 @@ class NAMESERVER:
 			_ret = resolver.query(_dm, _type)
 		except:
 			pass
-		return self.save( _type, _ret )
+		self.save( _type, _ret )
+		return _ret
 
 	def push(self):
 		for (rt, rv) in self.RECORDS:
@@ -415,6 +448,7 @@ def main():
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
 	parser.add_option(''  , '--subs', dest="subs", type="string", default="")
 	parser.add_option(''  , '--scan-ports', dest="scan", action="store_true", default=False)
+	parser.add_option(''  , '--skip-dns'  , dest="sdns", action="store_true", default=False)
 
 	(options, args) = parser.parse_args()
 
@@ -425,12 +459,16 @@ def main():
 	else:
 		parser  = PARSER( options, args )
 		pull.gthen( "CREATED ENVIRONMENT. EVERYTHING IN PLACE", pull.BOLD, pull.DARKCYAN )
-		pull.gthen( "DNS Records ->", pull.BOLD, pull.DARKCYAN )
-		pull.linebreak( 1 )
-		dnssec  = NAMESERVER( parser.domain )
-		dnssec.push()
-		dnsrec  = dnssec.get()
-		pull.linebreak( 1 )
+		if not parser.skipdns:
+			pull.gthen( "DNS Records ->", pull.BOLD, pull.DARKCYAN )
+			pull.linebreak( 1 )
+			dnssec  = NAMESERVER( parser.domain )
+			dnssec.push()
+			dnsrec  = dnssec.get()
+			pull.linebreak( 1 )
+		else:
+			dnssec  = NMHANDLER( parser.domain )
+	
 		pull.gthen( "False Positive Detection ->", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak( 1 )
 		dip     = dnssec.def_ip()

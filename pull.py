@@ -39,6 +39,7 @@ Options:
                         seperate file                     NONE
        --scan-ports     Turns on the port scanning 
                         feature                           FALSE
+       --skip-dns       Skip Dns Records Enum             FALSE
 """
 
 class PULLY:

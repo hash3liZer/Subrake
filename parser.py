@@ -22,6 +22,7 @@ class PARSER:
 		self.scan       = _opts.scan
 		self.subs       = _opts.subs
 		self.filter     = _opts.filter
+		self.skipdns    = _opts.sdns
 
 	def parse_domain(self, _dm):
 		if _dm:
