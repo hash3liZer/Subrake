@@ -33,17 +33,19 @@ class ROUNDER:
 		self.FSUBDOM = self.FSUBDOM % ( toput, toput + 1 )
 		return
 
-	def seperator(self, resp):
+	def seperator(self, code, headers):
 		_polls = {
 			'cd': 'ERR',
 			'sv': '',
 		}
-		_headers = resp.split("\r\n\r\n")[0]
-		for _ln in _headers.splitlines():
-			if _ln.startswith( "HTTP/" ):
-				_polls[ 'cd' ] = _ln.split( " " )[1].strip( "\r" )
-			elif _ln.startswith( "Server:" ):
-				_polls[ 'sv' ] = _ln.split( ": " )[1]
+		
+		if code:
+			_polls['cd'] = code
+
+		if headers:
+			headers = dict(headers)
+			if "Server" in list(headers.keys()):
+				_polls['sv'] = headers.get("Server")
 
 		return _polls
 

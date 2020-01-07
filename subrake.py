@@ -162,7 +162,15 @@ class ENGINE:
 
 	CTHREADS = 0
 	LOCK     = threading.Semaphore( value = 1 )
-	RECORD  = {
+	RECORD   = {
+	}
+	HEADERS  = {
+		"User-Agent": roll.AGENT,
+		"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+		"Accept-Language": "en-US,en;q=0.5",
+		"DNT": "1",
+		"Connection": "close",
+		"Upgrade-Insecure-Requests": "1"
 	}
 
 	def __init__( self, _domain, _checklist, _defip, _defcn, _osubs, _threads ):
@@ -185,6 +193,7 @@ class ENGINE:
 		pull.psheada( pull.DARKCYAN, rs=roll.FRESOL, cd=roll.FCODE, sv=roll.FSERVER, sb=roll.FSUBDOM )
 
 	def request(self, _subdomain, _port):
+		'''
 		_req = "GET / HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nOrigin: http://%s\r\n\r\n" % (_subdomain, roll.AGENT, _subdomain)
 		
 		_s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
@@ -209,8 +218,17 @@ class ENGINE:
 			_s.close()
 		except:
 			resp = ""
+		'''
+		httpath = ("http://%s" % _subdomain) if _port == 80 else ("https://%s" % _subdomain)
+		try:
+			r = requests.get(httpath, headers=self.HEADERS, allow_redirects=False, timeout=10)
+			code = r.status_code
+			headers = r.headers
+		except:
+			code = None
+			headers = {}
 
-		return roll.seperator( resp )
+		return roll.seperator( code, headers )
 
 	def handler(self, _subdomain):
 		self.CTHREADS += 1
