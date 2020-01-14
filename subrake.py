@@ -10,6 +10,7 @@ import ssl
 import csv
 import requests
 import random
+import signal
 import threading
 import string
 from dns import resolver
@@ -28,13 +29,15 @@ from handlers import THREATCROWD
 from handlers import CRTSEARCH
 from BeautifulSoup import BeautifulSoup as soup
 
-pull = PULLY()
-roll = ROUNDER()
+pull  = PULLY()
+roll  = ROUNDER()
+eeips = []
 
 class NMHANDLER:
 
-	def __init__(self, dm):
+	def __init__(self, dm, eeips):
 		self.domain = dm
+		self.eeips  = eeips
 
 	def query(self, _dm, _type):
 		_ret = []
@@ -62,12 +65,16 @@ class NMHANDLER:
 			pull.slasher( "Redirect: * -> Resolving -> NONE", pull.BOLD, pull.YELLOW )
 			return ""
 
+	def def_ps(self):
+			pull.slasher( "Exclude : * -> Specified -> %s" % (pull.YELLOW + ",".join(self.eeips) + pull.END) )
+
 class NAMESERVER:
 
 	RECORDS = []
 
-	def __init__(self, _dm):
+	def __init__(self, _dm, _eeips):
 		self.domain = _dm
+		self.eeips  = _eeips
 		self.nameservers = self.query(_dm, "NS")
 		self.mailservers = self.query(_dm, "MX")
 		#self.txtrecords = self.query(_dm, "TXT")
@@ -109,6 +116,9 @@ class NAMESERVER:
 		else:
 			pull.slasher( "Redirect: * -> Resolving -> NONE", pull.BOLD, pull.YELLOW )
 			return ""
+
+	def def_ps(self):
+			pull.slasher( "Exclude : * -> Specified -> %s" % ",".join(self.eeips) )
 
 class ONLINE:
 
@@ -160,7 +170,13 @@ class ONLINE:
 
 class ENGINE:
 
+	STOPPRINTER = False
+	ENGAGER     = True
+
+	BROOTBRA = False
+	BROOTBRE = False
 	CTHREADS = 0
+	SCOUNTER = 0
 	LOCK     = threading.Semaphore( value = 1 )
 	RECORD   = {
 	}
@@ -173,12 +189,45 @@ class ENGINE:
 		"Upgrade-Insecure-Requests": "1"
 	}
 
-	def __init__( self, _domain, _checklist, _defip, _defcn, _osubs, _threads ):
+	def __init__( self, _domain, _checklist, _defip, _eeips, _defcn, _osubs, _threads ):
+		self.signal     = signal.signal(signal.SIGINT, self.ee_handler_1)
 		self.domain     = _domain
 		self.mthreads   = _threads
 		self.defip      = _defip
+		self.eeips      = _eeips
 		self.defcn      = _defcn
 		self.checklist  = self.parse( _checklist, _osubs )
+
+	def empty_handler(self, sig, fr):
+		return
+
+	def ee_handler_1(self, sig, fr):
+		self.signal   = signal.signal(signal.SIGINT, self.empty_handler)
+		self.BROOTBRA = True
+
+		while self.CTHREADS > 0:
+			time.sleep(0.5)
+
+		self.STOPPRINTER = True
+		time.sleep(0.5)
+
+		pull.linebreak( 1 )
+		ii = raw_input(pull.DARKCYAN + "[<] " + pull.END + "[E]xit / [S]kip / [C]ontinue: ")
+		if ii in ('e', 'E'):
+			pull.linebreak( 1 )
+			pull.brick( pull.BOLD + "Received Interrupt -><- " + pull.END, pull.BOLD, pull.RED )
+		elif ii in ('s', 'S'):
+			self.BROOTBRA = False
+			self.BROOTBRE = True
+			self.signal   = signal.signal(signal.SIGINT, self.ee_handler_2)
+		else:
+			self.BROOTBRA = False
+			self.signal     = signal.signal(signal.SIGINT, self.ee_handler_1)
+			pass
+
+	def ee_handler_2(self, sig, fr):
+		pull.linebreak( 1 )
+		pull.brick( pull.BOLD + "Received Interrupt -><- " + pull.END, pull.BOLD, pull.RED )
 
 	def parse(self, _wd, _sb):
 		_list = list(_wd) + list(_sb)
@@ -255,42 +304,71 @@ class ENGINE:
 		sbv = roll.formatsbv( self.domain, _subdomain )
 
 		self.LOCK.acquire()
-		pull.lflush("STATUS! Remain [%d] Total [%d]" % ( ( len(self.checklist) - (self.checklist.index( _subdomain )+1) ), len(self.checklist) ) , pull.DARKCYAN, pull.BOLD)
-		if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
+		self.STOPPRINTER = True
+		time.sleep(0.1)
+		if self.RECORD[ _subdomain ][ 'ip' ] != self.defip and self.RECORD[ _subdomain ][ 'ip' ] != '' and self.RECORD[ _subdomain ][ 'ip' ] not in self.eeips:
 			pull.psrowa( '', rsv=rsv, cdv=cdv, svv=svv, sbv=sbv )
+		self.STOPPRINTER = False
 		self.LOCK.release()
 
+		self.SCOUNTER += 1
 		self.CTHREADS -= 1
 
+	def printer(self):
+		while self.ENGAGER:
+			while self.STOPPRINTER:
+				time.sleep(0.5)
+
+			if self.ENGAGER and not self.BROOTBRA:
+				pull.lflush("STATUS! Remain [%d] Total [%d]            " % ( len(self.checklist) - self.SCOUNTER, len(self.checklist) ) , pull.DARKCYAN, pull.BOLD)
+			elif self.BROOTBRA:
+				pull.lflush("PAUSE! Stopping ... Remain [%d]           " % self.CTHREADS, pull.DARKCYAN, pull.BOLD)
+
 	def engage(self):
+		t = threading.Thread(target=self.printer)
+		t.daemon = True
+		t.start()
+
 		for tocheck in self.checklist:
+			if self.BROOTBRE:
+				break
+
 			_t = threading.Thread( target=self.handler, args=( tocheck, ) )
 			_t.daemon = True
 			_t.start()
 
-			while self.CTHREADS >= self.mthreads:
+			while self.CTHREADS >= self.mthreads or self.BROOTBRA:
+				if self.BROOTBRE:
+					break
 				time.sleep( 0.5 )
 
 		while self.CTHREADS > 0:
+			if self.BROOTBRE:
+				break
 			time.sleep( 0.5 )
+
+		self.ENGAGER = False
 
 	def engrosser(self, _subdomain, _tsc, _ports):
 		self.CTHREADS += 1
 
-		if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
-			self.RECORD[ _subdomain ][ 'cname' ] = roll.cnlocator( _subdomain, self.defcn )
-			if _tsc:
-				self.RECORD[ _subdomain ][ 'ports' ] = roll.ptlocator( _subdomain, _ports )
+		try:
+			if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
+				self.RECORD[ _subdomain ][ 'cname' ] = roll.cnlocator( _subdomain, self.defcn )
+				if _tsc:
+					self.RECORD[ _subdomain ][ 'ports' ] = roll.ptlocator( _subdomain, _ports )
 
-		cdv = roll.formatcdv( self.RECORD[ _subdomain ][ 80 ][ 'cd' ], self.RECORD[ _subdomain ][ 443 ][ 'cd' ], pull.MIXTURE )
-		sbv = roll.formatsbv( self.domain, _subdomain )
-		ptv = roll.formatptv( self.RECORD[ _subdomain ][ 'ports' ], pull.MIXTURE )
-		cnv = roll.formatcnv( self.RECORD[ _subdomain ][ 'cname' ], pull.MIXTURE )
+			cdv = roll.formatcdv( self.RECORD[ _subdomain ][ 80 ][ 'cd' ], self.RECORD[ _subdomain ][ 443 ][ 'cd' ], pull.MIXTURE )
+			sbv = roll.formatsbv( self.domain, _subdomain )
+			ptv = roll.formatptv( self.RECORD[ _subdomain ][ 'ports' ], pull.MIXTURE )
+			cnv = roll.formatcnv( self.RECORD[ _subdomain ][ 'cname' ], pull.MIXTURE )
 
-		self.LOCK.acquire()
-		if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
-			pull.psrowb( '', cdv=cdv, sbv=sbv, ptv=ptv, cnv=cnv )
-		self.LOCK.release()
+			self.LOCK.acquire()
+			if self.RECORD[ _subdomain ][ 'ip' ] != self.defip and self.RECORD[ _subdomain ][ 'ip' ] != '' and self.RECORD[ _subdomain ][ 'ip' ] not in self.eeips:
+				pull.psrowb( '', cdv=cdv, sbv=sbv, ptv=ptv, cnv=cnv )
+			self.LOCK.release()
+		except KeyError:
+			pass
 
 		self.CTHREADS -= 1
 
@@ -316,13 +394,14 @@ class WRITER:
 	BASKETB = {}
 	RECORD  = {}
 
-	def __init__(self, _dom, _out, _csv, _sub, _rec, _dip, _dcn):
+	def __init__(self, _dom, _out, _csv, _sub, _rec, _dip, _eeips, _dcn):
 		self.domain = _dom
 		self.output = _out
 		self.csvout = _csv
 		self.subdos = _sub
 		self.record = _rec
 		self.defipa = _dip
+		self.eeips  = _eeips
 		self.defcna = _dcn
 
 	def nmwritetxt(self):
@@ -383,7 +462,7 @@ class WRITER:
 				"\n"
 			]) )
 			for (ip, subdomains) in self.BASKETA.items():
-				if ip != self.defipa:
+				if ip != self.defipa and ip != '' and ip not in self.eeips:
 					for subdomain in subdomains:
 						fl.write( "".join([
 							roll.formatrsv( self.record[ subdomain ]['ip'], self.defipa, pull.VACANT ),
@@ -410,7 +489,7 @@ class WRITER:
 			roll.FCODE   = "{:<}"
 			roll.FSERVER = "{:<}"
 			for (ip, subdomains) in self.BASKETA.items():
-				if ip != self.defipa:
+				if ip != self.defipa and ip != '' and ip not in self.eeips:
 					for subdomain in subdomains:
 						fl.writerow([
 							self.record[ subdomain ][ 'ip' ],
@@ -426,12 +505,12 @@ class WRITER:
 		if self.subdos:
 			fl = open( self.subdos, 'w' )
 			for (subdomain, fdict) in self.record.items():
-				if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa:
+				if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa and fdict['ip'] not in self.eeips:
 					fl.write( subdomain + "\n" )
 
 	def engage(self):
 		for (subdomain, fdict) in self.record.items():
-			if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa:
+			if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa and fdict[ 'ip' ] not in self.eeips:
 				self.TRASH.add( fdict[ 'ip' ] )
 				self.BASKETA[ fdict[ 'ip' ] ] = set()
 
@@ -467,6 +546,7 @@ def main():
 	parser.add_option(''  , '--subs', dest="subs", type="string", default="")
 	parser.add_option(''  , '--scan-ports', dest="scan", action="store_true", default=False)
 	parser.add_option(''  , '--skip-dns'  , dest="sdns", action="store_true", default=False)
+	parser.add_option(''  , '--exclude-ips', dest="eeips", type=str, default="")
 
 	(options, args) = parser.parse_args()
 
@@ -480,17 +560,18 @@ def main():
 		if not parser.skipdns:
 			pull.gthen( "DNS Records ->", pull.BOLD, pull.DARKCYAN )
 			pull.linebreak( 1 )
-			dnssec  = NAMESERVER( parser.domain )
+			dnssec  = NAMESERVER( parser.domain, parser.eeips )
 			dnssec.push()
 			dnsrec  = dnssec.get()
 			pull.linebreak( 1 )
 		else:
-			dnssec  = NMHANDLER( parser.domain )
+			dnssec  = NMHANDLER( parser.domain, parser.eeips )
 	
 		pull.gthen( "False Positive Detection ->", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak( 1 )
 		dip     = dnssec.def_ip()
 		dcn     = dnssec.def_cn()
+		dnssec.def_ps()
 		pull.linebreak( 1 )
 
 		if parser.online:
@@ -506,7 +587,7 @@ def main():
 
 		pull.gthen( "Starting Brute Engine. Validating sub-domains ->", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
-		eenge = ENGINE( parser.domain, parser.checklist, dip, dcn, osubs, parser.threads )
+		eenge = ENGINE( parser.domain, parser.checklist, dip, parser.eeips, dcn, osubs, parser.threads )
 		eenge.fmheaders()
 		eenge.engage()
 		pull.linebreak()
@@ -516,7 +597,7 @@ def main():
 		eenge.engross( parser.scan, parser.ports )
 		pull.linebreak( 1 )
 
-		fpush = WRITER(parser.domain, parser.output, parser.csv, parser.subs, eenge.get(), dip, dcn)
+		fpush = WRITER(parser.domain, parser.output, parser.csv, parser.subs, eenge.get(), dip, parser.eeips, dcn)
 
 		if parser.filter:
 			pull.gthen( "Filtering Items for You. Suitable for larger assets -><-", pull.BOLD, pull.DARKCYAN )

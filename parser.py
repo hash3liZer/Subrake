@@ -9,8 +9,8 @@ pull = PULLY()
 class PARSER:
 
 	def __init__(self, _opts, _args):
-		self.signal     = signal.signal( signal.SIGINT, self.sig_handler )
-		self.sigalm     = signal.signal( signal.SIGALRM, self.exp_handler )
+		#self.signal     = signal.signal( signal.SIGINT, self.sig_handler )
+		#self.sigalm     = signal.signal( signal.SIGALRM, self.exp_handler )
 		self.help       = _opts.help
 		self.domain     = self.parse_domain(    _opts.domain    )
 		self.checklist  = self.parse_wordlists( _opts.wordlists )
@@ -19,6 +19,7 @@ class PARSER:
 		self.csv        = self.parse_csv(       _opts.csv       )
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.online     = self.parse_online(    _opts.online    )
+		self.eeips      = self.parse_eeips(     _opts.eeips     )
 		self.scan       = _opts.scan
 		self.subs       = _opts.subs
 		self.filter     = _opts.filter
@@ -90,6 +91,14 @@ class PARSER:
 		if _bool:
 			return True
 		return False
+
+	def parse_eeips(self, _ips):
+		rtval = []
+		if _ips:
+			for ip in _ips.split(","):
+				rtval.append(ip)
+		
+		return rtval
 
 	def sig_handler(self, _sig, _fr):
 		pull.linebreak( 1 )
