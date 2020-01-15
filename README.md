@@ -2,7 +2,7 @@
     <img src="https://user-images.githubusercontent.com/29171692/57197739-5392b300-6f84-11e9-9191-4e38f3edc583.png" alt="subrake" /> <br>    
     SUBRAKE
 </h1>
-<h4 align="center"> A Powerful Subdomain Enumeration Tool for Reconnaissance. </h4>
+<h4 align="center"> A Powerful Subdomain Enumeration, Takeover, Classification Tool for Reconnaissance. </h4>
 <p align="center">
     <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="lisence" /></a>
 </p>
@@ -10,7 +10,7 @@
 [![asciicast](https://asciinema.org/a/ccHuIkpEjVIVwpxIqkVASGW0N.svg)](https://asciinema.org/a/ccHuIkpEjVIVwpxIqkVASGW0N)
 
 ## Description
-A Powerful Subdomain Scanner & Validator Written in sockets which makes it a lot more faster and easier to manage. It works by enumerating subdomains by searching them on web and by using local wordlists. It further identify the assets of a domain based on their ip and `CNAME` records and identify subdomains which are using the same IP addresses. It also scan ports if are given and enumerte possible server engines used on assets using the `SERVER` header returned in the response. It also enumerates possible returned HTTP status codes on port 80 and 443. 
+A Powerful Subdomain Scanner & Validator Written in sockets and requests which makes it a lot more faster and easier to manage. It works by enumerating subdomains by searching them on web and by using local wordlists. It further identify the assets of a domain based on their ip and `CNAME` records and identify subdomains which are using the same IP addresses. It also scan ports if are given and enumerte possible server engines used on assets using the `SERVER` header returned in the response. It also enumerates possible returned HTTP status codes on port 80 and 443. 
 
 ## Key Features
 <ul>
@@ -21,6 +21,7 @@ A Powerful Subdomain Scanner & Validator Written in sockets which makes it a lot
     <li> Internal Filtering using <b>--filter</b> option </li>
     <li> Store data in plain text and CSV formats. </li>
     <li> Built-in Port Scanning </li>
+    <li> Fitering Into More Results by Removing False Positives. </li>
 </ul>
 
 ## Installation
@@ -59,6 +60,8 @@ Options:
        --filter         Filter subdomains with same IP    FALSE
        --scan-ports     Turns on the port scanning 
                         feature                           FALSE
+       --exclude-ips    Exclude foll Ip Addresses from
+                        Results.                          NONE
 ```
 
 ## Examples
