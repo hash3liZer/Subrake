@@ -28,6 +28,8 @@ from handlers import VIRUSTOTAL
 from handlers import THREATCROWD
 from handlers import CRTSEARCH
 from BeautifulSoup import BeautifulSoup as soup
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 pull  = PULLY()
 roll  = ROUNDER()
@@ -270,7 +272,7 @@ class ENGINE:
 		'''
 		httpath = ("http://%s" % _subdomain) if _port == 80 else ("https://%s" % _subdomain)
 		try:
-			r = requests.get(httpath, headers=self.HEADERS, allow_redirects=False, timeout=10)
+			r = requests.get(httpath, headers=self.HEADERS, allow_redirects=False, timeout=10, verify=False)
 			code = r.status_code
 			headers = r.headers
 		except:
@@ -542,6 +544,7 @@ def main():
 	parser.add_option('-c', '--csv', dest="csv", type="string", default="")
 	parser.add_option('-p', '--ports', dest="ports", type="string", default=roll.PORTS)
 	parser.add_option('-s', '--search', dest="online", action="store_true", default=False)
+	parser.add_option('-l', '--low-mode', dest="lmode", action="store_true", default=False)
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
 	parser.add_option(''  , '--subs', dest="subs", type="string", default="")
 	parser.add_option(''  , '--scan-ports', dest="scan", action="store_true", default=False)
