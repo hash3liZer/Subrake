@@ -177,6 +177,8 @@ class ENGINE:
 
 	BROOTBRA = False
 	BROOTBRE = False
+	ERRORCOU = 0
+	ERRORSUB = []
 	CTHREADS = 0
 	SCOUNTER = 0
 	LOCK     = threading.Semaphore( value = 1 )
@@ -278,6 +280,9 @@ class ENGINE:
 		except:
 			code = None
 			headers = {}
+			if _subdomain not in self.ERRORSUB:
+				self.ERRORCOU += 1
+				self.ERRORSUB.append(_subdomain)
 
 		return roll.seperator( code, headers )
 
@@ -322,9 +327,9 @@ class ENGINE:
 				time.sleep(0.5)
 
 			if self.ENGAGER and not self.BROOTBRA:
-				pull.lflush("STATUS! Remain [%d] Total [%d]            " % ( len(self.checklist) - self.SCOUNTER, len(self.checklist) ) , pull.DARKCYAN, pull.BOLD)
+				pull.lflush("STATUS! Remain [%d] Total [%d] ERRORS [%d]          " % ( len(self.checklist) - self.SCOUNTER, len(self.checklist), self.ERRORCOU) , pull.DARKCYAN, pull.BOLD)
 			elif self.BROOTBRA:
-				pull.lflush("PAUSE! Stopping ... Remain [%d]           " % self.CTHREADS, pull.DARKCYAN, pull.BOLD)
+				pull.lflush("PAUSE! Stopping ... Remain [%d]                     " % self.CTHREADS, pull.DARKCYAN, pull.BOLD)
 
 	def engage(self):
 		t = threading.Thread(target=self.printer)
