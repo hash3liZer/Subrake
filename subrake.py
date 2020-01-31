@@ -193,13 +193,14 @@ class ENGINE:
 		"Upgrade-Insecure-Requests": "1"
 	}
 
-	def __init__( self, _domain, _checklist, _defip, _eeips, _defcn, _osubs, _threads ):
+	def __init__( self, _domain, _checklist, _defip, _eeips, _defcn, _osubs, _threads, _eout ):
 		self.signal     = signal.signal(signal.SIGINT, self.ee_handler_1)
 		self.domain     = _domain
 		self.mthreads   = _threads
 		self.defip      = _defip
 		self.eeips      = _eeips
 		self.defcn      = _defcn
+		self.eoutput    = _eout
 		self.checklist  = self.parse( _checklist, _osubs )
 
 	def empty_handler(self, sig, fr):
@@ -355,6 +356,12 @@ class ENGINE:
 			time.sleep( 0.5 )
 
 		self.ENGAGER = False
+
+		if self.eoutput:
+			fl = open(self.eoutput, "w")
+			for ee in self.ERRORSUB:
+				fl.write(ee + "\n")
+			fl.close()
 
 	def engrosser(self, _subdomain, _tsc, _ports):
 		self.CTHREADS += 1
@@ -550,6 +557,7 @@ def main():
 	parser.add_option('-p', '--ports', dest="ports", type="string", default=roll.PORTS)
 	parser.add_option('-s', '--search', dest="online", action="store_true", default=False)
 	parser.add_option('-l', '--low-mode', dest="lmode", action="store_true", default=False)
+	parser.add_option('-e', '--error-output', dest="eoutput", type="string", default="")
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
 	parser.add_option(''  , '--subs', dest="subs", type="string", default="")
 	parser.add_option(''  , '--scan-ports', dest="scan", action="store_true", default=False)
@@ -595,7 +603,7 @@ def main():
 
 		pull.gthen( "Starting Brute Engine. Validating sub-domains ->", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
-		eenge = ENGINE( parser.domain, parser.checklist, dip, parser.eeips, dcn, osubs, parser.threads )
+		eenge = ENGINE( parser.domain, parser.checklist, dip, parser.eeips, dcn, osubs, parser.threads, parser.eoutput )
 		eenge.fmheaders()
 		eenge.engage()
 		pull.linebreak()

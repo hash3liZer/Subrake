@@ -17,6 +17,7 @@ class PARSER:
 		self.threads    = self.parse_threads(   _opts.threads   )
 		self.output     = self.parse_output(    _opts.output    )
 		self.csv        = self.parse_csv(       _opts.csv       )
+		self.eoutput    = self.parse_eoutput(   _opts.eoutput   )
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.online     = self.parse_online(    _opts.online    )
 		self.eeips      = self.parse_eeips(     _opts.eeips     )
@@ -57,6 +58,12 @@ class PARSER:
 			pull.brick( "Invalid! Threads must be an Integer.", pull.BOLD, pull.RED )
 
 	def parse_output(self, _out):
+		if _out:
+			return _out
+		else:
+			return False
+
+	def parse_eoutput(self, _out):
 		if _out:
 			return _out
 		else:

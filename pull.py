@@ -34,6 +34,8 @@ Options:
    -p, --ports          Comma-seperated ports to scan.    NONE
                         Depends on --scan-ports. 
    -s, --search         Search for subdomains Online      FALSE
+   -e, --error-output   File Where to Store Subdomains
+                        returned with Errors              NONE
        --filter         Filter subdomains with same IP    FALSE
        --subs           Store Validated Subdomains in a
                         seperate file                     NONE
