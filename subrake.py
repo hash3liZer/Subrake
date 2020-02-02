@@ -418,6 +418,19 @@ class WRITER:
 		self.eeips  = _eeips
 		self.defcna = _dcn
 
+	def screenshot(self, fl):
+		fl = open(fl, "w")
+		for (subdomain, fdict) in self.record.items():
+			if fdict[80]['cd'] != 'ERR':
+				cd = int(fdict[80]['cd'])
+				if cd < 300 and cd > 399:
+					fl.write( "http://" + subdomain + "\n" )
+			if fdict[443]['cd'] != 'ERR':
+				cd = int(fdict[443]['cd'])
+				if cd < 300 and cd > 399:
+					fl.write( "https://" + subdomain + "\n" )
+		fl.close()
+
 	def nmwritetxt(self):
 		if self.output:
 			fl = open( self.output, "w" )
@@ -558,6 +571,7 @@ def main():
 	parser.add_option('-s', '--search', dest="online", action="store_true", default=False)
 	parser.add_option('-l', '--low-mode', dest="lmode", action="store_true", default=False)
 	parser.add_option('-e', '--error-output', dest="eoutput", type="string", default="")
+	parser.add_option(''  , '--screenshots' , dest="sshots" , type="string", default="")
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
 	parser.add_option(''  , '--subs', dest="subs", type="string", default="")
 	parser.add_option(''  , '--scan-ports', dest="scan", action="store_true", default=False)
@@ -632,6 +646,11 @@ def main():
 				pull.linebreak()
 				fpush.nmwritetxt()
 				fpush.nmwritecsv()
+
+		if parser.sshots:
+			pull.gthen( "Writing the URLs to be Screenshotted ->", pull.BOLD, pull.DARKCYAN	)
+			pull.linebreak()
+			fpush.screenshot(parser.sshots)
 
 		if parser.subs:
 			fpush.writesubs()

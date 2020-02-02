@@ -18,6 +18,7 @@ class PARSER:
 		self.output     = self.parse_output(    _opts.output    )
 		self.csv        = self.parse_csv(       _opts.csv       )
 		self.eoutput    = self.parse_eoutput(   _opts.eoutput   )
+		self.sshots     = self.parse_sshots(    _opts.sshots    )
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.online     = self.parse_online(    _opts.online    )
 		self.eeips      = self.parse_eeips(     _opts.eeips     )
@@ -66,6 +67,12 @@ class PARSER:
 	def parse_eoutput(self, _out):
 		if _out:
 			return _out
+		else:
+			return False
+
+	def parse_sshots(self, _sshots):
+		if _sshots:
+			return _sshots
 		else:
 			return False
 

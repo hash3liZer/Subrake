@@ -36,6 +36,9 @@ Options:
    -s, --search         Search for subdomains Online      FALSE
    -e, --error-output   File Where to Store Subdomains
                         returned with Errors              NONE
+       --screenshots    File to Store URLs to be
+                        Screenshotted along with
+                        protocols                         NONE
        --filter         Filter subdomains with same IP    FALSE
        --subs           Store Validated Subdomains in a
                         seperate file                     NONE
