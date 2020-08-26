@@ -12,68 +12,102 @@
 
 <img align="center" src="https://user-images.githubusercontent.com/29171692/91291801-3609de00-e7b3-11ea-88f5-9f3dcceb451d.png" alt="subrake" />
 
-## Description
-A Powerful Subdomain Scanner & Validator Written in sockets and requests which makes it a lot more faster and easier to manage. It works by enumerating subdomains by searching them on web and by using local wordlists. It further identify the assets of a domain based on their ip and `CNAME` records and identify subdomains which are using the same IP addresses. It also scan ports if are given and enumerte possible server engines used on assets using the `SERVER` header returned in the response. It also enumerates possible returned HTTP status codes on port 80 and 443. 
-
 ## Key Features
 <ul>
-    <li> Use built-in low level sockets to connect subdomains and other assets </li>
-    <li> Search Subdomains Online on the Web. </li>
-    <li> Validate Subdomains Using associated IP address. </li>
-    <li> Identify False Positives. </li>
-    <li> Internal Filtering using <b>--filter</b> option </li>
-    <li> Store data in plain text and CSV formats. </li>
-    <li> Built-in Port Scanning </li>
-    <li> Fitering Into More Results by Removing False Positives. </li>
+    <li>OSINT + Subdomain Bruteforcing</li>
+    <li>Capable of handling outputs from multiple tools</li>
+    <li>Handling False Positives and Filters subdomains with same resolutions.</li>
+    <li>Checking for Server Banners and Ports</li>
+    <li>Incredibly Fast</li>
+    <li>Handling domains with larger scopes</li>
+    <li>Port Scanning</li>
 </ul>
 
-## Installation
-Install the required modules from `requirements.txt` file: 
+## Documentation
+### Installation
+Installing stable version directly from PYPI:
 ```
-$ pip install -r requirements.txt
+$ pip3 install subrake
 ```
 
-You can take a start by cloning the source. 
+Installing latest build:
 ```
 $ git clone https://github.com/hash3liZer/Subrake.git
 $ cd Subrake/
-$ python subrake -d yourdomain.tld -w wordlists/small.lst
+$ python3 setup.py install
 ```
 
-## Options
+Run after installation:
 ```
-Syntax: 
-    $ python subrake -d shellvoide.com -w [ Sublister Output ]
-    $ python subrake -d shellvoide.com -d shellvoide.com --wordlist wordlist/small.lst --filter --csv output.csv
+$ subrake --help
+```
 
-Options:
-   Args               Description                      Default
-   -h, --help           Show this manual                  NONE
+### Usage
+Subrake is highly flexible and is made to work under different situations. It can parse output files from multiple tools collectively. It does OSINT search alongside wordlist bruteforcing and before actual bruteforcing, it removes similar subdomains and false positives. It does also support a filter which when supplied allows you to seperate subdomains with same IP addresses in the final CSV result. Let's see some of the Subrake uses: 
+
+A simple run with OSINT results from search engines: 
+```
+$ subrake -d google.com
+```
+
+Subrake with Multiple Threads:
+```
+$ subtake -d google.com -t 50
+```
+
+Subrake with OSINT results + SecLists subdomains list:
+```
+$ subrake -d google.com --wordlists SecLists/Discovery/DNS/namelist.txt
+```
+
+Subrake with OSINT results + Multiple SecLists subdomains list:
+```
+$ subrake -d google.com --wordlists SecLists/Discovery/DNS/namelist.txt,SecLists/Discovery/DNS/dns-Jhaddix.txt
+```
+
+**Note: Subdomains with similar names will automatically be filtered and counted as 1**
+
+Subrake without OSINT + Output from multiple tools combined + IP Filtering: 
+```
+$ domain="google.com"
+$ subfinder -d $domain -nW -o $domain/1.txt && sublist3r -d $domain -o $domain/2.txt && cat $domain/* >> /tmp/output.txt
+$ subrake -d $domain -w tmp/output.txt --filter --skip-search
+```
+
+Subrake without DNS + OSINT:
+```
+$ subrake -d google.com --skip-dns
+```
+
+Subrake with Port Scanning:
+```
+$ subrake -d google.com --ports 8080,8443,8000,23,445
+```
+
+### Manual
+
+```
+   Args               Description                                    Default
+   -h, --help           Show this manual                             NONE
    -d, --domain         Target domain. Possible
-                        example: [example.com]            NONE
+                        example: [example.com]                       NONE
    -w, --wordlists      Wordlists containing subdomains
                         to test. Multiple wordlists can
-                        be specified.                     NONE                      
-   -t, --threads        Number of threads to spawn         25
-   -o, --output         Store output in a seperate file   NONE
-   -c, --csv            Store output in CSV format        NONE
-   -p, --ports          Comma-seperated ports to scan.    NONE
-                        Depends on --scan-ports. 
-   -s, --search         Search for subdomains Online      FALSE
-       --filter         Filter subdomains with same IP    FALSE
-       --scan-ports     Turns on the port scanning 
-                        feature                           FALSE
-       --exclude-ips    Exclude foll Ip Addresses from
-                        Results.                          NONE
+                        be specified.                                NONE
+   -t, --threads        Number of threads to spawn                    25
+   -o, --output         Store final subdomains in a specified file   NONE
+   -c, --csv            Store output results in CSV format           NONE
+   -p, --ports          Comma-seperated list of ports to scan.       NONE
+   -s, --skip-search    Search for subdomains Online from various
+                        sites.                                       FALSE
+       --filter         Filter subdomains with same IP in CSV output FALSE
+                        Helpful with larger scopes.
+       --skip-dns       Skip initial DNS enumeration phase           FALSE
+       --exclude-ips    Exclude specified IPs from the final results
+                        Helpful in removing False Positives          NONE
 ```
 
-## Examples
-Here are some of common examples:
-```
-$ python subrake.py -d shellvoide.com --wordlist wordlists/small.lst
-$ python subrake.py -d google.com -t 30 -o output.txt -f --search -w myrandomlist.txt
-$ python subrake.py -d starbucks.com -w wordlists/small.lst -t 30 -o output.txt --csv output.csv --scan-ports
-```
+**NOTE: The port 80,443 will be scanned by default for every host under HTTP/HTTPS banner. So, there's no need to specify them here**
 
 ## Contribution
 You can contribute to the project in many ways:
