@@ -18,10 +18,12 @@ setup(
     author="hash3liZer",
     author_email="admin@shellvoide.com",
     license="GPLv3",
+    download_url = 'https://github.com/hash3liZer/Subrake/archive/v3.1.tar.gz',
+    keywords=['bugbounty', 'bugbountytips', 'tool', 'subdomain', 'pentesting'],
     classifiers=[
         "License :: OSI Approved :: GPLv3 License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     packages=["subrake"],
     include_package_data=True,
