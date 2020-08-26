@@ -2,12 +2,15 @@
     <img src="https://user-images.githubusercontent.com/29171692/57197739-5392b300-6f84-11e9-9191-4e38f3edc583.png" alt="subrake" /> <br>    
     SUBRAKE
 </h1>
-<h4 align="center">A fast Subdomains Enumeration and Validation tool for Bug Bounty and Pentesters.</h4>
+<h4 align="center">A Subdomain Enumeration and Validation tool for Bug Bounty and Pentesters.</h4>
 <p align="center">
+    <a href="https://www.linux.org/" target="_blank"><img src="https://img.shields.io/badge/platform-linux-important" alt="platform: linux" /></a>
+    <a href="https://www.python.org/" target="_blank"><img src="https://img.shields.io/badge/Python-3-yellow.svg?logo=python" alt="Python: 3" /></a>
+    <a href="https://github.com/hash3liZer/Subrake/releases" target="_blank"><img src="https://img.shields.io/badge/version-v3.1-blue.svg?logo=moo" alt="Release: v3.1" /></a>
     <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="lisence" /></a>
 </p>
 
-[![asciicast](https://asciinema.org/a/ccHuIkpEjVIVwpxIqkVASGW0N.svg)](https://asciinema.org/a/ccHuIkpEjVIVwpxIqkVASGW0N)
+<img align="center" src="https://user-images.githubusercontent.com/29171692/91291801-3609de00-e7b3-11ea-88f5-9f3dcceb451d.png" alt="subrake" />
 
 ## Description
 A Powerful Subdomain Scanner & Validator Written in sockets and requests which makes it a lot more faster and easier to manage. It works by enumerating subdomains by searching them on web and by using local wordlists. It further identify the assets of a domain based on their ip and `CNAME` records and identify subdomains which are using the same IP addresses. It also scan ports if are given and enumerte possible server engines used on assets using the `SERVER` header returned in the response. It also enumerates possible returned HTTP status codes on port 80 and 443. 
