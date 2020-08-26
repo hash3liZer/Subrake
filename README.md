@@ -60,12 +60,11 @@ Subrake with OSINT results + SecLists subdomains list:
 $ subrake -d google.com --wordlists SecLists/Discovery/DNS/namelist.txt
 ```
 
-Subrake with OSINT results + Multiple SecLists subdomains list:
+Subrake with OSINT results + Multiple SecLists subdomains list: <br>
+**Note: Subdomains with similar names will automatically be filtered and counted as 1**
 ```
 $ subrake -d google.com --wordlists SecLists/Discovery/DNS/namelist.txt,SecLists/Discovery/DNS/dns-Jhaddix.txt
 ```
-
-**Note: Subdomains with similar names will automatically be filtered and counted as 1**
 
 Subrake without OSINT + Output from multiple tools combined + IP Filtering: 
 ```
@@ -79,7 +78,8 @@ Subrake without DNS + OSINT:
 $ subrake -d google.com --skip-dns
 ```
 
-Subrake with Port Scanning:
+Subrake with Port Scanning: <br>
+**NOTE: The port 80,443 will be scanned by default for every host under HTTP/HTTPS banner. So, there's no need to specify them here**
 ```
 $ subrake -d google.com --ports 8080,8443,8000,23,445
 ```
@@ -107,16 +107,12 @@ $ subrake -d google.com --ports 8080,8443,8000,23,445
                         Helpful in removing False Positives          NONE
 ```
 
-**NOTE: The port 80,443 will be scanned by default for every host under HTTP/HTTPS banner. So, there's no need to specify them here**
-
 ## Contribution
 You can contribute to the project in many ways:
 <ul>
     <li> Report Bugs </li>
-    <li> Fork the project and start building on your own. </li>
     <li> Suggestions for making it better </li>
 </ul>
 
 Have any further Question? You can hit me up on Twitter and Email: <br>
-Email: admin@shellvoide.com <br>
 Twitter: [@hash3liZer](https://twitter.com/hash3liZer)
