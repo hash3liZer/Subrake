@@ -38,7 +38,7 @@ class ROUNDER:
 			'cd': 'ERR',
 			'sv': '',
 		}
-		
+
 		if code:
 			_polls['cd'] = code
 
@@ -51,10 +51,10 @@ class ROUNDER:
 
 	def iplocator(self, hostname, defip):
 		_ip = ''
-		try:	
+		try:
 			toput = socket.gethostbyname( hostname )
 			_ip = toput
-		except Exception, e:
+		except Exception as e:
 			pass
 		return _ip
 

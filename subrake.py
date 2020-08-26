@@ -216,7 +216,7 @@ class ENGINE:
 		time.sleep(0.5)
 
 		pull.linebreak( 1 )
-		ii = raw_input(pull.DARKCYAN + "[<] " + pull.END + "[E]xit / [S]kip / [C]ontinue: ")
+		ii = input(pull.DARKCYAN + "[<] " + pull.END + "[E]xit / [S]kip / [C]ontinue: ")
 		if ii in ('e', 'E'):
 			pull.linebreak( 1 )
 			pull.brick( pull.BOLD + "Received Interrupt -><- " + pull.END, pull.BOLD, pull.RED )
