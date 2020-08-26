@@ -193,14 +193,13 @@ class ENGINE:
 		"Upgrade-Insecure-Requests": "1"
 	}
 
-	def __init__( self, _domain, _checklist, _defip, _eeips, _defcn, _osubs, _threads, _eout ):
+	def __init__( self, _domain, _checklist, _defip, _eeips, _defcn, _osubs, _threads ):
 		self.signal     = signal.signal(signal.SIGINT, self.ee_handler_1)
 		self.domain     = _domain
 		self.mthreads   = _threads
 		self.defip      = _defip
 		self.eeips      = _eeips
 		self.defcn      = _defcn
-		self.eoutput    = _eout
 		self.checklist  = self.parse( _checklist, _osubs )
 
 	def empty_handler(self, sig, fr):
@@ -357,19 +356,13 @@ class ENGINE:
 
 		self.ENGAGER = False
 
-		if self.eoutput:
-			fl = open(self.eoutput, "w")
-			for ee in self.ERRORSUB:
-				fl.write(ee + "\n")
-			fl.close()
-
-	def engrosser(self, _subdomain, _tsc, _ports):
+	def engrosser(self, _subdomain, _ports):
 		self.CTHREADS += 1
 
 		try:
 			if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
 				self.RECORD[ _subdomain ][ 'cname' ] = roll.cnlocator( _subdomain, self.defcn )
-				if _tsc:
+				if _ports:
 					self.RECORD[ _subdomain ][ 'ports' ] = roll.ptlocator( _subdomain, _ports )
 
 			cdv = roll.formatcdv( self.RECORD[ _subdomain ][ 80 ][ 'cd' ], self.RECORD[ _subdomain ][ 443 ][ 'cd' ], pull.MIXTURE )
@@ -386,9 +379,9 @@ class ENGINE:
 
 		self.CTHREADS -= 1
 
-	def engross(self, _tsc, _ports):
+	def engross(self, _ports):
 		for tocheck in self.checklist:
-			_t = threading.Thread( target=self.engrosser, args=( tocheck, _tsc, _ports ) )
+			_t = threading.Thread( target=self.engrosser, args=( tocheck, _ports ) )
 			_t.daemon = True
 			_t.start()
 
@@ -408,51 +401,21 @@ class WRITER:
 	BASKETB = {}
 	RECORD  = {}
 
-	def __init__(self, _dom, _out, _csv, _sub, _rec, _dip, _eeips, _dcn):
+	def __init__(self, _dom, _out, _csv, _rec, _dip, _eeips, _dcn):
 		self.domain = _dom
 		self.output = _out
 		self.csvout = _csv
-		self.subdos = _sub
 		self.record = _rec
 		self.defipa = _dip
 		self.eeips  = _eeips
 		self.defcna = _dcn
 
-	def screenshot(self, fl):
-		fl = open(fl, "w")
-		for (subdomain, fdict) in self.record.items():
-			if fdict[80]['cd'] != 'ERR':
-				cd = int(fdict[80]['cd'])
-				if cd < 300 and cd > 399:
-					fl.write( "http://" + subdomain + "\n" )
-			if fdict[443]['cd'] != 'ERR':
-				cd = int(fdict[443]['cd'])
-				if cd < 300 and cd > 399:
-					fl.write( "https://" + subdomain + "\n" )
-		fl.close()
-
 	def nmwritetxt(self):
 		if self.output:
-			fl = open( self.output, "w" )
-			fl.write( "".join([
-				roll.FRESOL.format("RESOLUTION"),
-				roll.FCODE.format("[HTTP/HTTPS]"),
-				roll.FSERVER.format("SERVER"),
-				roll.FSUBDOM.format("SUBDOMAIN"),
-				"{:<28.27}".format("CNAME"),
-				roll.FPORTS.format("PORTS"),
-				"\n"
-			]))
+			fl = open( self.output, 'w' )
 			for (subdomain, fdict) in self.record.items():
-				fl.write( "".join([
-					roll.formatrsv(fdict['ip'], self.defipa, pull.VACANT),
-					roll.formatcdv(fdict[80]['cd'], fdict[443]['cd'], pull.VACANT),
-					roll.formatsvv(fdict[80]['sv'], fdict[443]['sv'], pull.VACANT),
-					roll.formatsbv(self.domain, subdomain),
-					"{:<28.27}".format(fdict['cname']),
-					roll.formatptv(fdict['ports'], pull.VACANT),
-					"\n"
-				]))
+				if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa and fdict['ip'] not in self.eeips:
+					fl.write( subdomain + "\n" )
 
 	def nmwritecsv(self):
 		if self.csvout:
@@ -478,29 +441,10 @@ class WRITER:
 
 	def flwritetxt(self):
 		if self.output:
-			fl = open( self.output, "w" )
-			fl.write( "".join([
-				roll.FRESOL.format("RESOLUTION"),
-				roll.FCODE.format("[HTTP/HTTPS]"),
-				roll.FSERVER.format("SERVER"),
-				roll.FSUBDOM.format("SUBDOMAIN"),
-				"{:<28.27}".format("CNAME"),
-				roll.FPORTS.format("PORTS"),
-				"\n"
-			]) )
-			for (ip, subdomains) in self.BASKETA.items():
-				if ip != self.defipa and ip != '' and ip not in self.eeips:
-					for subdomain in subdomains:
-						fl.write( "".join([
-							roll.formatrsv( self.record[ subdomain ]['ip'], self.defipa, pull.VACANT ),
-							roll.formatcdv( self.record[ subdomain ][80]['cd'], self.record[ subdomain ][443]['cd'], pull.VACANT ),
-							roll.formatsvv( self.record[ subdomain ][80]['sv'], self.record[ subdomain ][443]['sv'], pull.VACANT ),
-							roll.formatsbv( self.domain, subdomain ),
-							"{:<28.27}".format( self.record[ subdomain ][ 'cname' ] ),
-							roll.formatptv( self.record[ subdomain ]['ports'], pull.VACANT ),
-							"\n"
-						]) )
-					fl.write( "\n" )
+			fl = open( self.output, 'w' )
+			for (subdomain, fdict) in self.record.items():
+				if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa and fdict['ip'] not in self.eeips:
+					fl.write( subdomain + "\n" )
 
 	def flwritecsv(self):
 		if self.csvout:
@@ -527,13 +471,6 @@ class WRITER:
 							",".join( self.record[ subdomain ]['ports'] )
 						])
 					fl.writerow([ " " ])
-
-	def writesubs(self):
-		if self.subdos:
-			fl = open( self.subdos, 'w' )
-			for (subdomain, fdict) in self.record.items():
-				if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa and fdict['ip'] not in self.eeips:
-					fl.write( subdomain + "\n" )
 
 	def engage(self):
 		for (subdomain, fdict) in self.record.items():
@@ -580,6 +517,7 @@ def main():
 	if options.help:
 		pull.help(); sys.exit(0)
 	else:
+		pull.linebreak()
 		parser  = PARSER( options, args )
 		pull.gthen( "CREATED ENVIRONMENT. EVERYTHING IN PLACE", pull.BOLD, pull.DARKCYAN )
 		if not parser.skipdns:
@@ -592,7 +530,7 @@ def main():
 		else:
 			dnssec  = NMHANDLER( parser.domain, parser.eeips )
 
-		pull.gthen( "False Positive Detection ->", pull.BOLD, pull.DARKCYAN )
+		pull.gthen( "Looking for Possible False Positives ->", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak( 1 )
 		dip     = dnssec.def_ip()
 		dcn     = dnssec.def_cn()
@@ -610,45 +548,38 @@ def main():
 		else:
 			osubs = list()
 
-		pull.gthen( "Starting Brute Engine. Validating sub-domains ->", pull.BOLD, pull.DARKCYAN )
+		pull.gthen( "Looking for subdomains with finite Resolution", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
-		eenge = ENGINE( parser.domain, parser.checklist, dip, parser.eeips, dcn, osubs, parser.threads, parser.eoutput )
+		eenge = ENGINE( parser.domain, parser.checklist, dip, parser.eeips, dcn, osubs, parser.threads )
 		eenge.fmheaders()
 		eenge.engage()
 		pull.linebreak()
-		pull.gthen( "Starting Brute Gun. Looking For Specifics ->", pull.BOLD, pull.DARKCYAN )
+		pull.linebreak()
+		pull.gthen( "Resolving subdomains to their CNAME", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
 		pull.psheadb( pull.DARKCYAN, cdh=roll.FCODE, sbh=roll.FSUBDOM, pth=roll.FPORTS, cnh=roll.FCNAME )
-		eenge.engross( parser.scan, parser.ports )
+		eenge.engross( parser.ports )
 		pull.linebreak( 1 )
 
-		fpush = WRITER(parser.domain, parser.output, parser.csv, parser.subs, eenge.get(), dip, parser.eeips, dcn)
+		fpush = WRITER(parser.domain, parser.output, parser.csv, eenge.get(), dip, parser.eeips, dcn)
 
 		if parser.filter:
-			pull.gthen( "Filtering Items for You. Suitable for larger assets -><-", pull.BOLD, pull.DARKCYAN )
+			pull.gthen( "Filtering domains with Clashing IPs", pull.BOLD, pull.DARKCYAN )
 			fpush.engage()
-			pull.lthen( "Items Filtered. Output Finalized! ", pull.BOLD, pull.GREEN )
+			pull.lthen( "Done!", pull.BOLD, pull.GREEN )
 			pull.linebreak()
 
 			if parser.output or parser.csv:
-				pull.gthen( "Writing Your Desired Output ->", pull.BOLD, pull.DARKCYAN )
+				pull.gthen( "Writing Output", pull.BOLD, pull.DARKCYAN )
 				pull.linebreak()
 				fpush.flwritetxt()
 				fpush.flwritecsv()
 		else:
 			if parser.output or parser.csv:
-				pull.gthen( "Writing Your Desired Output ->", pull.BOLD, pull.DARKCYAN )
+				pull.gthen( "Writing Output", pull.BOLD, pull.DARKCYAN )
 				pull.linebreak()
 				fpush.nmwritetxt()
 				fpush.nmwritecsv()
-
-		if parser.sshots:
-			pull.gthen( "Writing the URLs to be Screenshotted ->", pull.BOLD, pull.DARKCYAN	)
-			pull.linebreak()
-			fpush.screenshot(parser.sshots)
-
-		if parser.subs:
-			fpush.writesubs()
 
 		pull.lthen( "DONE!", pull.BOLD, pull.RED )
 
