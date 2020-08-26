@@ -9,7 +9,7 @@ __logo__ = """%s
  ___/ / /_/ / /_/ / /  / /_/ / ,< /  __/
 /____/\\__,_/_.___/_/   \\__,_/_/|_|\\___/
 %s
-                               %sv3.1. @hash3liZer%s"""
+                               %s@hash3liZer%s"""
 
 __help__ = """
 A Subdomain Enumeration and Validation tool for Bug Bounty and Pentesters.

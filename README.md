@@ -1,4 +1,4 @@
-<h1 align="center"> 
+<h1 align="center">
     <img src="https://user-images.githubusercontent.com/29171692/57197739-5392b300-6f84-11e9-9191-4e38f3edc583.png" alt="subrake" /> <br>    
     SUBRAKE
 </h1>
@@ -7,7 +7,7 @@
     <a href="https://www.linux.org/" target="_blank"><img src="https://img.shields.io/badge/platform-linux-important" alt="platform: linux" /></a>
     <a href="https://www.python.org/" target="_blank"><img src="https://img.shields.io/badge/Python-3-yellow.svg?logo=python" alt="Python: 3" /></a>
     <a href="https://pypi.org/" target="_blank"><img src="https://img.shields.io/badge/PYPI-%40subrake-green.svg?logo=pypi" alt="PYPI: @subrake" /></a>
-    <a href="https://github.com/hash3liZer/Subrake/releases" target="_blank"><img src="https://img.shields.io/badge/version-v3.1-blue.svg?logo=moo" alt="Release: v3.1" /></a>
+    <a href="https://github.com/hash3liZer/Subrake/releases" target="_blank"><img src="https://img.shields.io/badge/version-v3.3-blue.svg?logo=moo" alt="Release: v3.1" /></a>
     <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="lisence" /></a>
 </p>
 
@@ -44,9 +44,9 @@ $ subrake --help
 ```
 
 ### Usage
-Subrake is highly flexible and is made to work under different situations. It can parse output files from multiple tools collectively. It does OSINT search alongside wordlist bruteforcing and before actual bruteforcing, it removes similar subdomains and false positives. It does also support a filter which when supplied allows you to seperate subdomains with same IP addresses in the final CSV result. Let's see some of the Subrake uses: 
+Subrake is highly flexible and is made to work under different situations. It can parse output files from multiple tools collectively. It does OSINT search alongside wordlist bruteforcing and before actual bruteforcing, it removes similar subdomains and false positives. It does also support a filter which when supplied allows you to seperate subdomains with same IP addresses in the final CSV result. Let's see some of the Subrake uses:
 
-A simple run with OSINT results from search engines: 
+A simple run with OSINT results from search engines:
 ```
 $ subrake -d google.com
 ```
@@ -67,7 +67,7 @@ Subrake with OSINT results + Multiple SecLists subdomains list: <br>
 $ subrake -d google.com --wordlists SecLists/Discovery/DNS/namelist.txt,SecLists/Discovery/DNS/dns-Jhaddix.txt
 ```
 
-Subrake without OSINT + Output from multiple tools combined + IP Filtering: 
+Subrake without OSINT + Output from multiple tools combined + IP Filtering:
 ```
 $ domain="google.com"
 $ subfinder -d $domain -nW -o $domain/1.txt && sublist3r -d $domain -o $domain/2.txt && cat $domain/* >> /tmp/output.txt
