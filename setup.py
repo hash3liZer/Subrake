@@ -21,9 +21,12 @@ setup(
     download_url = 'https://github.com/hash3liZer/Subrake/archive/v3.1.tar.gz',
     keywords=['bugbounty', 'bugbountytips', 'tool', 'subdomain', 'pentesting'],
     classifiers=[
-        "License :: OSI Approved :: GPLv3 License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Console",
+        "Operating System :: POSIX",
     ],
     packages=["subrake"],
     include_package_data=True,
