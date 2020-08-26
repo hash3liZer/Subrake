@@ -6,6 +6,7 @@
 <p align="center">
     <a href="https://www.linux.org/" target="_blank"><img src="https://img.shields.io/badge/platform-linux-important" alt="platform: linux" /></a>
     <a href="https://www.python.org/" target="_blank"><img src="https://img.shields.io/badge/Python-3-yellow.svg?logo=python" alt="Python: 3" /></a>
+    <a href="https://pypi.org/" target="_blank"><img src="https://img.shields.io/badge/PYPI-%40subrake-green.svg?logo=pypi" alt="PYPI: @subrake" /></a>
     <a href="https://github.com/hash3liZer/Subrake/releases" target="_blank"><img src="https://img.shields.io/badge/version-v3.1-blue.svg?logo=moo" alt="Release: v3.1" /></a>
     <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="lisence" /></a>
 </p>
