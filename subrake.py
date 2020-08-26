@@ -1,6 +1,6 @@
 import sys
-if sys.version_info[0] != 2:
-	sys.exit( "[~] Currently only works with Python Version 2." )
+if sys.version_info[0] != 3:
+	sys.exit( "[~] Only Version 3 Supported!" )
 import optparse
 import re
 import os
@@ -27,7 +27,7 @@ from handlers import DNSDUMPSTER
 from handlers import VIRUSTOTAL
 from handlers import THREATCROWD
 from handlers import CRTSEARCH
-from BeautifulSoup import BeautifulSoup as soup
+from bs4 import BeautifulSoup as soup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 

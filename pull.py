@@ -135,12 +135,12 @@ class PULLY:
 	def gthen(self, _tshow, cc='', *colors):
 		for color in colors:
 			cc += color
-		print "\r%s[>]%s %s" % ( cc, self.END, _tshow )
+		print("\r%s[>]%s %s" % ( cc, self.END, _tshow ))
 
 	def lthen(self, _tshow, cc='', *colors):
 		for color in colors:
 			cc += color
-		print "\r%s[<]%s %s" % ( cc, self.END, _tshow )
+		print("\r%s[<]%s %s" % ( cc, self.END, _tshow ))
 
 	def brick(self, _tshow, cc='', *colors):
 		for color in colors:
@@ -150,7 +150,7 @@ class PULLY:
 	def slasher(self, _tshow, cc='', *colors):
 		for color in colors:
 			cc += color
-		print "    %s-%s %s" % ( cc, self.END, _tshow )
+		print("    %s-%s %s" % ( cc, self.END, _tshow ))
 
 	def lflush(self, _tshow, cc='', *colors):
 		for color in colors:
@@ -163,7 +163,7 @@ class PULLY:
 		sv = headfms[ 'sv' ]	# Server
 		sb = headfms[ 'sb' ]	# Subdomain
 
-		print "\r" + color + rs.format( "RESOLUTION" ) + cd.format( "[HTTP/HTTPS]" ) + sb.format( "SUBOMAIN" ) + sv.format( "SERVER" ) + self.END
+		print("\r" + color + rs.format( "RESOLUTION" ) + cd.format( "[HTTP/HTTPS]" ) + sb.format( "SUBOMAIN" ) + sv.format( "SERVER" ) + self.END)
 
 	def psrowa(self, color, **rowhvals):
 		rsv = rowhvals[ 'rsv' ]
@@ -171,7 +171,7 @@ class PULLY:
 		svv = rowhvals[ 'svv' ]
 		sbv = rowhvals[ 'sbv' ]
 
-		print "\r" + rsv + cdv + sbv + svv
+		print("\r" + rsv + cdv + sbv + svv)
 
 	def psheadb(self, color, **headfms):
 		cdh = headfms[ 'cdh' ]
@@ -179,7 +179,7 @@ class PULLY:
 		pth = headfms[ 'pth' ]
 		cnh = headfms[ 'cnh' ]
 
-		print "\r" + color + cdh.format( "[HTTP/HTTPS]" ) + sbh.format( "SUBDOMAIN" ) + pth.format( "PORTS" ) + cnh.format( "CNAME" ) + self.END
+		print("\r" + color + cdh.format( "[HTTP/HTTPS]" ) + sbh.format( "SUBDOMAIN" ) + pth.format( "PORTS" ) + cnh.format( "CNAME" ) + self.END)
 
 	def psrowb(self, color, **rowfms):
 		cdv = rowfms[ 'cdv' ]
@@ -187,14 +187,14 @@ class PULLY:
 		ptv = rowfms[ 'ptv' ]
 		cnv = rowfms[ 'cnv' ]
 
-		print "\r" + cdv + sbv + ptv + cnv
+		print("\r" + cdv + sbv + ptv + cnv)
 
 	def linebreak(self, _num = 1):
 		sys.stdout.write( "\n" * _num )
 
 	def logo(self):
 		_tochoose = [self.BLUE, self.YELLOW, self.RED, self.DARKCYAN, self.GREEN]
-		print __logo__ % (self.BOLD + self.DARKCYAN, self.END, self.BOLD, self.END)
+		print(__logo__ % (self.BOLD + self.DARKCYAN, self.END, self.BOLD, self.END))
 
 	def help(self):
-		print __help__
+		print(__help__)

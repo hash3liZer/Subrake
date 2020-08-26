@@ -43,7 +43,7 @@ class THREATCROWD:
 				self.extract()
 				self.append()
 
-		except Exception, e:
+		except Exception as e:
 			self.append()
 
 		self.baseclass.THREADS -= 1
@@ -55,7 +55,7 @@ class THREATCROWD:
 		self.LOCK.release()
 
 	def extract(self):
-		resp = json.loads(self.RESPONSE)
+		resp = json.loads(self.RESPONSE, "lxml")
 		if "subdomains" in resp:
 			resp = resp['subdomains']
 			for link in resp:

@@ -1,7 +1,7 @@
 import re
 import threading
 import requests
-from BeautifulSoup import BeautifulSoup as soup
+from bs4 import BeautifulSoup as soup
 
 class VIRUSTOTAL:
 
@@ -47,7 +47,7 @@ class VIRUSTOTAL:
 				self.extract()
 				self.append()
 
-		except Exception, e:
+		except Exception as e:
 			self.append()
 
 		self.baseclass.THREADS -= 1
@@ -58,7 +58,7 @@ class VIRUSTOTAL:
 		self.LOCK.release()
 
 	def extract(self):
-		_html = soup(self.RESPONSE)
+		_html = soup(self.RESPONSE, "lxml")
 		for cite in _html.findAll("div", attrs={'class': 'enum '}):
 			sub = re.search(self.regexp, cite.text, re.IGNORECASE)
 			if sub:

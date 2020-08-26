@@ -59,7 +59,7 @@ class DNSDUMPSTER:
 				self.extract()
 				self.append()
 
-		except Exception, e:
+		except Exception as e:
 			self.append()
 
 		self.baseclass.THREADS -= 1

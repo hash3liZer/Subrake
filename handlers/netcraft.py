@@ -3,7 +3,7 @@ import threading
 import requests
 import urllib
 import hashlib
-from BeautifulSoup import BeautifulSoup as soup
+from bs4 import BeautifulSoup as soup
 
 class NETCRAFT:
 
@@ -62,7 +62,7 @@ class NETCRAFT:
 					self.extract()
 					self.append()
 
-		except Exception, e:
+		except Exception as e:
 			self.append()
 
 		self.baseclass.THREADS -= 1
@@ -73,7 +73,7 @@ class NETCRAFT:
 		self.LOCK.release()
 
 	def extract(self):
-		_html = soup(self.RESPONSE)
+		_html = soup(self.RESPONSE, "lxml")
 		for cite in _html.findAll("a"):
 			sub = re.search(self.regexp, cite.text, re.IGNORECASE)
 			if sub:
