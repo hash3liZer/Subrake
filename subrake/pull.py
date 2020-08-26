@@ -12,12 +12,7 @@ __logo__ = """%s
                                %sv3.1. @hash3liZer%s"""
 
 __help__ = """
-Description:
-            A subdomain Enumeration tool for identifying subdomains, their response codes on HTTP and HTTPS, Possible used server using headers and CNAMES of identified subdomains.
-
-Syntax:
-    $ python subrake -d shellvoide.com -w [ Sublister Output ]
-    $ python subrake -d shellvoide.com -d shellvoide.com --wordlist wordlist/small.lst --filter --csv output.csv
+A Subdomain Enumeration and Validation tool for Bug Bounty and Pentesters.
 
 Options:
    Args               Description                                    Default

@@ -14,19 +14,19 @@ import signal
 import threading
 import string
 from dns import resolver
-from pull import PULLY
-from parser import PARSER
-from round import ROUNDER
-from handlers import GOOGLE
-from handlers import BING
-from handlers import YAHOO
-from handlers import ASK
-from handlers import BAIDU
-from handlers import NETCRAFT
-from handlers import DNSDUMPSTER
-from handlers import VIRUSTOTAL
-from handlers import THREATCROWD
-from handlers import CRTSEARCH
+from subrake.pull import PULLY
+from subrake.parser import PARSER
+from subrake.round import ROUNDER
+from subrake.handlers import GOOGLE
+from subrake.handlers import BING
+from subrake.handlers import YAHOO
+from subrake.handlers import ASK
+from subrake.handlers import BAIDU
+from subrake.handlers import NETCRAFT
+from subrake.handlers import DNSDUMPSTER
+from subrake.handlers import VIRUSTOTAL
+from subrake.handlers import THREATCROWD
+from subrake.handlers import CRTSEARCH
 from bs4 import BeautifulSoup as soup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)

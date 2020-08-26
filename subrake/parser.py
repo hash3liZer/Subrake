@@ -2,7 +2,7 @@ import sys
 import os
 import signal
 import re
-from pull import PULLY
+from subrake.pull import PULLY
 
 pull = PULLY()
 
