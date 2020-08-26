@@ -3,50 +3,41 @@ import os
 import random
 
 __logo__ = """%s
-  ______            _____              ______
- /_/_/__/      |    | \\  \       |     | |  /
- \______       |___ |__\\_/  __   |  /  |____\\
-   _____\ |  | |\\  ||   /  /\\ \  | /   |    /
-  /_/_/_/ |__| |_\\_||   \_ \_\\/_/| \\_/\\|_|__\\
-%s      
-                               %sv3.0. @hash3liZer%s
-"""
+   _____       __               __
+  / ___/__  __/ /_  _________ _/ /_____
+  \\__ \\/ / / / __ \\/ ___/ __ `/ //_/ _ \\
+ ___/ / /_/ / /_/ / /  / /_/ / ,< /  __/
+/____/\\__,_/_.___/_/   \\__,_/_/|_|\\___/
+%s
+                               %sv3.0. @hash3liZer%s"""
 
 __help__ = """
 Description:
             A subdomain Enumeration tool for identifying subdomains, their response codes on HTTP and HTTPS, Possible used server using headers and CNAMES of identified subdomains.
 
-Syntax: 
+Syntax:
     $ python subrake -d shellvoide.com -w [ Sublister Output ]
     $ python subrake -d shellvoide.com -d shellvoide.com --wordlist wordlist/small.lst --filter --csv output.csv
 
 Options:
-   Args               Description                      Default
-   -h, --help           Show this manual                  NONE
+   Args               Description                                    Default
+   -h, --help           Show this manual                             NONE
    -d, --domain         Target domain. Possible
-                        example: [example.com]            NONE
+                        example: [example.com]                       NONE
    -w, --wordlists      Wordlists containing subdomains
                         to test. Multiple wordlists can
-                        be specified.                     NONE                      
-   -t, --threads        Number of threads to spawn         25
-   -o, --output         Store output in a seperate file   NONE
-   -c, --csv            Store output in CSV format        NONE
-   -p, --ports          Comma-seperated ports to scan.    NONE
-                        Depends on --scan-ports. 
-   -s, --search         Search for subdomains Online      FALSE
-   -e, --error-output   File Where to Store Subdomains
-                        returned with Errors              NONE
-       --screenshots    File to Store URLs to be
-                        Screenshotted along with
-                        protocols                         NONE
-       --filter         Filter subdomains with same IP    FALSE
-       --subs           Store Validated Subdomains in a
-                        seperate file                     NONE
-       --scan-ports     Turns on the port scanning 
-                        feature                           FALSE
-       --skip-dns       Skip Dns Records Enum             FALSE
-       --exclude-ips    Exclude foll Ip Addresses from
-                        Results.                          NONE
+                        be specified.                                NONE
+   -t, --threads        Number of threads to spawn                    25
+   -o, --output         Store final subdomains in a specified file   NONE
+   -c, --csv            Store output results in CSV format           NONE
+   -p, --ports          Comma-seperated list of ports to scan.       NONE
+   -s, --skip-search    Search for subdomains Online from various
+                        sites.                                       FALSE
+       --filter         Filter subdomains with same IP in CSV output FALSE
+                        Helpful with larger scopes.
+       --skip-dns       Skip initial DNS enumeration phase           FALSE
+       --exclude-ips    Exclude specified IPs from the final results
+                        Helpful in removing False Positives          NONE
 """
 
 class PULLY:
@@ -203,7 +194,7 @@ class PULLY:
 
 	def logo(self):
 		_tochoose = [self.BLUE, self.YELLOW, self.RED, self.DARKCYAN, self.GREEN]
-		print __logo__ % (self.BOLD + random.choice(_tochoose), self.END, self.BOLD, self.END)
+		print __logo__ % (self.BOLD + self.DARKCYAN, self.END, self.BOLD, self.END)
 
 	def help(self):
 		print __help__

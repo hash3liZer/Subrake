@@ -237,7 +237,7 @@ class ENGINE:
 	def parse(self, _wd, _sb):
 		_list = list(_wd) + list(_sb)
 		for _ls in _list:
-			_list[ _list.index(_ls) ] = (_ls + ".%s" % self.domain) if not _ls.endswith( ".%s"%self.domain ) else _ls  
+			_list[ _list.index(_ls) ] = (_ls + ".%s" % self.domain) if not _ls.endswith( ".%s"%self.domain ) else _ls
 		return list( set( _list ) )
 
 	def fmheaders(self):
@@ -249,7 +249,7 @@ class ENGINE:
 	def request(self, _subdomain, _port):
 		'''
 		_req = "GET / HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nOrigin: http://%s\r\n\r\n" % (_subdomain, roll.AGENT, _subdomain)
-		
+
 		_s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
 		_s.settimeout( 10 )
 
@@ -290,14 +290,14 @@ class ENGINE:
 	def handler(self, _subdomain):
 		self.CTHREADS += 1
 
-		self.RECORD[ _subdomain ] = { 
-						
-					80: {}, 
-					443: {}, 
-					'ip': '', 
-					'cname': '', 
+		self.RECORD[ _subdomain ] = {
+
+					80: {},
+					443: {},
+					'ip': '',
+					'cname': '',
 					'ports': []
-					
+
 				}
 
 		rtval = self.request( _subdomain, 80 )
@@ -435,7 +435,7 @@ class WRITER:
 		if self.output:
 			fl = open( self.output, "w" )
 			fl.write( "".join([
-				roll.FRESOL.format("RESOLUTION"), 
+				roll.FRESOL.format("RESOLUTION"),
 				roll.FCODE.format("[HTTP/HTTPS]"),
 				roll.FSERVER.format("SERVER"),
 				roll.FSUBDOM.format("SUBDOMAIN"),
@@ -480,7 +480,7 @@ class WRITER:
 		if self.output:
 			fl = open( self.output, "w" )
 			fl.write( "".join([
-				roll.FRESOL.format("RESOLUTION"), 
+				roll.FRESOL.format("RESOLUTION"),
 				roll.FCODE.format("[HTTP/HTTPS]"),
 				roll.FSERVER.format("SERVER"),
 				roll.FSUBDOM.format("SUBDOMAIN"),
@@ -567,14 +567,9 @@ def main():
 	parser.add_option('-t', '--threads', dest="threads", type="int", default=20)
 	parser.add_option('-o', '--output', dest="output", type="string", default="")
 	parser.add_option('-c', '--csv', dest="csv", type="string", default="")
-	parser.add_option('-p', '--ports', dest="ports", type="string", default=roll.PORTS)
-	parser.add_option('-s', '--search', dest="online", action="store_true", default=False)
-	parser.add_option('-l', '--low-mode', dest="lmode", action="store_true", default=False)
-	parser.add_option('-e', '--error-output', dest="eoutput", type="string", default="")
-	parser.add_option(''  , '--screenshots' , dest="sshots" , type="string", default="")
+	parser.add_option('-p', '--ports', dest="ports", type="string", default="")
+	parser.add_option('-s', '--skip-search', dest="online", action="store_false", default=True)
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
-	parser.add_option(''  , '--subs', dest="subs", type="string", default="")
-	parser.add_option(''  , '--scan-ports', dest="scan", action="store_true", default=False)
 	parser.add_option(''  , '--skip-dns'  , dest="sdns", action="store_true", default=False)
 	parser.add_option(''  , '--exclude-ips', dest="eeips", type=str, default="")
 
@@ -596,7 +591,7 @@ def main():
 			pull.linebreak( 1 )
 		else:
 			dnssec  = NMHANDLER( parser.domain, parser.eeips )
-	
+
 		pull.gthen( "False Positive Detection ->", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak( 1 )
 		dip     = dnssec.def_ip()

@@ -18,12 +18,9 @@ class PARSER:
 		self.output     = self.parse_output(    _opts.output    )
 		self.csv        = self.parse_csv(       _opts.csv       )
 		self.eoutput    = self.parse_eoutput(   _opts.eoutput   )
-		self.sshots     = self.parse_sshots(    _opts.sshots    )
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.online     = self.parse_online(    _opts.online    )
 		self.eeips      = self.parse_eeips(     _opts.eeips     )
-		self.scan       = _opts.scan
-		self.subs       = _opts.subs
 		self.filter     = _opts.filter
 		self.skipdns    = _opts.sdns
 
@@ -70,12 +67,6 @@ class PARSER:
 		else:
 			return False
 
-	def parse_sshots(self, _sshots):
-		if _sshots:
-			return _sshots
-		else:
-			return False
-
 	def parse_csv(self, _csv):
 		if _csv:
 			return _csv
@@ -111,7 +102,7 @@ class PARSER:
 		if _ips:
 			for ip in _ips.split(","):
 				rtval.append(ip)
-		
+
 		return rtval
 
 	def sig_handler(self, _sig, _fr):
