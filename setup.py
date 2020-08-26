@@ -28,7 +28,7 @@ setup(
     install_requires=["requests", "dnspython", "beautifulsoup4"],
     entry_points={
         "console_scripts": [
-            "Subrake=subrake.__main__:main",
+            "subrake=subrake.__main__:main",
         ]
     },
 )
