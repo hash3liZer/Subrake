@@ -27,7 +27,7 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "Operating System :: POSIX",
     ],
-    packages=["subrake", "subrake.handlers"],
+    packages=["subrake", "subrake.handlers", "subrake.modules"],
     include_package_data=True,
     install_requires=["requests", "dnspython", "beautifulsoup4"],
     entry_points={
