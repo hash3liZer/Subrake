@@ -1,3 +1,4 @@
-requests
 dnspython
-beautifulsoup4
+requests
+bs4
+screeninfo

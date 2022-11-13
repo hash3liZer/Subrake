@@ -1,4 +1,5 @@
 import pathlib
+import os
 from setuptools import setup
 
 # The directory containing this file
@@ -29,7 +30,7 @@ setup(
     ],
     packages=["subrake", "subrake.handlers", "subrake.modules"],
     include_package_data=True,
-    install_requires=["requests", "dnspython", "beautifulsoup4"],
+    install_requires=open('requirements.txt').read().splitlines(),
     entry_points={
         "console_scripts": [
             "subrake=subrake.__main__:main",

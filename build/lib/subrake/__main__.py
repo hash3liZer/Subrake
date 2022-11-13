@@ -236,8 +236,10 @@ class ENGINE:
 
 	def parse(self, _wd, _sb):
 		_list = list(_wd) + list(_sb)
+		counter = 0
 		for _ls in _list:
-			_list[ _list.index(_ls) ] = (_ls + ".%s" % self.domain) if not _ls.endswith( ".%s"%self.domain ) else _ls
+			_list[ counter ] = (f"{_ls}.{self.domain}") if not _ls.endswith(f".{self.domain}") else _ls
+			counter += 1
 		return list( set( _list ) )
 
 	def fmheaders(self):
@@ -507,6 +509,7 @@ def main():
 	parser.add_option('-c', '--csv', dest="csv", type="string", default="")
 	parser.add_option('-p', '--ports', dest="ports", type="string", default="")
 	parser.add_option('-s', '--skip-search', dest="online", action="store_false", default=True)
+	parser.add_option(''  , '--skip-subcast', dest="subcast", action="store_false", default=True)
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
 	parser.add_option(''  , '--skip-dns'  , dest="sdns", action="store_true", default=False)
 	parser.add_option(''  , '--exclude-ips', dest="eeips", type=str, default="")
@@ -538,10 +541,14 @@ def main():
 		dnssec.def_ps()
 		pull.linebreak( 1 )
 
-		pull.gthen( "Starting Subcaster to locate more subdomains ->", pull.BOLD, pull.DARKCYAN )
-		pull.linebreak( 1 )
-		subcast = SUBCAST( parser )
-		subcast.engage()
+		if parser.subcast:
+			pull.gthen( "Starting Subcaster to locate more subdomains ->", pull.BOLD, pull.DARKCYAN )
+			pull.linebreak( 1 )
+			subcast = SUBCAST( parser )
+			subcast_subs = subcast.engage()
+			pull.linebreak( 1 )
+		else:
+			subcast_subs = list()
 
 		if parser.online:
 			pull.gthen( "Looking for Subdomains Online ->", pull.BOLD, pull.DARKCYAN )
@@ -553,6 +560,7 @@ def main():
 			pull.linebreak()
 		else:
 			osubs = list()
+		osubs += subcast_subs
 
 		pull.gthen( "Looking for subdomains with finite Resolution", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
