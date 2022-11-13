@@ -1,4 +1,0 @@
-dnspython
-requests
-bs4
-screeninfo
