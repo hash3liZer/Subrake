@@ -28,6 +28,7 @@ from subrake.handlers import VIRUSTOTAL
 from subrake.handlers import THREATCROWD
 from subrake.handlers import CRTSEARCH
 from subrake.modules import SUBCAST
+from subrake.modules import TAKEOVER
 from bs4 import BeautifulSoup as soup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -148,7 +149,7 @@ class ONLINE:
 		self.baidu.execute()
 		self.netcraft.execute()
 		#self.dnsdumpster.execute()
-		self.virustotal.execute()
+		#self.virustotal.execute()
 		self.crt.execute()
 
 	def acquire(self):
@@ -280,14 +281,16 @@ class ENGINE:
 			r = requests.get(httpath, headers=self.HEADERS, allow_redirects=False, timeout=10, verify=False)
 			code = r.status_code
 			headers = r.headers
+			response = r.text
 		except:
 			code = None
 			headers = {}
+			response = ''
 			if _subdomain not in self.ERRORSUB:
 				self.ERRORCOU += 1
 				self.ERRORSUB.append(_subdomain)
 
-		return roll.seperator( code, headers )
+		return roll.seperator( code, headers, response )
 
 	def handler(self, _subdomain):
 		self.CTHREADS += 1
@@ -381,6 +384,23 @@ class ENGINE:
 			pass
 
 		self.CTHREADS -= 1
+
+	def takeover(self):
+		for tocheck in self.checklist:
+			try:
+				_subdata = self.RECORD[ _subdomain ]
+			except KeyError:
+				pass
+
+			_8code = _subdata[ 80 ][ 'cd' ]
+			_8head = _subdata[ 80 ][ 'sv' ]
+			_8resp = _subdata[ 80 ][ 'rp' ]
+
+			_4code = _subdata[ 443 ][ 'cd' ]
+			_4head = _subdata[ 443 ][ 'sv' ]
+			_4resp = _subdata[ 443 ][ 'rp' ]
+
+			pull.lflush(f"STATUS! Checking the domain {pull.YELLOW}[{tocheck}]{pull.END}" , pull.DARKCYAN, pull.BOLD)
 
 	def engross(self, _ports):
 		for tocheck in self.checklist:
@@ -573,6 +593,10 @@ def main():
 		pull.linebreak()
 		pull.psheadb( pull.DARKCYAN, cdh=roll.FCODE, sbh=roll.FSUBDOM, pth=roll.FPORTS, cnh=roll.FCNAME )
 		eenge.engross( parser.ports )
+		pull.linebreak( 1 )
+		pull.gthen( "Deducing results for the final takeover CASES", pull.BOLD, pull.DARKCYAN )
+		pull.linebreak()
+		eenge.takeover()
 		pull.linebreak( 1 )
 
 		fpush = WRITER(parser.domain, parser.output, parser.csv, eenge.get(), dip, parser.eeips, dcn)
