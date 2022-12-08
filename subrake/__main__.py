@@ -388,7 +388,7 @@ class ENGINE:
 	def takeover(self):
 		for tocheck in self.checklist:
 			try:
-				_subdata = self.RECORD[ _subdomain ]
+				_subdata = self.RECORD[ tocheck ]
 			except KeyError:
 				pass
 
@@ -400,7 +400,7 @@ class ENGINE:
 			_4head = _subdata[ 443 ][ 'sv' ]
 			_4resp = _subdata[ 443 ][ 'rp' ]
 
-			pull.lflush(f"STATUS! Checking the domain {pull.YELLOW}[{tocheck}]{pull.END}" , pull.DARKCYAN, pull.BOLD)
+			pull.lflush(f"STATUS! Checking the domain {pull.YELLOW}[{tocheck}]{pull.END}            " , pull.DARKCYAN, pull.BOLD)
 
 	def engross(self, _ports):
 		for tocheck in self.checklist:
@@ -597,7 +597,8 @@ def main():
 		pull.gthen( "Deducing results for the final takeover CASES", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
 		eenge.takeover()
-		pull.linebreak( 1 )
+		pull.linebreak( )
+		pull.linebreak( )
 
 		fpush = WRITER(parser.domain, parser.output, parser.csv, eenge.get(), dip, parser.eeips, dcn)
 
