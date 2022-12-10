@@ -88,6 +88,7 @@ $ subrake -d google.com --ports 8080,8443,8000,23,445
 ### Manual
 
 ```
+Options:
    Args               Description                                    Default
    -h, --help           Show this manual                             NONE
    -d, --domain         Target domain. Possible
@@ -101,6 +102,7 @@ $ subrake -d google.com --ports 8080,8443,8000,23,445
    -p, --ports          Comma-seperated list of ports to scan.       NONE
    -s, --skip-search    Search for subdomains Online from various
                         sites.                                       FALSE
+       --skip-subcast   Skip the usage of subcast module             FALSE
        --filter         Filter subdomains with same IP in CSV output FALSE
                         Helpful with larger scopes.
        --skip-dns       Skip initial DNS enumeration phase           FALSE
