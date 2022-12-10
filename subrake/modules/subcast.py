@@ -2,7 +2,9 @@ from subrake.pull import PULLY
 import tempfile
 import subprocess
 import time
+import json
 import os
+
 
 pull = PULLY()
 
@@ -19,7 +21,7 @@ class SUBCAST:
 
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED)
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
-        _comm = f"xterm -title amass -e 'amass enum -d {self.domain} -o {_path}'"
+        _comm = f"xterm -title amass -e 'amass enum -v -d {self.domain} -o {_path}'"
         exec  = subprocess.Popen(_comm, shell=True)
         pull.gthen(f"Launched AMASS: {_comm}", pull.BOLD, pull.GREEN)
 
@@ -47,20 +49,20 @@ class SUBCAST:
             _path
         )
 
-    def exec_sublister(self):
+    def exec_knockpy(self):
         def check():
-            cc = subprocess.call("sublist3r.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            cc = subprocess.call("knockpy.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if not cc: return True
             return False
 
-        if not check(): pull.lthen("Sublist3r not located on the machine. Skipping Sublist3r", pull.BOLD, pull.RED)
-        _path = os.path.join(tempfile.gettempdir(), "sublister.subs")
-        _comm = f"xterm -title sublister -e 'sublist3r.py -d {self.domain} -o {_path} --verbose'"
+        if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED)
+        _path = os.path.join(tempfile.gettempdir())
+        _comm = f"xterm -title knockpy -e 'knockpy.py {self.domain} --no-http -o {_path}'"
         exec  = subprocess.Popen(_comm, shell=True)
-        pull.gthen(f"Launched Sublist3r: {_comm}", pull.BOLD, pull.GREEN)
+        pull.gthen(f"Launched Knockpy: {_comm}", pull.BOLD, pull.GREEN)
 
         return (
-            'sublister',
+            'knockpy',
             exec,
             _path
         )
@@ -76,7 +78,8 @@ class SUBCAST:
 
         _list = [
             self.exec_amass,
-            self.exec_sublister
+            self.exec_sublister,
+            self.exec_knockpy
         ]
 
         _data = []
@@ -105,6 +108,17 @@ class SUBCAST:
             if os.path.isfile(client['subs']):
                 with open(client['subs']) as fl:
                     rtval += fl.read().splitlines()
+            elif os.path.isdir(client['subs']):
+                if client['name'] == 'knockpy':
+                    gfile = None
+                    for filename in os.listdir(client['subs']):
+                        if filename.startswith(self.domain) and filename.endswith(".json"):
+                            gfile = filename
+                            break
+                    if gfile:
+                        data = json.loads(open(os.path.join(client['subs'], gfile)).read())
+                        data = data.keys()
+                        rtval += [ss for ss in data if ss != "_meta"]
 
         rtval = list(set(rtval))
         pull.gthen(f"Gathered a total of {len(rtval)} unique subdomains from subcaster", pull.BOLD, pull.YELLOW)

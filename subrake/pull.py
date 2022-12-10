@@ -4,12 +4,19 @@ import random
 import platform
 import subprocess
 
-__logo__ = """%s
-   _____       __               __
-  / ___/__  __/ /_  _________ _/ /_____
-  \\__ \\/ / / / __ \\/ ___/ __ `/ //_/ _ \\
- ___/ / /_/ / /_/ / /  / /_/ / ,< /  __/
-/____/\\__,_/_.___/_/   \\__,_/_/|_|\\___/
+__logo__ = r"""%s
+
+
+  ██████  █    ██  ▄▄▄▄   ▄▄▄█████▓ ▄▄▄       ██▓███
+▒██    ▒  ██  ▓██▒▓█████▄ ▓  ██▒ ▓▒▒████▄    ▓██░  ██▒
+░ ▓██▄   ▓██  ▒██░▒██▒ ▄██▒ ▓██░ ▒░▒██  ▀█▄  ▓██░ ██▓▒
+  ▒   ██▒▓▓█  ░██░▒██░█▀  ░ ▓██▓ ░ ░██▄▄▄▄██ ▒██▄█▓▒ ▒
+▒██████▒▒▒▒█████▓ ░▓█  ▀█▓  ▒██▒ ░  ▓█   ▓██▒▒██▒ ░  ░
+▒ ▒▓▒ ▒ ░░▒▓▒ ▒ ▒ ░▒▓███▀▒  ▒ ░░    ▒▒   ▓▒█░▒▓▒░ ░  ░
+░ ░▒  ░ ░░░▒░ ░ ░ ▒░▒   ░     ░      ▒   ▒▒ ░░▒ ░
+░  ░  ░   ░░░ ░ ░  ░    ░   ░        ░   ▒   ░░
+      ░     ░      ░                     ░  ░
+                        ░
 %s
                                %s@hash3liZer \ @vareesha / @nabeeha%s"""
 
@@ -30,6 +37,7 @@ Options:
    -p, --ports          Comma-seperated list of ports to scan.       NONE
    -s, --skip-search    Search for subdomains Online from various
                         sites.                                       FALSE
+       --skip-subcast   Skip the usage of subcast module             FALSE
        --filter         Filter subdomains with same IP in CSV output FALSE
                         Helpful with larger scopes.
        --skip-dns       Skip initial DNS enumeration phase           FALSE

@@ -385,23 +385,6 @@ class ENGINE:
 
 		self.CTHREADS -= 1
 
-	def takeover(self):
-		for tocheck in self.checklist:
-			try:
-				_subdata = self.RECORD[ tocheck ]
-			except KeyError:
-				pass
-
-			_8code = _subdata[ 80 ][ 'cd' ]
-			_8head = _subdata[ 80 ][ 'sv' ]
-			_8resp = _subdata[ 80 ][ 'rp' ]
-
-			_4code = _subdata[ 443 ][ 'cd' ]
-			_4head = _subdata[ 443 ][ 'sv' ]
-			_4resp = _subdata[ 443 ][ 'rp' ]
-
-			pull.lflush(f"STATUS! Checking the domain {pull.YELLOW}[{tocheck}]{pull.END}            " , pull.DARKCYAN, pull.BOLD)
-
 	def engross(self, _ports):
 		for tocheck in self.checklist:
 			_t = threading.Thread( target=self.engrosser, args=( tocheck, _ports ) )
@@ -413,6 +396,26 @@ class ENGINE:
 
 		while self.CTHREADS > 0:
 			time.sleep( 0.5 )
+
+	def takeover(self):
+		for tocheck in self.checklist:
+			try:
+				_subdata = self.RECORD[ tocheck ]
+			except KeyError:
+				continue
+
+			_8code = _subdata[ 80 ][ 'cd' ]
+			_8head = _subdata[ 80 ][ 'sv' ]
+			_8resp = _subdata[ 80 ][ 'rp' ]
+
+			_4code = _subdata[ 443 ][ 'cd' ]
+			_4head = _subdata[ 443 ][ 'sv' ]
+			_4resp = _subdata[ 443 ][ 'rp' ]
+
+			pull.lflush(f"STATUS! Checking the domain {pull.YELLOW}[{tocheck}]{pull.END}            " , pull.DARKCYAN, pull.BOLD)
+
+			if _8code == 404 and _8head == "AmazonS3" and "NoSuchBucket" in _8resp:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}AmazonS3{pull.END}", pull.BOLD, pull.RED )
 
 	def get(self):
 		return self.RECORD
@@ -581,6 +584,7 @@ def main():
 		else:
 			osubs = list()
 		osubs += subcast_subs
+		osubs += ["test"]
 
 		pull.gthen( "Looking for subdomains with finite Resolution", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
@@ -595,7 +599,6 @@ def main():
 		eenge.engross( parser.ports )
 		pull.linebreak( 1 )
 		pull.gthen( "Deducing results for the final takeover CASES", pull.BOLD, pull.DARKCYAN )
-		pull.linebreak()
 		eenge.takeover()
 		pull.linebreak( )
 		pull.linebreak( )
