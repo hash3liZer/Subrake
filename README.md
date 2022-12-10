@@ -1,8 +1,8 @@
 <h1 align="center">
     <img src="https://user-images.githubusercontent.com/29171692/57197739-5392b300-6f84-11e9-9191-4e38f3edc583.png" alt="subrake" /> <br>    
-    SUBRAKE
+    SUBRAKE / SubTAP
 </h1>
-<h4 align="center">A Subdomain Enumeration and Validation tool for Bug Bounty and Pentesters.</h4>
+<h4 align="center">A Subdomain Enumeration and Takeover toolki for Bug Bounty and Pentesters.</h4>
 <p align="center">
     <a href="https://www.linux.org/" target="_blank"><img src="https://img.shields.io/badge/platform-linux-important" alt="platform: linux" /></a>
     <a href="https://www.python.org/" target="_blank"><img src="https://img.shields.io/badge/Python-3-yellow.svg?logo=python" alt="Python: 3" /></a>
