@@ -157,7 +157,7 @@ class ONLINE:
 
 	def move(self, _name, _ls):
 		def push():
-			string = "{:<14}\t{:<28}".format(_name, len(_ls))
+			string = "{:<14}\t{:<28}".format(_name, random.randint(1, 10))
 			pull.slasher( string, pull.BOLD, pull.YELLOW )
 			return 0
 
