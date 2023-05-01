@@ -1,4 +1,5 @@
 import sys
+import traceback
 if sys.version_info[0] != 3:
 	sys.exit( "[~] Only Version 3 Supported!" )
 import optparse
@@ -366,7 +367,7 @@ class ENGINE:
 		self.CTHREADS += 1
 
 		try:
-			if self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
+			if not self.RECORD[_subdomain]['ip'] or self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
 				self.RECORD[ _subdomain ][ 'cname' ] = roll.cnlocator( _subdomain, self.defcn )
 				if _ports:
 					self.RECORD[ _subdomain ][ 'ports' ] = roll.ptlocator( _subdomain, _ports )
@@ -377,7 +378,12 @@ class ENGINE:
 			cnv = roll.formatcnv( self.RECORD[ _subdomain ][ 'cname' ], pull.MIXTURE )
 
 			self.LOCK.acquire()
-			if self.RECORD[ _subdomain ][ 'ip' ] != self.defip and self.RECORD[ _subdomain ][ 'ip' ] != '' and self.RECORD[ _subdomain ][ 'ip' ] not in self.eeips:
+			# if (not self.RECORD[ _subdomain ][ 'ip' ] or self.RECORD[ _subdomain ][ 'ip' ] != self.defip) and \
+			# 		self.RECORD[ _subdomain ][ 'cname' ] and \
+			# 		(self.eeips and self.RECORD[ _subdomain ][ 'ip' ] not in self.eeips):
+
+			if (not self.RECORD[_subdomain]['ip'] and self.RECORD[_subdomain]['cname']) \
+				or self.RECORD[ _subdomain ][ 'ip' ] != self.defip:
 				pull.psrowb( '', cdv=cdv, sbv=sbv, ptv=ptv, cnv=cnv )
 			self.LOCK.release()
 		except KeyError:
@@ -404,6 +410,9 @@ class ENGINE:
 			except KeyError:
 				continue
 
+			_ip    = _subdata[ 'ip' ]
+			_cname = _subdata[ 'cname' ]
+
 			_8code = _subdata[ 80 ][ 'cd' ]
 			_8head = _subdata[ 80 ][ 'sv' ]
 			_8resp = _subdata[ 80 ][ 'rp' ]
@@ -416,6 +425,33 @@ class ENGINE:
 
 			if _8code == 404 and _8head == "AmazonS3" and "NoSuchBucket" in _8resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}AmazonS3{pull.END}", pull.BOLD, pull.RED )
+
+			if _8code == 'ERR' and _4code == 'ERR' and 'elasticbeanstalk.com' in _cname:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}ElasticBeanstalk{pull.END}", pull.BOLD, pull.RED )
+
+			if "animaapp.io" in _cname and "The page you were looking for does not exist" in _8resp:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Anima APP{pull.END}", pull.BOLD, pull.RED )
+
+			if "airee.ru" in _cname and "не оплатил сервис Айри.рф. Доступ к сайту временно невозможен" in _8resp and _8code == 200:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Airee.ru{pull.END}", pull.BOLD, pull.RED )
+
+			if _8code == 'ERR' and _4code == 'ERR' and 'trydiscourse.com' in _cname:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Discourse{pull.END}", pull.BOLD, pull.RED )
+
+			if "helprace.com" in _cname and _4code == 301:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}HelpRace{pull.END}", pull.BOLD, pull.RED )
+
+			if "52.16.160.97" in _ip and "Job Board Is Unavailable" in _4resp:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SmartJobBoard{pull.END}", pull.BOLD, pull.RED )
+
+			if _8code == 404 and _8head == "openresty" and "s.strikinglydns.com" in _cname:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Strikingly{pull.END}", pull.BOLD, pull.RED )
+
+			if _8code == 404 and _8head == "Surge" and "surge.sh" in _cname:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Surge.sh{pull.END}", pull.BOLD, pull.RED )			
+
+			if _8code == 200 and "surveysparrow.com" in _cname and "SurveySparrow | Account Not Found" in _8resp:
+				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SurveySparrow{pull.END}", pull.BOLD, pull.RED )
 
 	def get(self):
 		return self.RECORD
@@ -458,7 +494,7 @@ class WRITER:
 			for (subdomain, fdict) in self.record.items():
 				fl.writerow([
 					fdict[ 'ip' ],
-					"[" + fdict[80]['cd'] + "/" + fdict[443]['cd'] + "]",
+					"[" + str(fdict[80]['cd']) + "/" + str(fdict[443]['cd']) + "]",
 					roll.formatsvv( fdict[80]['sv'], fdict[443]['sv'], pull.VACANT ),
 					subdomain,
 					fdict['cname'],
@@ -469,7 +505,8 @@ class WRITER:
 		if self.output:
 			fl = open( self.output, 'w' )
 			for (subdomain, fdict) in self.record.items():
-				if fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa and fdict['ip'] not in self.eeips:
+				if (fdict[ 'ip' ] and fdict[ 'ip' ] != self.defipa and fdict['ip'] not in self.eeips) or \
+					(not fdict[ 'ip' ] and fdict[ 'cname' ] and fdict[ 'cname' ] != self.defcna):
 					fl.write( subdomain + "\n" )
 
 	def flwritecsv(self):
@@ -584,7 +621,7 @@ def main():
 		else:
 			osubs = list()
 		osubs += subcast_subs
-		osubs += ["test"]
+		osubs += ["test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10"]
 
 		pull.gthen( "Looking for subdomains with finite Resolution", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
