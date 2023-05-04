@@ -1,6 +1,8 @@
 #!/bin/bash
 
-apt install -y xterm amass python3-dev python3 python3-pip
+sudo rm /etc/apt/preferences.d/nosnap.pref
+apt update
+apt install -y xterm python3-dev python3 python3-pip snap
 
 cd /opt/
 git clone https://github.com/aboul3la/Sublist3r.git
@@ -14,5 +16,7 @@ cd knock
 pip3 install -r requirements.txt
 chmod +x knockpy.py
 ln -s /opt/knock/knockpy.py /usr/bin/knockpy.py
+
+snap install amass
 
 pip3 install -r ./requirements.txt
