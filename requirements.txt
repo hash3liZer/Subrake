@@ -1,4 +1,4 @@
 dnspython
-requests
+requests==2.30.0
 bs4
 screeninfo
