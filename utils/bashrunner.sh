@@ -18,7 +18,7 @@ read excludelist
 echo -n "Specify Ports you want to scan [Empty to leave]: "
 read ports
 
-echo "Number of threads to generate [25]: "
+echo -n "Number of threads to generate [25]: "
 read threads
 
 args="-d $domain -o /opt/subtakes/$domain/subdomains.txt --csv /opt/subtakes/$domain/report.csv --filter"

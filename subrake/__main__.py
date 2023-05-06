@@ -279,7 +279,7 @@ class ENGINE:
 		'''
 		httpath = ("http://%s" % _subdomain) if _port == 80 else ("https://%s" % _subdomain)
 		try:
-			r = requests.get(httpath, headers=self.HEADERS, allow_redirects=False, timeout=10, verify=False)
+			r = requests.get(httpath, headers=self.HEADERS, allow_redirects=False, timeout=4, verify=False)
 			code = r.status_code
 			headers = r.headers
 			response = r.text
@@ -425,43 +425,43 @@ class ENGINE:
 
 			if _8code == 404 and _8head == "AmazonS3" and "NoSuchBucket" in _8resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}AmazonS3{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if _8code == 'ERR' and _4code == 'ERR' and 'elasticbeanstalk.com' in _cname:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}ElasticBeanstalk{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if "animaapp.io" in _cname and "The page you were looking for does not exist" in _8resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Anima APP{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if "airee.ru" in _cname and "не оплатил сервис Айри.рф. Доступ к сайту временно невозможен" in _8resp and _8code == 200:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Airee.ru{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if _8code == 'ERR' and _4code == 'ERR' and 'trydiscourse.com' in _cname:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Discourse{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if "helprace.com" in _cname and _4code == 301:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}HelpRace{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if "52.16.160.97" in _ip and "Job Board Is Unavailable" in _4resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SmartJobBoard{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if _8code == 404 and _8head == "openresty" and "s.strikinglydns.com" in _cname:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Strikingly{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if _8code == 404 and _8head == "Surge" and "surge.sh" in _cname:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Surge.sh{pull.END}", pull.BOLD, pull.RED )			
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 			if _8code == 200 and "surveysparrow.com" in _cname and "SurveySparrow | Account Not Found" in _8resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SurveySparrow{pull.END}", pull.BOLD, pull.RED )
-				tocheck['takeover'] = True
+				_subdata['takeover'] = True
 
 	def get(self):
 		return self.RECORD
@@ -510,7 +510,7 @@ class WRITER:
 					subdomain,
 					fdict['cname'],
 					",".join( fdict['ports'] ),
-					fdict['takeover']
+					"Possible" if fdict['takeover'] else "Not Possible"
 				])
 
 	def flwritetxt(self):
@@ -545,7 +545,7 @@ class WRITER:
 							subdomain,
 							self.record[ subdomain ][ 'cname' ],
 							",".join( self.record[ subdomain ]['ports'] ),
-							self.record[ subdomain ][ 'takeover' ]
+							"Possible" if self.record[ subdomain ][ 'takeover' ] else "Not Possible"
 						])
 					fl.writerow([ " " ])
 
