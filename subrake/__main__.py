@@ -302,8 +302,8 @@ class ENGINE:
 					443: {},
 					'ip': '',
 					'cname': '',
-					'ports': []
-
+					'ports': [],
+					'takeover': False
 				}
 
 		rtval = self.request( _subdomain, 80 )
@@ -425,33 +425,43 @@ class ENGINE:
 
 			if _8code == 404 and _8head == "AmazonS3" and "NoSuchBucket" in _8resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}AmazonS3{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 			if _8code == 'ERR' and _4code == 'ERR' and 'elasticbeanstalk.com' in _cname:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}ElasticBeanstalk{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 			if "animaapp.io" in _cname and "The page you were looking for does not exist" in _8resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Anima APP{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 			if "airee.ru" in _cname and "не оплатил сервис Айри.рф. Доступ к сайту временно невозможен" in _8resp and _8code == 200:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Airee.ru{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 			if _8code == 'ERR' and _4code == 'ERR' and 'trydiscourse.com' in _cname:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Discourse{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 			if "helprace.com" in _cname and _4code == 301:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}HelpRace{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 			if "52.16.160.97" in _ip and "Job Board Is Unavailable" in _4resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SmartJobBoard{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 			if _8code == 404 and _8head == "openresty" and "s.strikinglydns.com" in _cname:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Strikingly{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 			if _8code == 404 and _8head == "Surge" and "surge.sh" in _cname:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Surge.sh{pull.END}", pull.BOLD, pull.RED )			
+				tocheck['takeover'] = True
 
 			if _8code == 200 and "surveysparrow.com" in _cname and "SurveySparrow | Account Not Found" in _8resp:
 				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SurveySparrow{pull.END}", pull.BOLD, pull.RED )
+				tocheck['takeover'] = True
 
 	def get(self):
 		return self.RECORD
@@ -488,7 +498,8 @@ class WRITER:
 				"SERVER",
 				"SUBDOMAIN",
 				"CNAME",
-				"PORTS"
+				"PORTS",
+				"TAKEOVER"
 			])
 			roll.FSERVER = "{:<}"
 			for (subdomain, fdict) in self.record.items():
@@ -498,7 +509,8 @@ class WRITER:
 					roll.formatsvv( fdict[80]['sv'], fdict[443]['sv'], pull.VACANT ),
 					subdomain,
 					fdict['cname'],
-					",".join( fdict['ports'] )
+					",".join( fdict['ports'] ),
+					fdict['takeover']
 				])
 
 	def flwritetxt(self):
@@ -518,7 +530,8 @@ class WRITER:
 				"SERVER",
 				"SUBDOMAIN",
 				"CNAME",
-				"PORTS"
+				"PORTS",
+				"TAKEOVER"
 			])
 			roll.FCODE   = "{:<}"
 			roll.FSERVER = "{:<}"
@@ -531,7 +544,8 @@ class WRITER:
 							roll.formatsvv( self.record[ subdomain ][80]['sv'], self.record[ subdomain ][443]['sv'], pull.VACANT ),
 							subdomain,
 							self.record[ subdomain ][ 'cname' ],
-							",".join( self.record[ subdomain ]['ports'] )
+							",".join( self.record[ subdomain ]['ports'] ),
+							self.record[ subdomain ][ 'takeover' ]
 						])
 					fl.writerow([ " " ])
 

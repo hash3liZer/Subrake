@@ -29,6 +29,7 @@ ln -s /usr/bin/python3 /usr/bin/python 2>/dev/null
 if ! [ -d "/opt/SecLists" ]; then
   wget "https://github.com/danielmiessler/SecLists/archive/refs/tags/2023.1.zip" -O /tmp/SecLists.zip
   mv "/opt/SecLists-2023.1" /opt/SecLists
+  chmod 777 -R /opt/SecLists
   rm -rf /tmp/SecLists.zip
 fi
 
@@ -50,6 +51,9 @@ snap install amass
 cd "$homedir"
 pip3 install -r ./requirements.txt
 python3 ./setup.py install
+
+mkdir -p /opt/subtakes
+chmod 777 -R /opt/subtakes
 
 echo "Add folowing entry to your .bashrc: "
 echo ""

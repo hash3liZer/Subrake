@@ -38,7 +38,7 @@ class PARSER:
 		_list = []
 
 		if not _wds:
-			if not self.online:
+			if not self.online and not self.subcast:
 				pull.brick( "OOPS! You forgot the dictionary.", pull.BOLD, pull.RED)
 		else:
 			for fl in set( _wds.split(",") ):
