@@ -4,7 +4,7 @@ import subprocess
 import time
 import json
 import os
-
+import shutil
 
 pull = PULLY()
 
@@ -13,15 +13,14 @@ class SUBCAST:
     def __init__(self, prs):
         self.domain = prs.domain
 
-    def exec_amass(self):
+    def exec_amass(self):  # sourcery skip: avoid-builtin-shadow
         def check():
             cc = subprocess.call("amass -help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if not cc: return True
-            return False
+            return not cc
 
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED)
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
-        _comm = f"xterm -title amass -e 'amass enum -v -d {self.domain} -o {_path}'"
+        _comm = f"amass enum -v -d {self.domain} -o {_path}"
         exec  = subprocess.Popen(_comm, shell=True)
         pull.gthen(f"Launched AMASS: {_comm}", pull.BOLD, pull.GREEN)
 
@@ -31,15 +30,14 @@ class SUBCAST:
             _path
         )
 
-    def exec_sublister(self):
+    def exec_sublister(self):  # sourcery skip: avoid-builtin-shadow
         def check():
             cc = subprocess.call("sublist3r.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if not cc: return True
-            return False
+            return not cc
 
         if not check(): pull.lthen("Sublist3r not located on the machine. Skipping Sublist3r", pull.BOLD, pull.RED)
         _path = os.path.join(tempfile.gettempdir(), "sublister.subs")
-        _comm = f"xterm -title sublister -e 'sublist3r.py -d {self.domain} -o {_path} --verbose'"
+        _comm = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
         exec  = subprocess.Popen(_comm, shell=True)
         pull.gthen(f"Launched Sublist3r: {_comm}", pull.BOLD, pull.GREEN)
 
@@ -49,15 +47,14 @@ class SUBCAST:
             _path
         )
 
-    def exec_knockpy(self):
+    def exec_knockpy(self):  # sourcery skip: avoid-builtin-shadow
         def check():
             cc = subprocess.call("knockpy.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if not cc: return True
-            return False
+            return not cc
 
         if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED)
         _path = os.path.join(tempfile.gettempdir())
-        _comm = f"xterm -title knockpy -e 'knockpy.py {self.domain} --no-http -o {_path}'"
+        _comm = f"knockpy.py {self.domain} --no-http -o {_path}"
         exec  = subprocess.Popen(_comm, shell=True)
         pull.gthen(f"Launched Knockpy: {_comm}", pull.BOLD, pull.GREEN)
 
@@ -108,17 +105,23 @@ class SUBCAST:
             if os.path.isfile(client['subs']):
                 with open(client['subs']) as fl:
                     rtval += fl.read().splitlines()
+                os.remove(client['subs'])
             elif os.path.isdir(client['subs']):
                 if client['name'] == 'knockpy':
-                    gfile = None
-                    for filename in os.listdir(client['subs']):
-                        if filename.startswith(self.domain) and filename.endswith(".json"):
-                            gfile = filename
-                            break
-                    if gfile:
+                    if gfile := next(
+                        (
+                            filename
+                            for filename in os.listdir(client['subs'])
+                            if filename.startswith(self.domain)
+                            and filename.endswith(".json")
+                        ),
+                        None,
+                    ):
                         data = json.loads(open(os.path.join(client['subs'], gfile)).read())
                         data = data.keys()
                         rtval += [ss for ss in data if ss != "_meta"]
+                    
+                    shutil.rmtree(client['subs'])
 
         rtval = list(set(rtval))
         pull.gthen(f"Gathered a total of {len(rtval)} unique subdomains from subcaster", pull.BOLD, pull.YELLOW)
