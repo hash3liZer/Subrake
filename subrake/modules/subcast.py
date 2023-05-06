@@ -21,7 +21,7 @@ class SUBCAST:
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED)
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
         _comm = f"amass enum -v -d {self.domain} -o {_path}"
-        exec  = subprocess.Popen(_comm, shell=True)
+        exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         pull.gthen(f"Launched AMASS: {_comm}", pull.BOLD, pull.GREEN)
 
         return (
@@ -38,7 +38,7 @@ class SUBCAST:
         if not check(): pull.lthen("Sublist3r not located on the machine. Skipping Sublist3r", pull.BOLD, pull.RED)
         _path = os.path.join(tempfile.gettempdir(), "sublister.subs")
         _comm = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
-        exec  = subprocess.Popen(_comm, shell=True)
+        exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         pull.gthen(f"Launched Sublist3r: {_comm}", pull.BOLD, pull.GREEN)
 
         return (
@@ -55,7 +55,7 @@ class SUBCAST:
         if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED)
         _path = os.path.join(tempfile.gettempdir())
         _comm = f"knockpy.py {self.domain} --no-http -o {_path}"
-        exec  = subprocess.Popen(_comm, shell=True)
+        exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         pull.gthen(f"Launched Knockpy: {_comm}", pull.BOLD, pull.GREEN)
 
         return (
