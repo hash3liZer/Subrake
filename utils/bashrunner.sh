@@ -51,5 +51,7 @@ if [ "$threads" != "" ]; then
     args="$args --threads $threads"
 fi
 
+mkdir /opt/subtakes/$domain
+
 subrake $args
 exit
