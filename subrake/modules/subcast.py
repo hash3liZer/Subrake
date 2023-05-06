@@ -12,6 +12,7 @@ class SUBCAST:
 
     def __init__(self, prs):
         self.domain = prs.domain
+        self.onlysublister = prs.onlysublister
 
     def exec_amass(self):  # sourcery skip: avoid-builtin-shadow
         def check():
@@ -73,11 +74,11 @@ class SUBCAST:
             pull.lthen("Skipping SUBCAST as the package xterm is not installed!", pull.BOLD, pull.RED)
             return
 
-        _list = [
-            self.exec_amass,
-            self.exec_sublister,
-            self.exec_knockpy
-        ]
+        _list = (
+            [self.exec_sublister]
+            if self.onlysublister
+            else [self.exec_amass, self.exec_sublister, self.exec_knockpy]
+        )
 
         _data = []
         for func in _list:
@@ -120,7 +121,7 @@ class SUBCAST:
                         data = json.loads(open(os.path.join(client['subs'], gfile)).read())
                         data = data.keys()
                         rtval += [ss for ss in data if ss != "_meta"]
-                    
+
                     shutil.rmtree(client['subs'])
 
         rtval = list(set(rtval))

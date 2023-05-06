@@ -20,6 +20,7 @@ class PARSER:
 		self.csv        = self.parse_csv(       _opts.csv       )
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.eeips      = self.parse_eeips(     _opts.eeips     )
+		self.onlysublister = _opts.onlysublister
 		self.subcast    = _opts.subcast
 		self.filter     = _opts.filter
 		self.skipdns    = _opts.sdns

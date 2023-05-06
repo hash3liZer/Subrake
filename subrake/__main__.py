@@ -570,6 +570,7 @@ def main():
 	parser.add_option('-p', '--ports', dest="ports", type="string", default="")
 	parser.add_option('-s', '--skip-search', dest="online", action="store_false", default=True)
 	parser.add_option(''  , '--skip-subcast', dest="subcast", action="store_false", default=True)
+	parser.add_option(''  , '--only-sublister', dest="onlysublister", action="store_true", default=False)
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
 	parser.add_option(''  , '--skip-dns'  , dest="sdns", action="store_true", default=False)
 	parser.add_option(''  , '--exclude-ips', dest="eeips", type=str, default="")
