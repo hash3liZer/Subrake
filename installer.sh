@@ -1,6 +1,6 @@
 #!/bin/bash
 
-homedir = $(pwd)
+homedir=$(pwd)
 
 if ! [ $(id -u) -eq 0 ]; then
     echo "[-] The installer script must be run as root"
