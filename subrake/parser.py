@@ -12,6 +12,8 @@ class PARSER:
 		#self.signal     = signal.signal( signal.SIGINT, self.sig_handler )
 		#self.sigalm     = signal.signal( signal.SIGALRM, self.exp_handler )
 		self.help       = _opts.help
+		self.onlysublister = _opts.onlysublister
+		self.subcast       = _opts.subcast
 		self.domain     = self.parse_domain(    _opts.domain    )
 		self.online     = self.parse_online(    _opts.online    )
 		self.checklist  = self.parse_wordlists( _opts.wordlists )
@@ -20,8 +22,6 @@ class PARSER:
 		self.csv        = self.parse_csv(       _opts.csv       )
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.eeips      = self.parse_eeips(     _opts.eeips     )
-		self.onlysublister = _opts.onlysublister
-		self.subcast    = _opts.subcast
 		self.filter     = _opts.filter
 		self.skipdns    = _opts.sdns
 
