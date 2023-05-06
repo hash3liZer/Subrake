@@ -13,6 +13,9 @@ if ! [[ "$(cat /etc/os-release | grep "^ID=" | cut -d= -f2)" == "ubuntu" ]]; the
     exit -1;
 fi
 
+cp ./utils/bashrunner.sh /usr/bin/bashrunner
+chmod +x /usr/bin/bashrunner
+
 source /etc/os-release
 
 rm -rf /etc/apt/preferences.d/nosnap.pref
@@ -47,3 +50,8 @@ snap install amass
 cd "$homedir"
 pip3 install -r ./requirements.txt
 python3 ./setup.py install
+
+echo "Add folowing entry to your .bashrc: "
+echo ""
+echo "bashrunner"
+echo "exit"

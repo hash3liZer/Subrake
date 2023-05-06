@@ -38,6 +38,7 @@ Options:
    -s, --skip-search    Search for subdomains Online from various
                         sites.                                       FALSE
        --skip-subcast   Skip the usage of subcast module             FALSE
+       --only-sublister Use only Sublist3r for subdomain enumeration FALSE
        --filter         Filter subdomains with same IP in CSV output FALSE
                         Helpful with larger scopes.
        --skip-dns       Skip initial DNS enumeration phase           FALSE
