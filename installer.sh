@@ -1,5 +1,7 @@
 #!/bin/bash
 
+homedir = $(pwd)
+
 if ! [ $(id -u) -eq 0 ]; then
     echo "[-] The installer script must be run as root"
     exit -1;
@@ -24,6 +26,7 @@ ln -s /usr/bin/python3 /usr/bin/python 2>/dev/null
 if ! [ -d "/opt/SecLists" ]; then
   wget "https://github.com/danielmiessler/SecLists/archive/refs/tags/2023.1.zip" -O /tmp/SecLists.zip
   mv "/opt/SecLists-2023.1" /opt/SecLists
+  rm -rf /tmp/SecLists.zip
 fi
 
 cd /opt/
@@ -40,5 +43,7 @@ chmod +x knockpy.py
 ln -s /opt/knock/knockpy.py /usr/bin/knockpy.py
 
 snap install amass
+
+cd "$homedir"
 pip3 install -r ./requirements.txt
 python3 ./setup.py install
