@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap '' INT
+
 echo -n "Enter Domain name: "
 read domain
 
@@ -36,6 +38,8 @@ fi
 if [ "$wordlist" != "" ]; then
     if [ "$wordlist" == "default" ]; then
     args="$args --wordlists /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt"
+    else
+    args="$args --wordlists $wordlist"
     fi
 fi
 
