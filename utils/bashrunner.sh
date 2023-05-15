@@ -39,6 +39,17 @@ while true; do
     echo -en "${RED}[?]${RESET} Do you want to subcast [Y/n]                       : ${YELLOW}"
     read subcast
 
+    if [ "$subcast" != "Y" ] && [ "$subcast" != "y" ]; then
+        args="$args --skip-subcast"
+    else
+        echo -en "${RED}[?]${RESET} Run only Sublist3r (Resource Efficient) [Y/n]      : ${YELLOW}"
+        read osublist3r
+        if [ "$osublist3r" == "Y" ] && [ "$osublist3r" == "y" ]; then
+            args="$args --only-sublister"
+        fi
+        args="$args"
+    fi
+
     echo -en "${RED}[?]${RESET} Want to provide any wordlist [default/empty for no]: ${MAGENTA}"
     read wordlist
 
@@ -55,12 +66,6 @@ while true; do
 
     if [ "$omodule" != "Y" ] && [ "$omodule" != "y" ]; then
         args="$args --skip-search"
-    fi
-
-    if [ "$subcast" != "Y" ] && [ "$subcast" != "y" ]; then
-        args="$args --skip-subcast"
-    else
-        args="$args"
     fi
 
     if [ "$wordlist" != "" ]; then
