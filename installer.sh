@@ -20,7 +20,7 @@ source /etc/os-release
 
 rm -rf /etc/apt/preferences.d/nosnap.pref
 apt update
-apt install -y xterm python3-dev python3 python3-pip snap unzip git screen
+apt install -y xterm python3-dev python3 python3-pip snap unzip git screen tmux
 apt install -y -t ${UBUNTU_CODENAME}-backports cockpit
 
 ln -s /usr/bin/python3 /usr/bin/python 2>/dev/null

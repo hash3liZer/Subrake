@@ -15,13 +15,13 @@ while true; do
     echo -en "${RED}[?]${RESET} Enter Domain name                                  : ${GREEN}"
     read domain
 
-    if screen -ls | grep -q "$domain"; then
+    if tmux has-session -t "$domain" 2>/dev/null; then
     echo -e "${MAGENTA}[-]${RESET} A screen session with the name '$domain' already exists."
     echo -en "${YELLOW}[?]${RESET} Do you want to jump to that session or skip? (y/n) "
     read choice
         case "$choice" in
             y|Y)
-                screen -r "$domain"
+                tmux attach-session -t "$domain"
                 continue
                 ;;
             *)
@@ -83,7 +83,7 @@ while true; do
 
     mkdir -p /opt/subtakes/$domain
 
-    screen -S $domain -dm bash -c "subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit"
-    screen -r $domain
+    tmux new-session -d -s "$domain" "bash -c 'subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit'"
+    tmux attach-session -t "$domain"
     # clear
 done
