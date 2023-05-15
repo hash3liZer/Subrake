@@ -19,6 +19,7 @@ class SUBCAST:
             cc = subprocess.call("amass -help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return not cc
 
+        print("Checking for amass: ", check())
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
         _comm = f"amass enum -v -d {self.domain} -o {_path}"
@@ -65,7 +66,7 @@ class SUBCAST:
             _path
         )
 
-    def engage(self):
+    def engage(self):  # sourcery skip: low-code-quality
         if not pull.is_linux():
             pull.lthen("Skipping SUBCAST as the underlying operating system is not Linux!", pull.BOLD, pull.RED)
             return
@@ -82,14 +83,13 @@ class SUBCAST:
 
         _data = []
         for func in _list:
-            _func = func()
-            if not _func: continue
-            (name, caller, subs) = func()
-            _data.append({
-                'name': name,
-                'caller': caller,
-                'subs'  : subs
-            })
+            if _func := func():
+                (name, caller, subs) = func()
+                _data.append({
+                    'name': name,
+                    'caller': caller,
+                    'subs'  : subs
+                })
 
         pull.gthen("Waiting for all the subcasters to finish ...", pull.BOLD, pull.YELLOW)
         calls = 0
