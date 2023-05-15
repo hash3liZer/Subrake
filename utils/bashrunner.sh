@@ -51,7 +51,7 @@ while true; do
     echo -en "${RED}[?]${RESET} Number of threads to generate [25]                 : ${YELLOW}"
     read threads
 
-    args="-d $domain -o /opt/subtakes/$domain/subdomains.txt --csv /opt/subtakes/$domain/report.csv --filter"
+    args="-d $domain -o /usr/share/cockpit/static/subtakes/$domain/subdomains.txt --csv /usr/share/cockpit/static/subtakes/$domain/report.csv --filter"
 
     if [ "$omodule" != "Y" ] && [ "$omodule" != "y" ]; then
         args="$args --skip-search"
@@ -83,7 +83,7 @@ while true; do
         args="$args --threads $threads"
     fi
 
-    mkdir -p /opt/subtakes/$domain
+    mkdir -p /usr/share/cockpit/static/subtakes/$domain
 
     tmux new-session -d -s "$session" "bash -c 'subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit'"
     tmux attach-session -t "$session"
