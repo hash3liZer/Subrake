@@ -28,6 +28,7 @@ ln -s /usr/bin/python3 /usr/bin/python 2>/dev/null
 # Check if a directory doesn't exist
 if ! [ -d "/opt/SecLists" ]; then
   wget "https://github.com/danielmiessler/SecLists/archive/refs/tags/2023.1.zip" -O /tmp/SecLists.zip
+  unzip /tmp/SecLists.zip -d /opt/
   mv "/opt/SecLists-2023.1" /opt/SecLists
   chmod 777 -R /opt/SecLists
   rm -rf /tmp/SecLists.zip
