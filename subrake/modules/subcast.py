@@ -7,11 +7,6 @@ import os
 import shutil
 
 pull = PULLY()
-CALLS = {
-    'amass': False,
-    'sublister': False,
-    'knockpy': False
-}
 
 class SUBCAST:
 
@@ -26,19 +21,17 @@ class SUBCAST:
         def check():
             cc = subprocess.call("/snap/bin/amass -help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return not cc
-
-        if CALLS['amass']: return
-        CALLS['amass'] = True
+        
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
         _subc = f"/snap/bin/amass enum -v -d {self.domain} -o {_path}"
         _comm = f"tmux split-window -h -t {self.sessname}:0 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True)
-        pull.gthen(f"Launched AMASS: {_comm}", pull.BOLD, pull.GREEN)
+        pull.gthen(f"Launched AMASS: {_subc}", pull.BOLD, pull.GREEN)
 
         return (
             'amass',
-            exec,
+            f'{self.sessname}:0.1',
             _path
         )
 
@@ -47,18 +40,16 @@ class SUBCAST:
             cc = subprocess.call("sublist3r.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return not cc
 
-        if CALLS['sublister']: return
-        CALLS['sublister'] = True
         if not check(): pull.lthen("Sublist3r not located on the machine. Skipping Sublist3r", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "sublister.subs")
         _subc = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
         _comm = f"tmux split-window -t {self.sessname}:0.1 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        pull.gthen(f"Launched Sublist3r: {_comm}", pull.BOLD, pull.GREEN)
+        pull.gthen(f"Launched Sublist3r: {_subc}", pull.BOLD, pull.GREEN)
 
         return (
             'sublister',
-            exec,
+            f'{self.sessname}:0.2',
             _path
         )
 
@@ -67,18 +58,16 @@ class SUBCAST:
             cc = subprocess.call("knockpy.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return not cc
 
-        if CALLS['knockpy']: return
-        CALLS['knockpy'] = True
         if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir())
         _subc = f"knockpy.py {self.domain} --no-http -o {_path}"
-        _comm = f"tmux split-window -h -t {self.sessname}.0.2 '{_subc}'"
+        _comm = f"tmux split-window -t {self.sessname}.0.1 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        pull.gthen(f"Launched Knockpy: {_comm}", pull.BOLD, pull.GREEN)
+        pull.gthen(f"Launched Knockpy: {_subc}", pull.BOLD, pull.GREEN)
 
         return (
             'knockpy',
-            exec,
+            f'{self.sessname}:0.3',
             _path
         )
 
@@ -115,7 +104,8 @@ class SUBCAST:
         talls = []
         while calls != len(_data):
             for client in _data:
-                if client['caller'].poll() == 0 and client['name'] not in talls:
+                _fcall = subprocess.call(f"tmux capture-pane -t {client['caller']}", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                if _fcall and client['name'] not in talls:
                     pull.gthen(f"The caster {client['name']} has finished gathering the subdomains", pull.BOLD, pull.GREEN)
                     calls += 1
                     talls.append(client['name'])
