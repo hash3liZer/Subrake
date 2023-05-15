@@ -15,6 +15,22 @@ while true; do
     echo -en "${RED}[?]${RESET} Enter Domain name                                  : ${GREEN}"
     read domain
 
+    if screen -ls | grep -q "$domain"; then
+    echo -e "${MAGENTA}[-]${RESET} A screen session with the name '$domain' already exists."
+    echo -en "${YELLOW}[?]${RESET} Do you want to jump to that session or skip? (y/n) "
+    read choice
+        case "$choice" in
+            y|Y)
+                screen -r "$domain"
+                continue
+                ;;
+            *)
+                clear
+                continue
+                ;;
+        esac
+    fi
+
     echo -en "${RED}[?]${RESET} Do you want to run online module [Y/n]             : ${YELLOW}"
     read omodule
 
@@ -67,22 +83,7 @@ while true; do
 
     mkdir -p /opt/subtakes/$domain
 
-    if screen -ls | grep -q "$domain"; then
-    echo -e "${MAGENTA}[-]${RESET} A screen session with the name '$domain' already exists."
-    echo -en "${YELLOW}[?]${RESET} Do you want to jump to that session? (y/n) "
-    read choice
-        case "$choice" in
-            y|Y)
-                screen -r "$screen_name"
-                ;;
-            *)
-                clear
-                continue
-                ;;
-        esac
-    fi
-
-    screen -S $domain -dm bash -c "subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read"
+    screen -S $domain -dm bash -c "subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit"
     screen -r $domain
     # clear
 done
