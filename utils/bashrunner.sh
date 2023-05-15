@@ -12,25 +12,25 @@ WHITE="\e[37m"
 RESET="\e[0m"
 
 while true; do
-    echo -en "${RED}[?]${RESET} Enter Domain name                                 : "
+    echo -en "${RED}[?]${RESET} Enter Domain name                                  : ${GREEN}"
     read domain
 
-    echo -en "${RED}[?]${RESET}Do you want to run online module [Y/n]             : "
+    echo -en "${RED}[?]${RESET} Do you want to run online module [Y/n]             : ${YELLOW}"
     read omodule
 
-    echo -en "${RED}[?]${RESET}Do you want to subcast [Y/n]                       : "
+    echo -en "${RED}[?]${RESET} Do you want to subcast [Y/n]                       : ${YELLOW}"
     read subcast
 
-    echo -en "${RED}[?]${RESET}Want to provide any wordlist [default/empty for no]: "
+    echo -en "${RED}[?]${RESET} Want to provide any wordlist [default/empty for no]: ${MAGENTA}"
     read wordlist
 
-    echo -en "${RED}[?]${RESET}Any IPs you want to exclude [comma-separated]      : "
+    echo -en "${RED}[?]${RESET} Any IPs you want to exclude [comma-separated]      : ${YELLOW}"
     read excludelist
 
-    echo -en "${RED}[?]${RESET}Specify Ports you want to scan [Empty to leave]    : "
+    echo -en "${RED}[?]${RESET} Specify Ports you want to scan [Empty to leave]    : ${YELLOW}"
     read ports
 
-    echo -en "${RED}[?]${RESET}Number of threads to generate [25]                 : "
+    echo -en "${RED}[?]${RESET} Number of threads to generate [25]                 : ${YELLOW}"
     read threads
 
     args="-d $domain -o /opt/subtakes/$domain/subdomains.txt --csv /opt/subtakes/$domain/report.csv --filter"
@@ -67,7 +67,7 @@ while true; do
 
     mkdir -p /opt/subtakes/$domain
 
-    screen -S $domain -dm bash -c "subtakes $args; echo;; echo; echo "${MAGENTA}[-]${RESET} Press any key to continue..."; read; exit"
+    screen -S $domain -dm bash -c "subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit"
     screen -r $domain
     clear
 done
