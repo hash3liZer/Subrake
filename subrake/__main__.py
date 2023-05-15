@@ -1,3 +1,4 @@
+import multiprocessing
 import sys
 import traceback
 if sys.version_info[0] != 3:
@@ -678,4 +679,5 @@ def main():
 		pull.lthen( "DONE!", pull.BOLD, pull.RED )
 
 if __name__ == "__main__":
+	multiprocessing.freeze_support()
 	main()

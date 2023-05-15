@@ -18,14 +18,12 @@ class SUBCAST:
 
     def exec_amass(self):  # sourcery skip: avoid-builtin-shadow
         def check():
-            cc = subprocess.call("amass -help", shell=True)
-            print("Content", cc)
+            cc = subprocess.call("/snap/bin/amass -help", shell=True)
             return not cc
 
-        print("Checking for amass: ", check())
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
-        _comm = f"amass enum -v -d {self.domain} -o {_path}"
+        _comm = f"/snap/bin/amass enum -v -d {self.domain} -o {_path}"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         pull.gthen(f"Launched AMASS: {_comm}", pull.BOLD, pull.GREEN)
 
