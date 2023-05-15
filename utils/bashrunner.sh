@@ -44,7 +44,7 @@ while true; do
     else
         echo -en "${RED}[?]${RESET} Run only Sublist3r (Resource Efficient) [Y/n]      : ${YELLOW}"
         read osublist3r
-        if [ "$osublist3r" == "Y" ] && [ "$osublist3r" == "y" ]; then
+        if [ "$osublist3r" == "Y" ] || [ "$osublist3r" == "y" ]; then
             args="$args --only-sublister"
         fi
         args="$args"
