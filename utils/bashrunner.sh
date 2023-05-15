@@ -12,6 +12,7 @@ WHITE="\e[37m"
 RESET="\e[0m"
 
 while true; do
+    clear
     echo -en "${RED}[?]${RESET} Enter Domain name                                  : ${GREEN}"
     read domain
     session="${domain//.}"
