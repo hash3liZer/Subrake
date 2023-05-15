@@ -96,10 +96,8 @@ class SUBCAST:
         self.__RUN = []
         _data = []
         for func in _list:
-            _func = func()
-            print(_func)
-            if type(_func) == tuple:
-                (name, caller, subs) = func()
+            if _func := func():
+                (name, caller, subs) = _func
                 if name not in self.__RUN:
                     self.__RUN.append(name)                    
                     _data.append({
