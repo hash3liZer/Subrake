@@ -1,3 +1,4 @@
+import contextlib
 from subrake.pull import PULLY
 import tempfile
 import subprocess
@@ -60,7 +61,7 @@ class SUBCAST:
 
         if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir())
-        _subc = f"/usr/bin/knockpy.py {self.domain} --no-http -o {_path}"
+        _subc = f"knockpy.py {self.domain} --no-http -o {_path}"
         _comm = f"tmux split-window -d -t {self.sessname}.0.1 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         pull.gthen(f"Launched Knockpy: {_subc}", pull.BOLD, pull.GREEN)
@@ -133,7 +134,8 @@ class SUBCAST:
                         data = data.keys()
                         rtval += [ss for ss in data if ss != "_meta"]
 
-                    shutil.rmtree(client['subs'])
+                    with contextlib.suppress(Exception):
+                        shutil.rmtree(client['subs'])
 
         rtval = list(set(rtval))
         pull.gthen(f"Gathered a total of {len(rtval)} unique subdomains from subcaster", pull.BOLD, pull.YELLOW)
