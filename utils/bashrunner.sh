@@ -69,11 +69,11 @@ while true; do
 
     if screen -ls | grep -q "$domain"; then
     echo -e "${MAGENTA}[-]${RESET} A screen session with the name '$domain' already exists."
-    echo -e "${YELLOW}[?]${RESET} Do you want to jump to that session? (y/n) "
-    read -p choice
+    echo -en "${YELLOW}[?]${RESET} Do you want to jump to that session? (y/n) "
+    read choice
         case "$choice" in
             y|Y)
-                screen -S "$screen_name" -X quit
+                screen -r "$screen_name"
                 ;;
             *)
                 clear
