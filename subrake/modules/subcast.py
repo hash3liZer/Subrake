@@ -19,7 +19,7 @@ class SUBCAST:
 
     def __init__(self, prs):
         self.domain = prs.domain
-        self.sessname = prs.domain.replace(".", "_")
+        self.sessname = prs.domain.replace(".", "")
         self.onlysublister = prs.onlysublister
 
     def exec_amass(self):  # sourcery skip: avoid-builtin-shadow
