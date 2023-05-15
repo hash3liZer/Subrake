@@ -2,6 +2,11 @@
 
 homedir=$(pwd)
 
+# create a function
+function install_cockpit(){
+   
+}
+
 if ! [ $(id -u) -eq 0 ]; then
     echo "[-] The installer script must be run as root"
     exit -1;
@@ -52,8 +57,8 @@ cd "$homedir"
 pip3 install -r ./requirements.txt
 python3 ./setup.py install
 
-mkdir -p /opt/subtakes
-chmod 777 -R /opt/subtakes
+mkdir -p /usr/share/subtakes
+chmod 777 -R /usr/share/subtakes
 
 echo "Add folowing entry to your .bashrc: "
 echo ""
