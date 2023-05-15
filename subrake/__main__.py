@@ -424,43 +424,43 @@ class ENGINE:
 			pull.lflush(f"STATUS! Checking the domain {pull.YELLOW}[{tocheck}]{pull.END}            " , pull.DARKCYAN, pull.BOLD)
 
 			if _8code == 404 and _8head == "AmazonS3" and "NoSuchBucket" in _8resp:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}AmazonS3{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}AmazonS3{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 			if _8code == 'ERR' and _4code == 'ERR' and 'elasticbeanstalk.com' in _cname:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}ElasticBeanstalk{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}ElasticBeanstalk{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 			if "animaapp.io" in _cname and "The page you were looking for does not exist" in _8resp:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Anima APP{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Anima APP{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 			if "airee.ru" in _cname and "не оплатил сервис Айри.рф. Доступ к сайту временно невозможен" in _8resp and _8code == 200:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Airee.ru{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Airee.ru{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 			if _8code == 'ERR' and _4code == 'ERR' and 'trydiscourse.com' in _cname:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Discourse{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Discourse{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 			if "helprace.com" in _cname and _4code == 301:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}HelpRace{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}HelpRace{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 			if "52.16.160.97" in _ip and "Job Board Is Unavailable" in _4resp:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SmartJobBoard{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SmartJobBoard{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 			if _8code == 404 and _8head == "openresty" and "s.strikinglydns.com" in _cname:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Strikingly{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Strikingly{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 			if _8code == 404 and _8head == "Surge" and "surge.sh" in _cname:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Surge.sh{pull.END}", pull.BOLD, pull.RED )			
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}Surge.sh{pull.END}", pull.BOLD, pull.RED )			
 				_subdata['takeover'] = True
 
 			if _8code == 200 and "surveysparrow.com" in _cname and "SurveySparrow | Account Not Found" in _8resp:
-				pull.gthen( f"{pull.YELLOW}TAKEOVER DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SurveySparrow{pull.END}", pull.BOLD, pull.RED )
+				pull.gthen( f"{pull.YELLOW}TAKEOVER POSSIBILITY DETECTED!{pull.END} <==> [Sub] {pull.RED}{tocheck}{pull.END} [Service] {pull.RED}SurveySparrow{pull.END}", pull.BOLD, pull.RED )
 				_subdata['takeover'] = True
 
 	def get(self):
