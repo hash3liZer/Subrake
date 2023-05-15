@@ -2,11 +2,6 @@
 
 homedir=$(pwd)
 
-# create a function
-function install_cockpit(){
-   
-}
-
 if ! [ $(id -u) -eq 0 ]; then
     echo "[-] The installer script must be run as root"
     exit -1;
