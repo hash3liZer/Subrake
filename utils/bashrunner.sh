@@ -68,8 +68,9 @@ while true; do
     mkdir -p /opt/subtakes/$domain
 
     if screen -ls | grep -q "$domain"; then
-    echo -e "${RED}[-]${RESET} A screen session with the name '$domain' already exists."
-    read -ep "${RED}[?]${RESET} Do you want to kill the existing session? (y/n) " choice
+    echo -e "${MAGENTA}[-]${RESET} A screen session with the name '$domain' already exists."
+    echo -e "${YELLOW}[?]${RESET} Do you want to jump to that session? (y/n) "
+    read -p choice
         case "$choice" in
             y|Y)
                 screen -S "$screen_name" -X quit
