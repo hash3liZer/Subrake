@@ -67,7 +67,20 @@ while true; do
 
     mkdir -p /opt/subtakes/$domain
 
-    screen -r $domain -X kill > /dev/null 2>&1
+    if screen -ls | grep -q "$domain"; then
+    echo -e "${RED}[-]${RESET} A screen session with the name '$domain' already exists."
+    read -ep "${RED}[?]${RESET} Do you want to kill the existing session? (y/n) " choice
+        case "$choice" in
+            y|Y)
+                screen -S "$screen_name" -X quit
+                ;;
+            *)
+                clear
+                continue
+                ;;
+        esac
+    fi
+
     screen -S $domain -dm bash -c "subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read"
     screen -r $domain
     # clear
