@@ -17,6 +17,8 @@ while true; do
     read domain
     session="${domain//.}"
 
+    args="-d $domain -o /usr/share/cockpit/static/subtakes/$domain/subdomains.txt --csv /usr/share/cockpit/static/subtakes/$domain/report.csv --filter"
+
     if tmux has-session -t "$session" 2>/dev/null; then
     echo -e "${MAGENTA}[-]${RESET} A screen session with the name '$domain' already exists."
     echo -en "${YELLOW}[?]${RESET} Do you want to jump to that session or skip? (y/n) "
@@ -47,7 +49,6 @@ while true; do
         if [ "$osublist3r" == "Y" ] || [ "$osublist3r" == "y" ]; then
             args="$args --only-sublister"
         fi
-        echo $args
     fi
 
     echo -en "${RED}[?]${RESET} Want to provide any wordlist [default/empty for no]: ${MAGENTA}"
@@ -61,8 +62,6 @@ while true; do
 
     echo -en "${RED}[?]${RESET} Number of threads to generate [25]                 : ${YELLOW}"
     read threads
-
-    args="-d $domain -o /usr/share/cockpit/static/subtakes/$domain/subdomains.txt --csv /usr/share/cockpit/static/subtakes/$domain/report.csv --filter"
 
     if [ "$omodule" != "Y" ] && [ "$omodule" != "y" ]; then
         args="$args --skip-search"
