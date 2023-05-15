@@ -60,7 +60,7 @@ while true; do
     if [ "$subcast" != "Y" ] && [ "$subcast" != "y" ]; then
         args="$args --skip-subcast"
     else
-        args="$args --only-sublister"
+        args="$args"
     fi
 
     if [ "$wordlist" != "" ]; then
