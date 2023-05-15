@@ -19,6 +19,7 @@ class SUBCAST:
 
     def __init__(self, prs):
         self.domain = prs.domain
+        self.sessname = prs.domain.replace(".", "_")
         self.onlysublister = prs.onlysublister
 
     def exec_amass(self):  # sourcery skip: avoid-builtin-shadow
@@ -30,7 +31,8 @@ class SUBCAST:
         CALLS['amass'] = True
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
-        _comm = f"tmux new-session -d '/snap/bin/amass enum -v -d {self.domain} -o {_path}'"
+        _subc = f"/snap/bin/amass enum -v -d {self.domain} -o {_path}"
+        _comm = f"tmux split-window -h -t {self.sessname}:0 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True)
         pull.gthen(f"Launched AMASS: {_comm}", pull.BOLD, pull.GREEN)
 
@@ -49,7 +51,8 @@ class SUBCAST:
         CALLS['sublister'] = True
         if not check(): pull.lthen("Sublist3r not located on the machine. Skipping Sublist3r", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "sublister.subs")
-        _comm = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
+        _subc = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
+        _comm = f"tmux split-window -t {self.sessname}:0.1 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         pull.gthen(f"Launched Sublist3r: {_comm}", pull.BOLD, pull.GREEN)
 
@@ -68,7 +71,8 @@ class SUBCAST:
         CALLS['knockpy'] = True
         if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir())
-        _comm = f"knockpy.py {self.domain} --no-http -o {_path}"
+        _subc = f"knockpy.py {self.domain} --no-http -o {_path}"
+        _comm = f"tmux split-window -h -t {self.sessname}.0.2 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         pull.gthen(f"Launched Knockpy: {_comm}", pull.BOLD, pull.GREEN)
 
