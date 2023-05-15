@@ -47,7 +47,7 @@ while true; do
         if [ "$osublist3r" == "Y" ] || [ "$osublist3r" == "y" ]; then
             args="$args --only-sublister"
         fi
-        args="$args"
+        echo $args
     fi
 
     echo -en "${RED}[?]${RESET} Want to provide any wordlist [default/empty for no]: ${MAGENTA}"
