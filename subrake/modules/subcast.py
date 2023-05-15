@@ -7,6 +7,11 @@ import os
 import shutil
 
 pull = PULLY()
+CALLS = {
+    'amass': False,
+    'sublister': False,
+    'knockpy': False
+}
 
 class SUBCAST:
 
@@ -18,9 +23,11 @@ class SUBCAST:
 
     def exec_amass(self):  # sourcery skip: avoid-builtin-shadow
         def check():
-            cc = subprocess.call("/snap/bin/amass -help", shell=True)
+            cc = subprocess.call("/snap/bin/amass -help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return not cc
 
+        if CALLS['amass']: return
+        CALLS['amass'] = True
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
         _comm = f"/snap/bin/amass enum -v -d {self.domain} -o {_path}"
@@ -38,6 +45,8 @@ class SUBCAST:
             cc = subprocess.call("sublist3r.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return not cc
 
+        if CALLS['sublister']: return
+        CALLS['sublister'] = True
         if not check(): pull.lthen("Sublist3r not located on the machine. Skipping Sublist3r", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "sublister.subs")
         _comm = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
@@ -55,6 +64,8 @@ class SUBCAST:
             cc = subprocess.call("knockpy.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return not cc
 
+        if CALLS['knockpy']: return
+        CALLS['knockpy'] = True
         if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir())
         _comm = f"knockpy.py {self.domain} --no-http -o {_path}"
