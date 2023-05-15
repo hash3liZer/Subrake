@@ -30,8 +30,8 @@ class SUBCAST:
         CALLS['amass'] = True
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED); return
         _path = os.path.join(tempfile.gettempdir(), "amass.subs")
-        _comm = f"/snap/bin/amass enum -v -d {self.domain} -o {_path}"
-        exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        _comm = f"tmux new-session -d '/snap/bin/amass enum -v -d {self.domain} -o {_path}'"
+        exec  = subprocess.Popen(_comm, shell=True)
         pull.gthen(f"Launched AMASS: {_comm}", pull.BOLD, pull.GREEN)
 
         return (
