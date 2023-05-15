@@ -10,13 +10,16 @@ pull = PULLY()
 
 class SUBCAST:
 
+    __RUN = []
+
     def __init__(self, prs):
         self.domain = prs.domain
         self.onlysublister = prs.onlysublister
 
     def exec_amass(self):  # sourcery skip: avoid-builtin-shadow
         def check():
-            cc = subprocess.call("amass -help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            cc = subprocess.call("amass -help", shell=True)
+            print("Content", cc)
             return not cc
 
         print("Checking for amass: ", check())
@@ -81,15 +84,18 @@ class SUBCAST:
             else [self.exec_amass, self.exec_sublister, self.exec_knockpy]
         )
 
+        self.__RUN = []
         _data = []
         for func in _list:
             if _func := func():
                 (name, caller, subs) = func()
-                _data.append({
-                    'name': name,
-                    'caller': caller,
-                    'subs'  : subs
-                })
+                if name not in self.__RUN:
+                    self.__RUN.append(name)                    
+                    _data.append({
+                        'name': name,
+                        'caller': caller,
+                        'subs'  : subs
+                    })
 
         pull.gthen("Waiting for all the subcasters to finish ...", pull.BOLD, pull.YELLOW)
         calls = 0
