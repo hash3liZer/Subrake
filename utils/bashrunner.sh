@@ -67,7 +67,7 @@ while true; do
 
     mkdir -p /opt/subtakes/$domain
 
-    screen -S $domain -dm bash -c "subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit"
+    screen -S $domain -dm bash -c "subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read;"
     screen -r $domain
-    clear
+    # clear
 done
