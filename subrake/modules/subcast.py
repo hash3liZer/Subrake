@@ -5,6 +5,7 @@ import subprocess
 import time
 import json
 import os
+import getpass
 import shutil
 
 pull = PULLY()
@@ -18,13 +19,18 @@ class SUBCAST:
         self.sessname = prs.domain.replace(".", "")
         self.onlysublister = prs.onlysublister
 
+        if not os.path.isdir(os.path.join("/home/", getpass.getuser(), ".subrake", self.sessname)):
+            os.makedirs(os.path.join("/home/", getpass.getuser(), ".subrake", self.sessname))
+
+        self.dirpath = os.path.join("/home/", getpass.getuser(), ".subrake", self.sessname)
+
     def exec_sublister(self):  # sourcery skip: avoid-builtin-shadow
         def check():
             cc = subprocess.call("sublist3r.py --help", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return not cc
 
         if not check(): pull.lthen("Sublist3r not located on the machine. Skipping Sublist3r", pull.BOLD, pull.RED); return
-        _path = os.path.join(tempfile.gettempdir(), f"sublister.{self.sessname}.subs")
+        _path = os.path.join(tempfile.gettempdir(), "sublister.subs")
         _subc = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
         _comm = f"tmux split-window -h -d -t {self.sessname}:0 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -42,7 +48,7 @@ class SUBCAST:
             return not cc
         
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED); return
-        _path = os.path.join(tempfile.gettempdir(), f"amass.{self.sessname}.subs")
+        _path = os.path.join(tempfile.gettempdir(), "amass.subs")
         _subc = f"/snap/bin/amass enum -v -d {self.domain} -o {_path}"
         _comm = f"tmux split-window -d -t {self.sessname}:0.1 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True)
@@ -60,7 +66,7 @@ class SUBCAST:
             return not cc
 
         if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED); return
-        _path = os.path.join(tempfile.gettempdir(), f"knockpy.{self.sessname}")
+        _path = os.path.join(tempfile.gettempdir(), "knockpy")
         _subc = f"knockpy.py {self.domain} --no-http -o {_path}"
         _comm = f"tmux split-window -d -t {self.sessname}.0.1 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
