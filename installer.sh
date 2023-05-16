@@ -18,11 +18,13 @@ cp ./utils/get_all_subs.sh /usr/bin/get_all_subs
 cp ./utils/get_all_takeovers.sh /usr/bin/get_all_takeovers
 cp ./utils/get_all_domains.sh /usr/bin/get_all_domains
 cp ./utils/get_active_sessions.sh /usr/bin/get_active_sessions
+cp ./utils/get_tables.sh /usr/bin/get_tables
 chmod +x /usr/bin/bashrunner
 chmod +x /usr/bin/get_all_subs
 chmod +x /usr/bin/get_all_takeovers
 chmod +x /usr/bin/get_all_domains
 chmod +x /usr/bin/get_active_sessions
+chmod +x /usr/bin/get_tables
 
 source /etc/os-release
 
