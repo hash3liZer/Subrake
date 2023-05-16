@@ -17,8 +17,10 @@ while true; do
     read domain
 
     echo "$domain" > /tmp/testdomain.txt
-    if [ "$domain" == "" ]; then
-        exit
+    stripped_domain="${domain#"${domain%%[![:space:]]*}"}"
+    if [[ -z "${stripped_domain}" ]]; then
+        echo "Reached here" > /tmp/reacher.txt
+        exit;
     fi
 
     session="${domain//.}"
