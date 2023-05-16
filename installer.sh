@@ -14,7 +14,15 @@ if ! [[ "$(cat /etc/os-release | grep "^ID=" | cut -d= -f2)" == "ubuntu" ]]; the
 fi
 
 cp ./utils/bashrunner.sh /usr/bin/bashrunner
+cp ./utils/get_all_subs.sh /usr/bin/get_all_subs
+cp ./utils/get_all_takeovers.sh /usr/bin/get_all_takeovers
+cp ./utils/get_all_domains.sh /usr/bin/get_all_domains
+cp ./utils/get_active_sessions.sh /usr/bin/get_active/sessions
 chmod +x /usr/bin/bashrunner
+chmod +x /usr/bin/get_all_subs
+chmod +x /usr/bin/get_all_takeovers
+chmod +x /usr/bin/get_all_domains
+chmod +x /usr/bin/get_active_sessions
 
 source /etc/os-release
 

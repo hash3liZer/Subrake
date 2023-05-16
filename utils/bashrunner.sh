@@ -15,6 +15,11 @@ while true; do
     clear
     echo -en "${RED}[?]${RESET} Enter Domain name                                  : ${GREEN}"
     read domain
+
+    if [ "$domain" == "" ]; then
+        continue
+    fi
+
     session="${domain//.}"
 
     args="-d $domain -o /usr/share/cockpit/static/subtakes/$domain/subdomains.txt --csv /usr/share/cockpit/static/subtakes/$domain/report.csv --filter"
@@ -88,6 +93,7 @@ while true; do
     fi
 
     mkdir -p /usr/share/cockpit/static/subtakes/$domain
+    echo "$(date)" > /usr/share/cockpit/static/subtakes/$domain/datetime.txt
 
     tmux new-session -d -s "$session" "bash -c 'subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit'"
     tmux attach-session -t "$session"
