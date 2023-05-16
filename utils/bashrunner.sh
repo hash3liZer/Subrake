@@ -16,13 +16,6 @@ while true; do
     echo -en "${RED}[?]${RESET} Enter Domain name                                  : ${GREEN}"
     read domain
 
-    echo "$domain" > /tmp/testdomain.txt
-    stripped_domain="${domain#"${domain%%[![:space:]]*}"}"
-    if [[ -z "${stripped_domain}" ]]; then
-        echo "Reached here" > /tmp/reacher.txt
-        exit;
-    fi
-
     session="${domain//.}"
 
     args="-d $domain -o /usr/share/cockpit/static/subtakes/$domain/subdomains.txt --csv /usr/share/cockpit/static/subtakes/$domain/report.csv --filter"
@@ -70,6 +63,10 @@ while true; do
 
     echo -en "${RED}[?]${RESET} Number of threads to generate [25]                 : ${YELLOW}"
     read threads
+
+    if [ -z "$omodule" ] && [ -z "$subcast" ] && [ -z "$wordlist" ]; then
+        exit 1
+    fi
 
     if [ "$omodule" != "Y" ] && [ "$omodule" != "y" ]; then
         args="$args --skip-search"
