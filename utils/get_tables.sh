@@ -5,6 +5,7 @@ folder="/usr/share/cockpit/static/subtakes"
 # Get the list of directories under the folder
 directories=$(find "$folder" -mindepth 1 -maxdepth 1 -type d)
 
+# Initialize the rtval associative array
 declare -A rtval
 
 # Loop through each directory
@@ -13,7 +14,7 @@ for dir in $directories; do
     basename=$(basename "$dir")
     sessionname="${basename//.}"
 
-    # Initialize the section dictionary
+    # Initialize the section associative array
     declare -A section
 
     # Emptying the section
@@ -25,12 +26,12 @@ for dir in $directories; do
 
     # Date Collection
     if [ -e "$dir/datetime.txt" ]; then
-        section["datetime"]="$(cat "$dir/datetime.txt")"
+        section["datetime"]=$(cat "$dir/datetime.txt")
     fi
 
     # Subdomain Collection
     if [ -e "$dir/report.csv" ]; then
-        section["subdomains"]="$(tail -n +2 "$dir/report.csv" | grep -i "$basename" | wc -l)"
+        section["subdomains"]=$(tail -n +2 "$dir/report.csv" | grep -i "$basename" | wc -l)
     fi
 
     # Status Collection
@@ -46,13 +47,26 @@ for dir in $directories; do
 
     # Takeover Collection
     if [ -e "$dir/report.csv" ] && [ -e "$dir/subdomains.txt" ] && [ -e "$dir/datetime.txt" ]; then
-        section["takeovers"]="$(tail -n +2 "$dir/report.csv" | grep -i ",Possible" | wc -l)"
+        section["takeovers"]=$(tail -n +2 "$dir/report.csv" | grep -i ",Possible" | wc -l)
     fi
 
-    # Add the section to the rtval dictionary
+    # Add the section to the rtval array
     rtval["$basename"]="${section[@]}"
 done
 
-# Convert the rtval dictionary to JSON using jq
-json_string=$(declare -p rtval | jq -c .)
+# Construct the JSON string manually
+json_string="{"
+for key in "${!rtval[@]}"; do
+    json_string+="\"$key\": ["
+    section_values="${rtval[$key]}"
+    IFS=" " read -r -a values_array <<< "$section_values"
+    for value in "${values_array[@]}"; do
+        json_string+="\"$value\","
+    done
+    json_string="${json_string%,}"  # Remove the trailing comma
+    json_string+="],"
+done
+json_string="${json_string%,}"  # Remove the trailing comma
+json_string+="}"
+
 echo "$json_string"
