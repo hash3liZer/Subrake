@@ -26,7 +26,9 @@ for dir in $directories; do
 
     # Date Collection
     if [ -e "$dir/datetime.txt" ]; then
-        section["datetime"]=$(cat "$dir/datetime.txt")
+        data=$(cat "$dir/datetime.txt")
+        data=${data// /_}
+        section["datetime"]="$data"
     fi
 
     # Subdomain Collection
