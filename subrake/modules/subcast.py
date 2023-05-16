@@ -30,7 +30,7 @@ class SUBCAST:
             return not cc
 
         if not check(): pull.lthen("Sublist3r not located on the machine. Skipping Sublist3r", pull.BOLD, pull.RED); return
-        _path = os.path.join(tempfile.gettempdir(), "sublister.subs")
+        _path = os.path.join(self.dirpath, "sublister.subs")
         _subc = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
         _comm = f"tmux split-window -h -d -t {self.sessname}:0 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -48,7 +48,7 @@ class SUBCAST:
             return not cc
         
         if not check(): pull.lthen("Amass not located on the machine. Skipping AMASS", pull.BOLD, pull.RED); return
-        _path = os.path.join(tempfile.gettempdir(), "amass.subs")
+        _path = os.path.join(self.dirpath, "amass.subs")
         _subc = f"/snap/bin/amass enum -v -d {self.domain} -o {_path}"
         _comm = f"tmux split-window -d -t {self.sessname}:0.1 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True)
@@ -66,7 +66,7 @@ class SUBCAST:
             return not cc
 
         if not check(): pull.lthen("Knockpy not located on the machine. Skipping KNOCKpy", pull.BOLD, pull.RED); return
-        _path = os.path.join(tempfile.gettempdir(), "knockpy")
+        _path = os.path.join(self.dirpath, "knockpy")
         _subc = f"knockpy.py {self.domain} --no-http -o {_path}"
         _comm = f"tmux split-window -d -t {self.sessname}.0.1 '{_subc}'"
         exec  = subprocess.Popen(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
