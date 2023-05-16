@@ -16,6 +16,7 @@ while true; do
     echo -en "${RED}[?]${RESET} Enter Domain name                                  : ${GREEN}"
     read domain
 
+    echo "$domain" > /tmp/testdomain.txt
     if [ "$domain" == "" ]; then
         exit
     fi
