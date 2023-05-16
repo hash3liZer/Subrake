@@ -43,7 +43,7 @@ for dir in $directories; do
         if [ -e "$dir/report.csv" ] && [ -e "$dir/subdomains.txt" ] && [ -e "$dir/datetime.txt" ]; then
             section["status"]="Completed"
         else
-            section["status"]="Stopped"
+            section["status"]="Killed"
         fi
     fi
 
