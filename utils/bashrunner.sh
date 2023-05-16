@@ -17,7 +17,7 @@ while true; do
     read domain
 
     if [ "$domain" == "" ]; then
-        continue
+        exit
     fi
 
     session="${domain//.}"
