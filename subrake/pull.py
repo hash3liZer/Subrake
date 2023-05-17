@@ -21,7 +21,7 @@ __logo__ = r"""%s
                                %s@hash3liZer \ @vareesha / @nabeeha%s"""
 
 __help__ = """
-A Subdomain Enumeration and Validation tool for Bug Bounty and Pentesters.
+A Subdomain Takeover Assessment toolkit for Bug Bounty and Pentesters.
 
 Options:
    Args               Description                                    Default
