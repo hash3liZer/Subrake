@@ -39,6 +39,8 @@ pull  = PULLY()
 roll  = ROUNDER()
 eeips = []
 
+# RECON
+# 1. DNS RESOLVE
 class NMHANDLER:
 
 	def __init__(self, dm, eeips):
@@ -74,6 +76,8 @@ class NMHANDLER:
 	def def_ps(self):
 			pull.slasher( "Exclude : * -> Specified -> %s" % (pull.YELLOW + ",".join(self.eeips) + pull.END) )
 
+# RECON
+# FALSE POSITIVES
 class NAMESERVER:
 
 	RECORDS = []
@@ -126,6 +130,8 @@ class NAMESERVER:
 	def def_ps(self):
 			pull.slasher( "Exclude : * -> Specified -> %s" % ",".join(self.eeips) )
 
+# OSINT
+# ONLINE SEARCH ENGINES
 class ONLINE:
 
 	SUBDOMAINS = []
@@ -174,6 +180,10 @@ class ONLINE:
 			pass
 		return
 
+# SURFACE DISCOVERY
+# HTTP STATUS CODES, HEADERS, AND RESPONSES
+# CNAME EXTRACTION
+# TAKEOVER DETECTION
 class ENGINE:
 
 	STOPPRINTER = False
@@ -294,6 +304,7 @@ class ENGINE:
 
 		return roll.seperator( code, headers, response )
 
+	# ENUMERATION OF STATUS CODE, HEADERS AND RESPONSES
 	def handler(self, _subdomain):
 		self.CTHREADS += 1
 
@@ -364,6 +375,7 @@ class ENGINE:
 
 		self.ENGAGER = False
 
+	# ENUMERATION OF CNAMES
 	def engrosser(self, _subdomain, _ports):
 		self.CTHREADS += 1
 
@@ -404,6 +416,7 @@ class ENGINE:
 		while self.CTHREADS > 0:
 			time.sleep( 0.5 )
 
+	# DETECT TAKEOVER
 	def takeover(self):
 		for tocheck in self.checklist:
 			try:
@@ -576,6 +589,7 @@ class WRITER:
 def main():
 	parser = optparse.OptionParser( add_help_option=False )
 
+	# Help MAnual. PArsing section
 	parser.add_option('-h', '--help', dest='help', action='store_true', default=False)
 	parser.add_option('-d', '--domain', dest="domain", type="string", default="")
 	parser.add_option('-w', '--wordlists', dest="wordlists", type="string", default="")
@@ -597,6 +611,7 @@ def main():
 	if options.help:
 		pull.help(); sys.exit(0)
 	else:
+		## RECON
 		pull.linebreak()
 		parser  = PARSER( options, args )
 		pull.gthen( "CREATED ENVIRONMENT. EVERYTHING IN PLACE", pull.BOLD, pull.DARKCYAN )
@@ -617,6 +632,8 @@ def main():
 		dnssec.def_ps()
 		pull.linebreak( 1 )
 
+		# OSINT
+		# SUBCAST
 		if parser.subcast:
 			pull.gthen( "Starting Subcaster to locate more subdomains ->", pull.BOLD, pull.DARKCYAN )
 			pull.linebreak( 1 )
@@ -626,6 +643,7 @@ def main():
 		else:
 			subcast_subs = list()
 
+		# ONLINE
 		if parser.online:
 			pull.gthen( "Looking for Subdomains Online ->", pull.BOLD, pull.DARKCYAN )
 			pull.linebreak()
@@ -639,6 +657,7 @@ def main():
 		osubs += subcast_subs
 		osubs += ["test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10"]
 
+		# SURFACE DISCOVERY
 		pull.gthen( "Looking for subdomains with finite Resolution", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak()
 		eenge = ENGINE( parser.domain, parser.checklist, dip, parser.eeips, dcn, osubs, parser.threads )
@@ -652,12 +671,15 @@ def main():
 		eenge.engross( parser.ports )
 		pull.linebreak( 1 )
 		pull.gthen( "Deducing results for the final takeover CASES", pull.BOLD, pull.DARKCYAN )
+		
+		# TAKEOVER
 		eenge.takeover()
 		pull.linebreak( )
 		pull.linebreak( )
 
 		fpush = WRITER(parser.domain, parser.output, parser.csv, eenge.get(), dip, parser.eeips, dcn)
 
+		# REPORT
 		if parser.filter:
 			pull.gthen( "Filtering domains with Clashing IPs", pull.BOLD, pull.DARKCYAN )
 			fpush.engage()
