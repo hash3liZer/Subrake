@@ -144,5 +144,5 @@ class SUBCAST:
                     #     shutil.rmtree(client['subs'])
 
         rtval = list(set(rtval))
-        pull.gthen(f"Gathered a total of {len(rtval)} unique subdomains from subcaster", pull.BOLD, pull.YELLOW)
+        pull.gthen(f"Gathered a total of {len(rtval) or 1} unique subdomains from subcaster", pull.BOLD, pull.YELLOW)
         return rtval
