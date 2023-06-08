@@ -77,8 +77,8 @@ function setup_cockpit(){
   cp ./plugins/branding/logo.png /usr/share/cockpit/branding/ubuntu/
   cp ./plugins/branding/logo.png /usr/share/cockpit/branding/debian/
 
-  mkdir -p /usr/share/subtakes
-  chmod 777 -R /usr/share/subtakes
+  mkdir -p /usr/share/cockpit/static/subtakes
+  chmod 777 -R /usr/share/cockpit/static/subtakes
   echo "Cockpit is installed and enabled on port 9090"
 }
 
