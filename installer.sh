@@ -40,7 +40,7 @@ function copy_scripts(){
 }
 
 function add_user(){
-  echo -e "\n\n\n\n\n"
+  echo -e "\n"
   echo "[-] Setting up cockpit user ..."
   echo -n "[?] Enter username: "
   read cusername
@@ -51,8 +51,9 @@ function add_user(){
 
   if [ $? -ne 0 ]; then
     adduser --gecos "" --disabled-password $cusername
-    echo "$cusername:$cpassword" | chpasswd
   fi 
+
+  echo "$cusername:$cpassword" | chpasswd
 }
 
 function setup_cockpit(){
