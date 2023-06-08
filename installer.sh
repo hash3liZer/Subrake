@@ -57,12 +57,17 @@ function add_user(){
 
 function setup_cockpit(){
   systemctl enable --now cockpit.socket
-  mv /usr/share/cockpit/apps/manifest.json /usr/share/cockpit/apps/manifest.json.bak
-  mv /usr/share/cockpit/networkmanager/manifest.json /usr/share/cockpit/networkmanager/manifest.json.bak
-  mv /usr/share/cockpit/packagekit/manifest.json /usr/share/cockpit/packagekit/manual/manifest.json.bak
-  mv /usr/share/cockpit/storaged/manifest.json /usr/share/cockpit/storaged/manifest.json.bak
-  mv /usr/share/cockpit/users/manifest.json /usr/share/cockpit/users/manifest.json.bak
-  mv ./plugins/subruns /usr/share/cockpit/
+  cp /usr/share/cockpit/apps/manifest.json /usr/share/cockpit/apps/manifest.json.bak
+  cp /usr/share/cockpit/networkmanager/manifest.json /usr/share/cockpit/networkmanager/manifest.json.bak
+  cp /usr/share/cockpit/packagekit/manifest.json /usr/share/cockpit/packagekit/manual/manifest.json.bak
+  cp /usr/share/cockpit/storaged/manifest.json /usr/share/cockpit/storaged/manifest.json.bak
+  cp /usr/share/cockpit/users/manifest.json /usr/share/cockpit/users/manifest.json.bak
+
+  # Copy subrun module
+  cp ./plugins/subruns /usr/share/cockpit/
+
+  # Copy static files
+  cp ./plugins/static/* /usr/share/cockpit/static/
 
   mkdir -p /usr/share/subtakes
   chmod 777 -R /usr/share/subtakes
