@@ -2,41 +2,45 @@
 
 homedir=$(pwd)
 
-if ! [ $(id -u) -eq 0 ]; then
-    echo "[-] The installer script must be run as root"
-    exit -1;
-fi
+function init(){
+  if ! [ $(id -u) -eq 0 ]; then
+      echo "[-] The installer script must be run as root"
+      exit -1;
+  fi
 
-# Check if underlying operating system ir ubuntu or not
-if ! [[ "$(cat /etc/os-release | grep "^ID=" | cut -d= -f2)" == "ubuntu" ]]; then
-    echo "[-] The installer script is only prepare for ubuntu operating systems"
-    exit -1;
-fi
+  # Check if underlying operating system ir ubuntu or not
+  if ! [[ "$(cat /etc/os-release | grep "^ID=" | cut -d= -f2)" == "ubuntu" ]]; then
+      echo "[-] The installer script is only prepare for ubuntu operating systems"
+      exit -1;
+  fi
+}
 
-cp ./utils/bashrunner.sh /usr/bin/bashrunner
-cp ./utils/get_all_subs.sh /usr/bin/get_all_subs
-cp ./utils/get_all_takeovers.sh /usr/bin/get_all_takeovers
-cp ./utils/get_all_domains.sh /usr/bin/get_all_domains
-cp ./utils/get_active_sessions.sh /usr/bin/get_active_sessions
-cp ./utils/get_tables.sh /usr/bin/get_tables
-chmod +x /usr/bin/bashrunner
-chmod +x /usr/bin/get_all_subs
-chmod +x /usr/bin/get_all_takeovers
-chmod +x /usr/bin/get_all_domains
-chmod +x /usr/bin/get_active_sessions
-chmod +x /usr/bin/get_tables
+function install_dependencies(){
+  source /etc/os-release
+  rm -rf /etc/apt/preferences.d/nosnap.pref
+  apt update
+  apt install -y xterm python3-dev python3 python3-pip snap unzip git screen tmux
+  apt install -y -t ${UBUNTU_CODENAME}-backports cockpit
+  ln -s /usr/bin/python3 /usr/bin/python 2>/dev/null
+}
 
-source /etc/os-release
-
-rm -rf /etc/apt/preferences.d/nosnap.pref
-apt update
-apt install -y xterm python3-dev python3 python3-pip snap unzip git screen tmux
-apt install -y -t ${UBUNTU_CODENAME}-backports cockpit
-
-ln -s /usr/bin/python3 /usr/bin/python 2>/dev/null
+function copy_scripts(){
+  cp ./utils/bashrunner.sh /usr/bin/bashrunner
+  cp ./utils/get_all_subs.sh /usr/bin/get_all_subs
+  cp ./utils/get_all_takeovers.sh /usr/bin/get_all_takeovers
+  cp ./utils/get_all_domains.sh /usr/bin/get_all_domains
+  cp ./utils/get_active_sessions.sh /usr/bin/get_active_sessions
+  cp ./utils/get_tables.sh /usr/bin/get_tables
+  chmod +x /usr/bin/bashrunner
+  chmod +x /usr/bin/get_all_subs
+  chmod +x /usr/bin/get_all_takeovers
+  chmod +x /usr/bin/get_all_domains
+  chmod +x /usr/bin/get_active_sessions
+  chmod +x /usr/bin/get_tables
+}
 
 function add_user(){
-  echo "\n\n\n\n\n"
+  echo -e "\n\n\n\n\n"
   echo "[-] Setting up cockpit user ..."
   echo -n "[?] Enter username: "
   read cusername
@@ -99,6 +103,9 @@ function final_setup(){
   python3 ./setup.py install
 }
 
+init
+install_dependencies
+copy_scripts
 add_user
 setup_cockpit
 setup_wordlists
