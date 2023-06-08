@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="subruns.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="icons.css">
+    <link rel="stylesheet" href="mycustom.css">
+    <script src="../base1/cockpit.js"></script>
+  </head>
+  <body>
+    <div class="main-content">
+        <div class="section__content section__content--p30">
+            <div class="container-fluid">
+                <div class="row m-t-25">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="overview-item overview-item--c1">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="zmdi zmdi-account-o"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 id="headSubdomainsFound"><div class="spinner-border text-info" role="status"></div></h2>
+                                        <span>subdmains found</span>
+                                    </div>
+                                </div>
+                                <div class="overview-chart">
+                                    <canvas id="widgetChart1"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="overview-item overview-item--c2">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="zmdi zmdi-shopping-cart"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 id="headTakeoversFound"><div class="spinner-border text-info" role="status"></div></h2>
+                                        <span>takeovers</span>
+                                    </div>
+                                </div>
+                                <div class="overview-chart">
+                                    <canvas id="widgetChart2"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="overview-item overview-item--c3">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="zmdi zmdi-calendar-note"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 id="headScannedDomains"><div class="spinner-border text-info" role="status"></div></h2>
+                                        <span>scanned domains</span>
+                                    </div>
+                                </div>
+                                <div class="overview-chart">
+                                    <canvas id="widgetChart3"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="overview-item overview-item--c4">
+                            <div class="overview__inner">
+                                <div class="overview-box clearfix">
+                                    <div class="icon">
+                                        <i class="zmdi zmdi-money"></i>
+                                    </div>
+                                    <div class="text">
+                                        <h2 id="headSessions"><div class="spinner-border text-info" role="status"></div></h2>
+                                        <span>active sessions</span>
+                                    </div>
+                                </div>
+                                <div class="overview-chart">
+                                    <canvas id="widgetChart4"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg">
+                        <div id="progressBar" class="progress progress-custom">
+                            <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated mybar" role="progressbar" style="width: 100% !important" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="table-responsive table--no-card m-b-40">
+                            <table class="table table-borderless table-striped table-earning">
+                                <thead>
+                                    <tr>
+                                        <th>date</th>
+                                        <th>Subdomains</th>
+                                        <th>Domain</th>
+                                        <th class="text-right">Takeovers</th>
+                                        <th class="text-right">Status</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appendSection">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END MAIN CONTENT-->      
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <script type="text/javascript" src="handsontable.min.js"></script>
+    <script type="text/javascript" src="subruns.js"></script>
+  </body>
+</html>

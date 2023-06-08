@@ -35,36 +35,75 @@ apt install -y -t ${UBUNTU_CODENAME}-backports cockpit
 
 ln -s /usr/bin/python3 /usr/bin/python 2>/dev/null
 
-# Check if a directory doesn't exist
-if ! [ -d "/opt/SecLists" ]; then
-  wget "https://github.com/danielmiessler/SecLists/archive/refs/tags/2023.1.zip" -O /tmp/SecLists.zip
-  unzip /tmp/SecLists.zip -d /opt/
-  mv "/opt/SecLists-2023.1" /opt/SecLists
-  chmod 777 -R /opt/SecLists
-  rm -rf /tmp/SecLists.zip
-fi
+function add_user(){
+  echo "\n\n\n\n\n"
+  echo "[-] Setting up cockpit user ..."
+  echo -n "[?] Enter username: "
+  read cusername
+  echo -n "[?] Enter password: "
+  read -s cpassword
 
-cd /opt/
-git clone https://github.com/aboul3la/Sublist3r.git
-cd Sublist3r
-pip3 install -r requirements.txt
-ln -s /opt/Sublist3r/sublist3r.py /usr/bin/sublist3r.py
+  getent passwd $cusername >/dev/null
 
-cd /opt/
-git clone https://github.com/guelfoweb/knock
-cd knock
-pip3 install -r requirements.txt
-chmod +x knockpy.py
-ln -s /opt/knock/knockpy.py /usr/bin/knockpy.py
+  if [ $? -ne 0 ]; then
+    adduser --gecos "" --disabled-password $cusername
+    echo "$cusername:$cpassword" | chpasswd
+  fi 
+}
 
-snap install amass
+function setup_cockpit(){
+  systemctl enable --now cockpit.socket
+  mv /usr/share/cockpit/apps/manifest.json /usr/share/cockpit/apps/manifest.json.bak
+  mv /usr/share/cockpit/networkmanager/manifest.json /usr/share/cockpit/networkmanager/manifest.json.bak
+  mv /usr/share/cockpit/packagekit/manifest.json /usr/share/cockpit/packagekit/manual/manifest.json.bak
+  mv /usr/share/cockpit/storaged/manifest.json /usr/share/cockpit/storaged/manifest.json.bak
+  mv /usr/share/cockpit/users/manifest.json /usr/share/cockpit/users/manifest.json.bak
+  mv ./plugins/subruns /usr/share/cockpit/
 
-cd "$homedir"
-pip3 install -r ./requirements.txt
-python3 ./setup.py install
+  mkdir -p /usr/share/subtakes
+  chmod 777 -R /usr/share/subtakes
+  echo "Cockpit is installed and enabled on port 9090"
+}
 
-mkdir -p /usr/share/subtakes
-chmod 777 -R /usr/share/subtakes
+function setup_wordlists(){
+  # Check if a directory doesn't exist
+  if ! [ -d "/opt/SecLists" ]; then
+    wget "https://github.com/danielmiessler/SecLists/archive/refs/tags/2023.1.zip" -O /tmp/SecLists.zip
+    unzip /tmp/SecLists.zip -d /opt/
+    mv "/opt/SecLists-2023.1" /opt/SecLists
+    chmod 777 -R /opt/SecLists
+    rm -rf /tmp/SecLists.zip
+  fi
+}
+
+function setup_plugins(){
+  cd /opt/
+  git clone https://github.com/aboul3la/Sublist3r.git
+  cd Sublist3r
+  pip3 install -r requirements.txt
+  ln -s /opt/Sublist3r/sublist3r.py /usr/bin/sublist3r.py
+
+  # cd /opt/
+  # git clone https://github.com/guelfoweb/knock
+  # cd knock
+  # pip3 install -r requirements.txt
+  # chmod +x knockpy.py
+  # ln -s /opt/knock/knockpy.py /usr/bin/knockpy.py
+
+  # snap install amass
+}
+
+function final_setup(){
+  cd "$homedir"
+  pip3 install -r ./requirements.txt
+  python3 ./setup.py install
+}
+
+add_user
+setup_cockpit
+setup_wordlists
+setup_plugins
+final_setup
 
 echo "Add folowing entry to your .bashrc: "
 echo ""

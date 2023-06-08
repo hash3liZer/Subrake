@@ -1,0 +1,10 @@
+{
+    "version": 0,
+    "content-security-policy": "default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';",
+    "tools": {
+        "pinger": {
+            "label": "Sub Runs",
+            "path": "subruns.html"
+        }
+    }
+}

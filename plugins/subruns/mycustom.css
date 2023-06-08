@@ -1,0 +1,15 @@
+body{
+    background-color: #2C2F33 !important
+}
+.main-content{
+    padding-top: 30px !important;
+}
+.red-bolder{
+    color: #dc3545 ; font-weight: bolder;
+}.green-bolder{
+    color: #198754; font-weight: bolder
+}.mybar{
+    width: 100% !important;
+}.progress-custom{
+    margin-bottom: 20px !important;
+}
