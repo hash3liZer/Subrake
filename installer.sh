@@ -64,6 +64,9 @@ function setup_cockpit(){
   cp /usr/share/cockpit/storaged/manifest.json /usr/share/cockpit/storaged/manifest.json.bak
   cp /usr/share/cockpit/users/manifest.json /usr/share/cockpit/users/manifest.json.bak
 
+  # Copy systemd module
+  cp ./plugins/systemd/manifest.json /usr/share/cockpit/systemd/
+
   # Copy subrun module
   cp ./plugins/subruns /usr/share/cockpit/
 
