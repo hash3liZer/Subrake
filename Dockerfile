@@ -8,7 +8,7 @@ FROM --platform=linux/amd64 ubuntu:${ubuntu_version} AS subrake2
 RUN echo "Version for ubuntu: " ${ubuntu_version}
 
 # This doesn't actually publish the port, but is a hint to the user
-EXPOSE 999/tcp
+EXPOSE 9090/tcp
 
 # ENV VARS
 ENV DEBIAN_FRONTEND=noninteractive
