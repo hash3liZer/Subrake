@@ -57,6 +57,7 @@ function add_user(){
   echo -n "[?] Enter username: "
   if [ -z "$CUSERNAME" ]; then
     read cusername
+    CUSERNAME=$cusername
   else
     echo $CUSERNAME
     cusername=$CUSERNAME
@@ -65,6 +66,7 @@ function add_user(){
   echo -n "[?] Enter password: "
   if [ -z "$CPASSWORD" ]; then
     read cpassword
+    CPASSWORD=$cpassword
   else
     echo $CPASSWORD
     cpassword=$CPASSWORD
@@ -109,7 +111,7 @@ function setup_wordlists(){
   # Check if a directory doesn't exist
   if ! [ -d "/opt/subrake_wordlists" ]; then
     mkdir /opt/subrake_wordlists
-    cp -r ./wordlists/ /opt/subrake_wordlists/
+    cp ./wordlists/* /opt/subrake_wordlists/
   fi
 }
 
@@ -145,7 +147,6 @@ setup_wordlists
 setup_plugins
 final_setup
 
-echo "Add folowing entry to your .bashrc: "
-echo ""
-echo "bashrunner"
-echo "exit"
+grep -qxF 'bashrunner' /home/$CUSERNAME/.bashrc || echo 'bashrunner' >> /home/$CUSERNAME/.bashrc
+
+echo "[+] Installation completed successfully"

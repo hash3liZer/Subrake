@@ -74,7 +74,7 @@ while true; do
 
     if [ "$wordlist" != "" ]; then
         if [ "$wordlist" == "default" ]; then
-        args="$args --wordlists /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt"
+        args="$args --wordlists /opt/subrake_wordlists/subdomains-top1million-5000.txt"
         else
         args="$args --wordlists $wordlist"
         fi
