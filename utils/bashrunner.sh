@@ -95,7 +95,7 @@ while true; do
     mkdir -p /usr/share/cockpit/static/subtakes/$domain
     echo "$(date)" > /usr/share/cockpit/static/subtakes/$domain/datetime.txt
 
-    tmux new-session -d -s "$session" "tmux source-file /home/shiri/.tmux.conf; bash -c 'subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit'"
+    tmux new-session -d -s "$session" "tmux source-file /opt/.tmux.conf; bash -c 'subrake $args; echo; echo; echo -en \"${MAGENTA}[-]${RESET} Press any key to continue...\"; read; exit'"
     tmux attach-session -t "$session"
     # clear
 done

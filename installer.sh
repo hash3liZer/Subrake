@@ -31,21 +31,43 @@ function copy_scripts(){
   cp ./utils/get_all_domains.sh /usr/bin/get_all_domains
   cp ./utils/get_active_sessions.sh /usr/bin/get_active_sessions
   cp ./utils/get_tables.sh /usr/bin/get_tables
+  cp ./utils/tmux.conf /opt/.tmux.conf
   chmod +x /usr/bin/bashrunner
   chmod +x /usr/bin/get_all_subs
   chmod +x /usr/bin/get_all_takeovers
   chmod +x /usr/bin/get_all_domains
   chmod +x /usr/bin/get_active_sessions
   chmod +x /usr/bin/get_tables
+  chmod -wx /opt/.tmux.conf
+  chmod +r /opt/.tmux.conf
+}
+
+# check if an environment variable is set
+function check_env(){
+  if [ -z "${!1}" ]; then
+    echo "[-] $1 environment variable is not set"
+    exit -1
+  fi
 }
 
 function add_user(){
   echo -e "\n"
   echo "[-] Setting up cockpit user ..."
   echo -n "[?] Enter username: "
-  read cusername
+  if [ -z "$CUSERNAME" ]; then
+    read cusername
+  else
+    echo $CUSERNAME
+    cusername=$CUSERNAME
+  fi
+
   echo -n "[?] Enter password: "
-  read -s cpassword
+  if [ -z "$CPASSWORD" ]; then
+    read cpassword
+  else
+    echo $CPASSWORD
+    cpassword=$CPASSWORD
+  fi
 
   getent passwd $cusername >/dev/null
 
@@ -100,12 +122,12 @@ function setup_plugins(){
   pip3 install -r requirements.txt
   ln -s /opt/Sublist3r/sublist3r.py /usr/bin/sublist3r.py
 
-  # cd /opt/
-  # git clone https://github.com/guelfoweb/knock
-  # cd knock
-  # pip3 install -r requirements.txt
-  # chmod +x knockpy.py
-  # ln -s /opt/knock/knockpy.py /usr/bin/knockpy.py
+  cd /opt/
+  git clone https://github.com/guelfoweb/knock
+  cd knock
+  pip3 install -r requirements.txt
+  chmod +x knockpy.py
+  ln -s /opt/knock/knockpy.py /usr/bin/knockpy.py
 
   # snap install amass
 }
