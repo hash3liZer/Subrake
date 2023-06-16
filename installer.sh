@@ -91,7 +91,7 @@ function setup_cockpit(){
   cp ./plugins/systemd/manifest.json /usr/share/cockpit/systemd/
 
   # Copy subrun module
-  cp ./plugins/subruns /usr/share/cockpit/
+  cp -r ./plugins/subruns /usr/share/cockpit/
 
   # Copy static files
   cp ./plugins/static/* /usr/share/cockpit/static/
@@ -107,12 +107,9 @@ function setup_cockpit(){
 
 function setup_wordlists(){
   # Check if a directory doesn't exist
-  if ! [ -d "/opt/SecLists" ]; then
-    wget "https://github.com/danielmiessler/SecLists/archive/refs/tags/2023.1.zip" -O /tmp/SecLists.zip
-    unzip /tmp/SecLists.zip -d /opt/
-    mv "/opt/SecLists-2023.1" /opt/SecLists
-    chmod 777 -R /opt/SecLists
-    rm -rf /tmp/SecLists.zip
+  if ! [ -d "/opt/subrake_wordlists" ]; then
+    mkdir /opt/subrake_wordlists
+    cp -r ./wordlists/ /opt/subrake_wordlists/
   fi
 }
 
