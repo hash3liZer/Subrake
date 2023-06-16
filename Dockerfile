@@ -11,18 +11,23 @@ RUN echo "Version for ubuntu: " ${ubuntu_version}
 EXPOSE 999/tcp
 
 # ENV VARS
+ENV DEBIAN_FRONTEND=noninteractive
 ENV CUSERNAME=subtap
 ENV CPASSWORD=password
-
-# Installing cockpit
-RUN apt update && apt install -y cockpit
 
 # Add Data
 RUN mkdir /root/subrake
 COPY ./ /root/subrake
 
+# Changing current directory
+WORKDIR /root/subrake
+
+# Installing the complete package
 RUN chmod +x /root/subrake/installer.sh
 RUN /root/subrake/installer.sh
+
+# Adding bashrunner to bashrc
+RUN echo "bashrunner" >> /home/subtap/.bashrc
 
 # Set an environment variable to be available in the container
 ENV SUBRAKED_VERSION=2.0
