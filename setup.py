@@ -12,6 +12,7 @@ README = (HERE / "README.md").read_text()
 setup(
     name="subrake",
     version="3.3",
+    zip_safe=False,
     description="A Subdomain Enumeration and Validation tool for Bug Bounty and Pentesters.",
     long_description=README,
     long_description_content_type="text/markdown",
