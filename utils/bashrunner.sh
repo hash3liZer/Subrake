@@ -44,16 +44,48 @@ while true; do
 
     if [ "$subcast" != "Y" ] && [ "$subcast" != "y" ]; then
         args="$args --skip-subcast"
-    else
-        echo -en "${RED}[?]${RESET} Run only Sublist3r (Resource Efficient) [Y/n]      : ${YELLOW}"
-        read osublist3r
-        if [ "$osublist3r" == "Y" ] || [ "$osublist3r" == "y" ]; then
-            args="$args --only-sublister"
-        fi
+    # else
+    #     echo -en "${RED}[?]${RESET} Run only Sublist3r (Resource Efficient) [Y/n]      : ${YELLOW}"
+    #     read osublist3r
+    #     if [ "$osublist3r" == "Y" ] || [ "$osublist3r" == "y" ]; then
+    #         args="$args --only-sublister"
+    #     fi
     fi
 
-    echo -en "${RED}[?]${RESET} Want to provide any wordlist [default/empty for no]: ${MAGENTA}"
+    echo -en "${RED}[?]${RESET} Select a Wordlist from below (you can select multiple using ,): "
+    echo -e "\n"
+    echo -e  "${YELLOW}[?]${RESET} 1. 5000 Entries"
+    echo -e  "${YELLOW}[?]${RESET} 2. 20000 Entries"
+    echo -e  "${YELLOW}[?]${RESET} 3. Knockpy >10000 Entries"
+    echo -e  "${YELLOW}[?]${RESET} 3. Deepmagic Top 500 Entries"
+    echo -e "\n"
+    echo -en "${RED}[?]${RESET} Your Option (Leave empty for none): ${MAGENTA}"
     read wordlist
+
+    if [ "$wordlist" != "" ]; then
+        IFS=',' read -ra values <<< "$wordlist"
+
+        nwords=""
+        for value in "${values[@]}"; do
+            if [ $value == "1" ]; then
+                nwords += "/opt/subrake_wordlists/subdomains-top1million-5000.txt,"
+            elif [ $value == "2" ]; then
+                nwords += "/opt/subrake_wordlists/subdomains-top1million-20000.txt,"
+            elif [ $value == "3" ]; then
+                nwords += "/opt/subrake_wordlists/knockpy_wordlist.txt,"
+            elif [ $value == "4" ]; then
+                nwords += "/opt/subrake_wordlists/deepmagic_top500.txt,"
+            else
+                echo -e "${RED}[-]${RESET} Invalid Dictionary Option ..."
+                read
+                exit 1
+            fi
+            fi
+        done
+
+        args="$args --wordlists $nwords"
+        fi
+    fi
 
     echo -en "${RED}[?]${RESET} Any IPs you want to exclude [comma-separated]      : ${YELLOW}"
     read excludelist
@@ -70,14 +102,6 @@ while true; do
 
     if [ "$omodule" != "Y" ] && [ "$omodule" != "y" ]; then
         args="$args --skip-search"
-    fi
-
-    if [ "$wordlist" != "" ]; then
-        if [ "$wordlist" == "default" ]; then
-        args="$args --wordlists /opt/subrake_wordlists/subdomains-top1million-5000.txt"
-        else
-        args="$args --wordlists $wordlist"
-        fi
     fi
 
     if [ "$excludelist" != "" ]; then

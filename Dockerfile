@@ -18,8 +18,11 @@ WORKDIR /root/subrake
 
 # Installing the complete package
 RUN apk update
-RUN apk add xterm
+RUN apk add git
+RUN chmod +x ./installer.sh
+RUN sed -i '1s|^#!/bin/bash$|#!/bin/sh|' ./installer.sh
+RUN ./installer.sh --plugins
 RUN python setup.py install
 
-ENTRYPOINT [ "subrake", "--skip-subcast" ]
+ENTRYPOINT [ "subrake" ]
 CMD ["--help"]

@@ -167,4 +167,7 @@ elif [ "$1" == "--deploy" ]; then
   grep -qxF 'bashrunner' /home/$CUSERNAME/.bashrc || echo 'bashrunner' >> /home/$CUSERNAME/.bashrc
   echo "[+] Deployment completed successfully"
   exit 0
+elif [ "$1" == "--plugins" ]; then
+  setup_plugins
+  exit 0
 fi
