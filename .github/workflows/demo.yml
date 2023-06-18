@@ -1,5 +1,5 @@
 
-name: Deploy to the Demo SERVER
+name: Upload code to the demo Server
 
 on:
   push:
@@ -14,6 +14,28 @@ permissions:
   contents: read
 
 jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+  
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        
+    - name: Install package
+      run: |
+        pip install -r ./requirements.txt
+        python setup.py install
+        
+    - name: Print the manual
+      run: |
+        subrake --help
+    
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -35,11 +57,3 @@ jobs:
     - name: Push code to the Server
       run: |
         rsync -r --progress --delete ./ ${{ secrets.USER }}@${{ secrets.SERVER }}:/home/${{ secrets.USER }}/subrake
-        
-    - name: Deploy to the Server
-      run: |
-        ssh ${{ secrets.USER }}@${{ secrets.SERVER }} "
-          cd ./subrake &&
-          chmod u+x ./installer.sh &&
-          sudo ./installer.sh --deploy
-        "
