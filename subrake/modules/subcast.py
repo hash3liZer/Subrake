@@ -24,7 +24,7 @@ class SUBCAST:
         self.dirpath = os.path.join("/home/", getpass.getuser(), ".subrake", self.sessname)
 
     def is_tmux_func(self):
-        if 'TERM_PROGRAM' in os.environ and os.environ['TERM_PROGRAM'] == 'tmux':
+        if not subprocess.call(f"tmux has-session -t {self.sessname}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
             return True
         return False
 
@@ -38,7 +38,7 @@ class SUBCAST:
         _subc = f"sublist3r.py -d {self.domain} -o {_path} --verbose"
         _comm = f"tmux split-window -h -d -t {self.sessname}:0 '{_subc}'" if self.is_tmux else _subc
         pull.gthen(f"Launched Sublist3r: {_subc}", pull.BOLD, pull.GREEN)
-        exec  = subprocess.call(_comm, shell=True)
+        exec  = subprocess.call(_comm, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         while not subprocess.call(f"tmux capture-pane -t {self.sessname}:0.1", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE):
             time.sleep(1)
         pull.gthen(f"Caster Sublist3r Finished. Return Code: [{exec}]", pull.BOLD, pull.GREEN)     

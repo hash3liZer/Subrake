@@ -7,7 +7,7 @@ cpassword = ENV['SUBRAKE_PASSWORD'] || 'password'
 # https://docs.vagrantup.com.
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "generic/ubuntu2204"    # boxes at https://vagrantcloud.com/search
+  config.vm.box = "generic/ubuntu2004"    # boxes at https://vagrantcloud.com/search
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
