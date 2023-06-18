@@ -150,12 +150,12 @@ class ONLINE:
 		self.crt = CRTSEARCH( self, _dm )
 
 	def enumerate(self):
-		self.google.execute()
+		# self.google.execute()
 		self.bing.execute()
 		self.yahoo.execute()
-		self.ask.execute()
-		self.baidu.execute()
-		self.netcraft.execute()
+		# self.ask.execute()
+		# self.baidu.execute()
+		# self.netcraft.execute()
 		#self.dnsdumpster.execute()
 		#self.virustotal.execute()
 		self.crt.execute()
@@ -165,7 +165,8 @@ class ONLINE:
 
 	def move(self, _name, _ls):
 		def push():
-			string = "{:<14}\t{:<28}".format(_name, len(_ls) if len(_ls) else random.randint(1, 3))
+			# string = "{:<14}\t{:<28}".format(_name, len(_ls) if len(_ls) else random.randint(1, 3))
+			string = "{:<14}\t{:<28}".format(_name, len(_ls))
 			pull.slasher( string, pull.BOLD, pull.YELLOW )
 			return 0
 

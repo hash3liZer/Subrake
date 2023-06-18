@@ -7,11 +7,11 @@ cpassword = ENV['SUBRAKE_PASSWORD'] || 'password'
 # https://docs.vagrantup.com.
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "generic/ubuntu2004"    # boxes at https://vagrantcloud.com/search
+  config.vm.box = "generic/ubuntu2204"    # boxes at https://vagrantcloud.com/search
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
+  config.vm.box_check_update = false
   
   config.vm.define "subrake" do |subrake| # Give the VM a name
     # Port Forwarding. Format is [host_port, guest_port]. List host_ip for public access
@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
     
     # For private network. More like NAT in VirtualBox
     subrake.vm.network "private_network", ip: "10.1.2.3"
+    subrake.vm.network "public_network", auto_config: false
 
     # For bridged network. More like bridged in VirtualBox
     # subrake.vm.network "public_network"
@@ -41,6 +42,11 @@ Vagrant.configure("2") do |config|
     cd /subraked/
     ls -al
     chmod +x ./installer.sh
-    ./installer.sh
+    ./installer.sh --deploy
+    echo ""
+    echo ""
+    echo "[+] You can now access Subrake Portal at: http://127.0.0.1:9090"
+    echo "[+] Default username: $CUSERNAME"
+    echo "[+] Default password: $CPASSWORD"
   SHELL
 end

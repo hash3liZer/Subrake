@@ -120,6 +120,7 @@ function setup_plugins(){
   git clone https://github.com/aboul3la/Sublist3r.git
   cd Sublist3r
   pip3 install -r requirements.txt
+  rm -rf /usr/bin/sublist3r.py
   ln -s /opt/Sublist3r/sublist3r.py /usr/bin/sublist3r.py
 
   cd /opt/
@@ -127,6 +128,7 @@ function setup_plugins(){
   cd knock
   pip3 install -r requirements.txt
   chmod +x knockpy.py
+  rm -rf /usr/bin/knockpy.py
   ln -s /opt/knock/knockpy.py /usr/bin/knockpy.py
 
   # snap install amass
@@ -138,15 +140,31 @@ function final_setup(){
   python3 ./setup.py install
 }
 
-init
-install_dependencies
-copy_scripts
-add_user
-setup_cockpit
-setup_wordlists
-setup_plugins
-final_setup
+# Add 2 arguments of --install and --deploy
+if [ "$1" == "" ]; then
+  echo "[-] The script accepts either --install or --deploy arguments"
+  echo "[-] The --deploy option is only tested on ubuntu>=20.04. Use it wisely"
+  exit -1
+fi
 
-grep -qxF 'bashrunner' /home/$CUSERNAME/.bashrc || echo 'bashrunner' >> /home/$CUSERNAME/.bashrc
+if [ "$1" == "--install" ]; then
+  apt update
+  apt install -y xterm python3-dev python3 python3-pip
+  setup_plugins
+  final_setup
+  echo "[+] Installation completed successfully"
+  exit 0
+elif [ "$1" == "--deploy" ]; then
+  init
+  install_dependencies
+  copy_scripts
+  add_user
+  setup_cockpit
+  setup_wordlists
+  setup_plugins
+  final_setup
 
-echo "[+] Installation completed successfully"
+  grep -qxF 'bashrunner' /home/$CUSERNAME/.bashrc || echo 'bashrunner' >> /home/$CUSERNAME/.bashrc
+  echo "[+] Deployment completed successfully"
+  exit 0
+fi
