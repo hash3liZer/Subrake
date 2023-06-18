@@ -28,6 +28,10 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
         
+    - name: Add Public Keys to hosts files
+      run: |
+        ssh-keyscan -H ${{secrets.SERVER}} > ~/.ssh/known_hosts
+        
     - name: Push code to the Server
       run: |
         rsync -r --progress --delete ./ ${{ secrets.USER }}@${{ secrets.SERVER }}:/home/${{ secrets.USER }}/subrake
