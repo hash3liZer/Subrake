@@ -111,8 +111,8 @@ function setup_wordlists(){
   # Check if a directory doesn't exist
   if ! [ -d "/opt/subrake_wordlists" ]; then
     mkdir /opt/subrake_wordlists
-    cp ./wordlists/* /opt/subrake_wordlists/
   fi
+  cp ./wordlists/* /opt/subrake_wordlists/
 }
 
 function setup_plugins(){

@@ -57,34 +57,36 @@ while true; do
     echo -e  "${YELLOW}[?]${RESET} 1. 5000 Entries"
     echo -e  "${YELLOW}[?]${RESET} 2. 20000 Entries"
     echo -e  "${YELLOW}[?]${RESET} 3. Knockpy >10000 Entries"
-    echo -e  "${YELLOW}[?]${RESET} 3. Deepmagic Top 500 Entries"
-    echo -e "\n"
+    echo -e  "${YELLOW}[?]${RESET} 4. Deepmagic Top 500 Entries"
+    echo -en "\n"
     echo -en "${RED}[?]${RESET} Your Option (Leave empty for none): ${MAGENTA}"
     read wordlist
 
     if [ "$wordlist" != "" ]; then
         IFS=',' read -ra values <<< "$wordlist"
 
-        nwords=""
         for value in "${values[@]}"; do
             if [ $value == "1" ]; then
-                nwords += "/opt/subrake_wordlists/subdomains-top1million-5000.txt,"
+                nwords+="/opt/subrake_wordlists/subdomains-top1million-5000.txt,"
             elif [ $value == "2" ]; then
-                nwords += "/opt/subrake_wordlists/subdomains-top1million-20000.txt,"
+                nwords+="/opt/subrake_wordlists/subdomains-top1million-20000.txt,"
             elif [ $value == "3" ]; then
-                nwords += "/opt/subrake_wordlists/knockpy_wordlist.txt,"
+                nwords+="/opt/subrake_wordlists/knockpy_wordlist.txt,"
             elif [ $value == "4" ]; then
-                nwords += "/opt/subrake_wordlists/deepmagic_top500.txt,"
+                nwords+="/opt/subrake_wordlists/deepmagic_top500.txt,"
             else
                 echo -e "${RED}[-]${RESET} Invalid Dictionary Option ..."
                 read
                 exit 1
             fi
-            fi
         done
 
-        args="$args --wordlists $nwords"
+        # Get last character and remove it if its comma
+        last_character="${nwords: -1}"
+        if [[ "$last_character" == "," ]]; then
+            nwords="${nwords%?}"
         fi
+        args="$args --wordlists $nwords"
     fi
 
     echo -en "${RED}[?]${RESET} Any IPs you want to exclude [comma-separated]      : ${YELLOW}"
@@ -115,6 +117,8 @@ while true; do
     if [ "$threads" != "" ]; then
         args="$args --threads $threads"
     fi
+
+    echo $args
 
     mkdir -p /usr/share/cockpit/static/subtakes/$domain
     echo "$(date)" > /usr/share/cockpit/static/subtakes/$domain/datetime.txt

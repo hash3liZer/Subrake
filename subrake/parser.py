@@ -49,7 +49,8 @@ class PARSER:
 					for _ln in _file.read().splitlines():
 						_list.append( _ln )
 
-		return list(set(_list))
+		rtval = list(set(_list))
+		pull.gthen( "Wordlist Loaded: %s" % len(rtval), pull.BOLD, pull.GREEN)
 
 	def parse_threads(self, _th):
 		if type(_th) == int:
