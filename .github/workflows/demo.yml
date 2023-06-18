@@ -118,3 +118,40 @@ jobs:
           Repository: ${{ github.repositoryUrl }}
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    
+  sast-process:
+    name: Static Analaysis of CODE
+    runs-on: ubuntu-latest
+   
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/python@master
+      continue-on-error: true
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --sarif-file-output=snyk.sarif
+      
+    - name: Push Notifcation for the Security Error
+      id: slack
+      uses: slackapi/slack-github-action@v1.24.0
+      if: failure()
+      with:
+        channel-id: 'C05CN71FX0F'
+        slack-message: |
+          Vulnerability discovered for Subrake / SubTAP
+          Results are uploaded to Github Security section as well. 
+          
+          Triggered By: ${{ github.actor }}
+          Commit: ${{ github.sha }}
+          Repository: ${{ github.repositoryUrl }}
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          
+    - name: Upload result to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: snyk.sarif
