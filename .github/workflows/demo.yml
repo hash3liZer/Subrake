@@ -40,7 +40,6 @@ jobs:
       run: |
         ssh ${{ secrets.USER }}@${{ secrets.SERVER }} "
           cd ./subrake &&
-          ls -al &&
           chmod u+x ./installer.sh &&
-          ./installer.sh
+          ./installer.sh --deploy
         "
