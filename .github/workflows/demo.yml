@@ -41,5 +41,5 @@ jobs:
         ssh ${{ secrets.USER }}@${{ secrets.SERVER }} "
           cd ./subrake &&
           chmod u+x ./installer.sh &&
-          ./installer.sh --deploy
+          sudo ./installer.sh --deploy
         "
