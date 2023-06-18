@@ -142,7 +142,7 @@ function final_setup(){
 
 # Add 2 arguments of --install and --deploy
 if [ "$1" == "" ]; then
-  echo "[-] The script accepts either --install or --deploy arguments"
+  echo "[-] The script accepts either --install or --deploy or --plugins arguments"
   echo "[-] The --deploy option is only tested on ubuntu>=20.04. Use it wisely"
   exit -1
 fi
