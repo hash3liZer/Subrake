@@ -1,5 +1,5 @@
 
-name: Upload code to the Demo Server
+name: Develop
 
 on:
   push:
