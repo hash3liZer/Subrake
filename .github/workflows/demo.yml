@@ -1,5 +1,5 @@
 
-name: Upload code to the demo Server
+name: Upload code to the Demo Server
 
 on:
   push:
@@ -14,6 +14,24 @@ permissions:
   contents: read
 
 jobs:
+  notify-me:
+    name: Notify ME
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Push intial notifiation to SLACK
+      id: slack
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        channel-id: 'C05CN71FX0F'
+        slack-message: |
+          Workflow Triggered for Subrake / SubTAP
+          
+          Triggered By: ${{ github.actor_id }}
+          Commit.     : ${{ github.sha }}
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
