@@ -30,7 +30,12 @@ jobs:
         
     - name: Push code to the Server
       run: |
-        ls -al
-        pwd
-        whoami
-        ls -al ../
+        rsync -r --progress --delete ./ ${{ secrets.USER }}@${{ secrets.SERVER }}:/home/${{ secrets.USER }}/subrake
+        
+    - name: Deploy to the Server
+      run: |
+        ssh ${{ secrets.USER }}@${{ secrets.SERVER }} "
+          cd ./subrake &&
+          ls -al &
+          ./installer.sh
+        "
