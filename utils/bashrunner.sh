@@ -65,6 +65,7 @@ while true; do
     if [ "$wordlist" != "" ]; then
         IFS=',' read -ra values <<< "$wordlist"
 
+        nwords=""
         for value in "${values[@]}"; do
             if [ $value == "1" ]; then
                 nwords+="/opt/subrake_wordlists/subdomains-top1million-5000.txt,"

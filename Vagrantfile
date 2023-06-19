@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
     
     # For private network. More like NAT in VirtualBox
     subrake.vm.network "private_network", ip: "10.1.2.3"
-    subrake.vm.network "public_network", auto_config: false
+    # subrake.vm.network "public_network", auto_config: false
 
     # For bridged network. More like bridged in VirtualBox
     # subrake.vm.network "public_network"
