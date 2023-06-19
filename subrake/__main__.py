@@ -249,7 +249,9 @@ class ENGINE:
 		pull.brick( pull.BOLD + "Received Interrupt -><- " + pull.END, pull.BOLD, pull.RED )
 
 	def parse(self, _wd, _sb):
-		_list = list(_wd) + list(_sb)
+		aa    = [] if not _wd else list(_wd)
+		bb    = [] if not _sb else list(_sb)
+		_list = aa + bb
 		counter = 0
 		for _ls in _list:
 			_list[ counter ] = (f"{_ls}.{self.domain}") if not _ls.endswith(f".{self.domain}") else _ls
