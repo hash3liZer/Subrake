@@ -2,7 +2,7 @@
     <img src="https://user-images.githubusercontent.com/29171692/57197739-5392b300-6f84-11e9-9191-4e38f3edc583.png" alt="subrake" /> <br>    
     SUBRAKE / SubTAP
 </h1>
-<h4 align="center">A Subdomain Enumeration and Takeover toolki for Bug Bounty and Pentesters.</h4>
+<h4 align="center">A Subdomain Gathering & Takeover Assessment platform for Bug Bounty and Infosec.</h4>
 <p align="center">
     <a href="https://github.com/hash3liZer/Subrake/actions"><img src="https://github.com/hash3liZer/subrake/actions/workflows/demo.yml/badge.svg" alt="..."></a>
     <a href="https://www.linux.org/" target="_blank"><img src="https://img.shields.io/badge/platform-linux-important" alt="platform: linux" /></a>
@@ -17,7 +17,79 @@
 <img align="center" src="https://user-images.githubusercontent.com/29171692/206875554-1f09c82a-d82d-4285-b30f-d84c67d99a9d.png" alt="subrake" /> -->
 
 # Background
-A subdomain takeover unlike it sounds is basically the acquisition of the service that the subdomain is pointing to. 
+A subdomain takeover unlike it sounds is basically the acquisition of the service that the subdomain is pointing to. For example taking over an Amazon S3 Bucket that `marketing.target.com` was point to a while ago. Since, the subdomain was pointing to the service which is now owned by me aka the attacker in this scenario, we can say that i've taken over the subdomain now. 
+
+# About Subrake
+Subrake, initially designed for subdomain gathering using public sources and brute forcing through wordlists is now an assessment platform to gather subdomains and find takeovers. Designed primarily for bug bounty and infosec industry, it can be leveraged for blue teaming and internal pentests as well. It supports both a CLI and Web Based GUI Interface as well and supports multiple installation modes. We will cover the key features a little later after the Installation step. 
+
+# Installation:
+You can install subrake as per your preferences. You can have the plain simple command line version or a web based terminal having a reports page to manage your scans and be on the go. What we will cover here is: 
+
+* CLI
+    * Simple Python Setup
+    * Docker
+* GUI (Web Based)
+    * Vagrant
+    * Baremetal (Ubuntu Server)
+
+Clone the repo and jump into it: 
+```bash
+$ git clone https://github.com/hash3liZer/Subrake.git
+$ cd ./Subrake
+```
+
+## CLI
+### Simple Python Setup
+Install the requirements and run `setup.py`:
+```bash
+$ pip3 install -r requirements.txt
+$ python3 setup.py install
+```
+
+Verify if subrake is installed or not: 
+```bash
+subrake --version
+```
+
+### Docker
+Build the docker image from `Dockerfile`:
+```bash
+$ docker build -t subrake:latest .
+```
+
+Verify the docker container:
+```bash
+$ docker run --rm subrake --version
+```
+
+## GUI (Web Based)
+The web provides more of a control and management over your scans. You can easily manage your scans, download reports, delete runs and have as many concurrent sessions as you want. The web is based on a terminal and a reports page. The terminal acts as an actual terminal and runs inside a `tmux` session. 
+
+### Vagrant
+With vagrant, you can provision a box quickly and have everything automatically setup for you. Subrake uses `libvirt` provider here. So, install all the necessary dependencies first: 
+```python
+$ apt install -y qemu qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager vagrant vagrant-libvirt
+```
+
+Then inside the repository run this command: 
+```python
+$ vagrant up
+```
+
+This uses the default credentials `subrake/password` for the Cockpit interface. To modify it, you can use: 
+```python
+$ SUBRAKE_USERNAME="username" SUBRAKE_PASSWORD="password" vagrant up
+```
+
+It would take a while for the provisioning to complete. After done, you can access the web interface at: http://127.0.0.1:9090
+
+### Baremetal
+You can also install it on a baremetal server. But this is only tested on `Ubuntu 20.04`. You can modify the installer script as per your need if you are on a different flavor. 
+
+```python
+$ chmod +x ./installer.sh
+$ ./installer.sh --deploy
+```
 
 ## Key Features
 <ul>
