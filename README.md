@@ -52,7 +52,7 @@ $ git clone https://github.com/hash3liZer/Subrake.git
 $ cd ./Subrake
 ```
 
-# Automated Setup:
+## Automated Setup:
 You can setup `subrake` through vagrant (with KVM) where a machine will be spawned and everything will be automatically setup. Install the requirements first: 
 ```python
 $ apt update
@@ -83,10 +83,20 @@ $ vagrant suspend
 
 # Resume machine
 $ vagrant resume
+
+# Shutdown machine
+$ vagrant halt
+
+# Start back
+$ vagrant up
+
+# Delete the machine
+$ vagrant destroy
 ```
 
-## CLI
-### Simple Python Setup
+## Manual Setup
+With the manual setup, you can directly jump into directory and the `setuptools` for installation
+
 Install the requirements and run `setup.py`:
 ```bash
 $ pip3 install -r requirements.txt
@@ -95,80 +105,30 @@ $ python3 setup.py install
 
 Verify if subrake is installed or not: 
 ```bash
-subrake --version
+subrake --help
 ```
 
-### Docker
-Build the docker image from `Dockerfile`:
+## Docker
+You can also build the docker image from `Dockerfile`:
 ```bash
 $ docker build -t subrake:latest .
 ```
 
 Verify the docker container:
 ```bash
-$ docker run --rm subrake --version
+$ docker run --rm subrake --help
 ```
 
-## GUI (Web Based)
-The web provides more of a control and management over your scans. You can easily manage your scans, download reports, delete runs and have as many concurrent sessions as you want. The web is based on a terminal and a reports page. The terminal acts as an actual terminal and runs inside a `tmux` session. 
-
-### Vagrant
-With vagrant, you can provision a box quickly and have everything automatically setup for you. Subrake uses `libvirt` provider here. So, install all the necessary dependencies first: 
-```bash
-
-```
-
-Then inside the repository run this command: 
-```python
-$ vagrant up
-```
-
-This uses the default credentials `subrake/password` for the Cockpit interface. To modify it, you can use: 
-```python
-$ SUBRAKE_USERNAME="username" SUBRAKE_PASSWORD="password" vagrant up
-```
-
-It would take a while for the provisioning to complete. After done, you can access the web interface at: http://127.0.0.1:9090
-
-### Baremetal
-You can also install it on a baremetal server. But this is only tested on `Ubuntu 20.04`. You can modify the installer script as per your need if you are on a different flavor. 
-
+# Deployment
+You can deploy the script on a baremetal server as well. To do so, get a fresh `ubuntu 20.04` server up and running and run the following command:
 ```python
 $ chmod +x ./installer.sh
 $ ./installer.sh --deploy
 ```
 
-## Key Features
-<ul>
-    <li>OSINT + Subdomain Bruteforcing</li>
-    <li>Capable of handling outputs from multiple tools</li>
-    <li>Handling False Positives and Filters subdomains with same resolutions.</li>
-    <li>Checking for Server Banners and Ports</li>
-    <li>Incredibly Fast</li>
-    <li>Handling domains with larger scopes</li>
-    <li>Port Scanning</li>
-</ul>
+The server is then accessible at: `0.0.0.0:9090`. You can setup an `nginx` service and use it s a reverse proxy. 
 
-## Documentation
-### Installation
-Installing stable version directly from PYPI:
-```bash
-$ pip3 install subrake
-```
-
-Installing latest build:
-```bash
-$ git clone https://github.com/hash3liZer/Subrake.git
-$ cd Subrake/
-$ python3 setup.py install
-```
-
-Run after installation:
-```bash
-$ subrake --help
-```
-
-### Usage
+# Usage
 Subrake is highly flexible and is made to work under different situations. It can parse output files from multiple tools collectively. It does OSINT search alongside wordlist bruteforcing and before actual bruteforcing, it removes similar subdomains and false positives. It does also support a filter which when supplied allows you to seperate subdomains with same IP addresses in the final CSV result. Let's see some of the Subrake uses:
 
 A simple run with OSINT results from search engines:
