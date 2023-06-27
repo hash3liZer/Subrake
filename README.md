@@ -31,12 +31,12 @@ Designed primarily for bug bounty and infosec industry, it can be leveraged for 
 
 # Features ⚖️
 * ⚙️ All in one automated solution. Its working cycle is:
-    * DNS Enumeration
-    * False Positive Detection (Wildcard subdomains)
-    * Getting results from other tools (Sublist3r, Knock.py)
-    * Bruteforce using wordlists (Can work with multiple wordlists)
-    * Get 5 parameters for each subdomain (HTTP Codes, Resolution, Headers, CNAME, Ports)
-    * **Detect Takeover**
+    * 🪙 DNS Enumeration
+    * 💴 False Positive Detection (Wildcard subdomains)
+    * 💶 Getting results from other tools (Sublist3r, Knock.py)
+    * 💷 Bruteforce using wordlists (Can work with multiple wordlists)
+    * 💵 Get 5 parameters for each subdomain (HTTP Codes, Resolution, Headers, CNAME, Ports)
+    * 💰 **Detect Takeover**
 * 🛒 Support for external tools. You can add your own functions.
 * 🛍️ Automated and Manual Mode.
 * 🗄️ Can run concurrent sessions.
@@ -44,21 +44,45 @@ Designed primarily for bug bounty and infosec industry, it can be leveraged for 
 * 🛎️ Flexible and Fast. 
 
 # Installation
-You can install su
-# Automated Setup:
-You can install subrake as per your preferences. You can have the plain simple command line version or a web based terminal having a reports page to manage your scans and be on the go. What we will cover here is: 
-
-* CLI
-    * Simple Python Setup
-    * Docker
-* GUI (Web Based)
-    * Vagrant
-    * Baremetal (Ubuntu Server)
+You can setup subrake by an automated mode or by manually cloning the repo and install through `setuptools`. The first provides more control and is flexible with a UI. But if you prefer a simple CLI mode or on `windows`, go through the `manual` section. 
 
 Clone the repo and jump into it: 
 ```bash
 $ git clone https://github.com/hash3liZer/Subrake.git
 $ cd ./Subrake
+```
+
+# Automated Setup:
+You can setup `subrake` through vagrant (with KVM) where a machine will be spawned and everything will be automatically setup. Install the requirements first: 
+```python
+$ apt update
+$ apt install -y qemu qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager vagrant vagrant-libvirt
+```
+
+Then inside the repo, run `vagrant` up:
+```python
+$ vagrant up
+```
+
+This will take a while to provision the server. After done, you will receive the URL: `http://127.0.0.1:9090`
+
+<img width="1162" alt="image" src="https://github.com/hash3liZer/Subrake/assets/29171692/a03f9b61-6842-49b2-8015-202c20d6104f">
+
+The default credentials are: `subrake/password`. You can change them during provisioning as well: 
+```python
+$ SUBRAKE_USERNAME="username" SUBRAKE_PASSWORD="password" vagrant up
+```
+
+After done, you can manage the state of your newly created machine through these commands: 
+```python
+# See the machine status
+$ vagrant status
+
+# Suspend the machine
+$ vagrant suspend
+
+# Resume machine
+$ vagrant resume
 ```
 
 ## CLI
@@ -90,8 +114,8 @@ The web provides more of a control and management over your scans. You can easil
 
 ### Vagrant
 With vagrant, you can provision a box quickly and have everything automatically setup for you. Subrake uses `libvirt` provider here. So, install all the necessary dependencies first: 
-```python
-$ apt install -y qemu qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager vagrant vagrant-libvirt
+```bash
+
 ```
 
 Then inside the repository run this command: 
