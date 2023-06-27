@@ -129,7 +129,22 @@ $ ./installer.sh --deploy
 The server is then accessible at: `0.0.0.0:9090`. You can setup an `nginx` service and use it s a reverse proxy. 
 
 # Usage
-Subrake is highly flexible and is made to work under different situations. It can parse output files from multiple tools collectively. It does OSINT search alongside wordlist bruteforcing and before actual bruteforcing, it removes similar subdomains and false positives. It does also support a filter which when supplied allows you to seperate subdomains with same IP addresses in the final CSV result. Let's see some of the Subrake uses:
+## User Interface
+With the UI, you can directly jump to the `Subtap a Domain` page and run a scan. Expect a couple questions for the scan: 
+
+<img width="1198" alt="image" src="https://github.com/hash3liZer/Subrake/assets/29171692/ebf2a0b7-b02e-425a-8dbf-922d68ca886c">
+
+The scan is launched inside a `tmux` session. You can press `CTRL+E => d` to exit the running screen and launch a new scan. Also, to pause the screen and move up and down, you can press `CTRL+E => [`. Its just TMUX shortcuts with the global bind key changed to `CTRL+E`.  
+
+You can also jump back to a running screen by entering its name again: 
+
+<img width="1198" alt="image" src="https://github.com/hash3liZer/Subrake/assets/29171692/a48e3fa3-08fe-4f7a-86df-c73418b4dbe2">
+
+You an access the report at `SubRuns` page:
+
+<img width="1240" alt="image" src="https://github.com/hash3liZer/Subrake/assets/29171692/03f90a82-54a9-4e5c-857b-128665f11756">
+
+
 
 A simple run with OSINT results from search engines:
 ```bash
