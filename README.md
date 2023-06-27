@@ -140,82 +140,65 @@ You can also jump back to a running screen by entering its name again:
 
 <img width="1198" alt="image" src="https://github.com/hash3liZer/Subrake/assets/29171692/a48e3fa3-08fe-4f7a-86df-c73418b4dbe2">
 
-You an access the report at `SubRuns` page:
+### Reports
 
 <img width="1240" alt="image" src="https://github.com/hash3liZer/Subrake/assets/29171692/03f90a82-54a9-4e5c-857b-128665f11756">
 
+### Scan Results
 
+<img width="1240" alt="image" src="https://github.com/hash3liZer/Subrake/assets/29171692/b1344469-85c5-406e-8152-176b45cdfc41">
 
-A simple run with OSINT results from search engines:
-```bash
+## Command line
+On command line, you an directly access the tool by typing `subrake`. Here are a couple example of using subrake: 
+
+A simple run with default options:
+```python
 $ subrake -d google.com
 ```
 
 Subrake with Multiple Threads:
-```bash
+```python
 $ subtake -d google.com -t 50
 ```
 
-Subrake with OSINT results + SecLists subdomains list:
-```bash
+Subrake with modules and a wordlist:
+```python
 $ subrake -d google.com --wordlists SecLists/Discovery/DNS/namelist.txt
 ```
 
-Subrake with OSINT results + Multiple SecLists subdomains list: <br>
+Subrake with OSINT results + Multiple SecLists subdomains list: 
+
 **Note: Subdomains with similar names will automatically be filtered and counted as 1**
-```bash
+
+```python
 $ subrake -d google.com --wordlists SecLists/Discovery/DNS/namelist.txt,SecLists/Discovery/DNS/dns-Jhaddix.txt
 ```
 
-Subrake without OSINT + Output from multiple tools combined + IP Filtering:
-```bash
+Subrake without search engine + Output from multiple tools combined + IP Filtering (Note that you can integrate your tools into subrake):
+```python
 $ domain="google.com"
 $ subfinder -d $domain -nW -o $domain/1.txt && sublist3r -d $domain -o $domain/2.txt && cat $domain/* >> /tmp/output.txt
 $ subrake -d $domain -w tmp/output.txt --filter --skip-search
 ```
 
-Subrake without DNS + OSINT:
-```bash
-$ subrake -d google.com --skip-dns
-```
-
 Subrake with Port Scanning: <br>
 **NOTE: The port 80,443 will be scanned by default for every host under HTTP/HTTPS banner. So, there's no need to specify them here**
-```bash
+```python
 $ subrake -d google.com --ports 8080,8443,8000,23,445
 ```
 
-### Manual
+## Manual
+<img width="899" alt="image" src="https://github.com/hash3liZer/Subrake/assets/29171692/a34c6783-b5ef-4fdc-ba63-d6cabdb02d73">
 
-```bash
-Options:
-   Args               Description                                    Default
-   -h, --help           Show this manual                             NONE
-   -d, --domain         Target domain. Possible
-                        example: [example.com]                       NONE
-   -w, --wordlists      Wordlists containing subdomains
-                        to test. Multiple wordlists can
-                        be specified.                                NONE
-   -t, --threads        Number of threads to spawn                    25
-   -o, --output         Store final subdomains in a specified file   NONE
-   -c, --csv            Store output results in CSV format           NONE
-   -p, --ports          Comma-seperated list of ports to scan.       NONE
-   -s, --skip-search    Search for subdomains Online from various
-                        sites.                                       FALSE
-       --skip-subcast   Skip the usage of subcast module             FALSE
-       --filter         Filter subdomains with same IP in CSV output FALSE
-                        Helpful with larger scopes.
-       --skip-dns       Skip initial DNS enumeration phase           FALSE
-       --exclude-ips    Exclude specified IPs from the final results
-                        Helpful in removing False Positives          NONE
-```
+# ToDo LIST
+Feel free to open pull requests and a feature. You can contribute by:
 
-## Contribution
-You can contribute to the project in many ways:
-<ul>
-    <li> Report Bugs </li>
-    <li> Suggestions for making it better </li>
-</ul>
+- [ ] Add more vulnerable services. Currently 10
+- [ ] Improve Insatllation script.
+- [x] Add GUI Mode
+- [x] Add Docker support. 
 
-Have any further Question? You can hit me up on Twitter and Email: <br>
-Twitter: [@hash3liZer](https://twitter.com/hash3liZer)
+## Get me at
+* Email: <a href="mailto:me@shameerkashif.me">me@shameerkashif.me</a>
+* Discord: <a href="#">hash3liZer#5786</a>
+* Blog: <a href="https://blog.shameerkashif.me">https://blog.shameerkashif.me</a>
