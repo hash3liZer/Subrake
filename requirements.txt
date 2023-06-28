@@ -1,4 +1,4 @@
-dnspython
+dnspython==2.3.0
 requests
 bs4
 screeninfo
