@@ -44,6 +44,7 @@ Options:
        --skip-dns       Skip initial DNS enumeration phase           FALSE
        --exclude-ips    Exclude specified IPs from the final results
                         Helpful in removing False Positives          NONE
+	   --version        Show version                                 NONE
 """
 
 class PULLY:
