@@ -280,11 +280,16 @@ class ZONETAKEOVER:
         '''
             Check DNS Zone Takeover by checking for SOA record in each DNS Server of the domain
         '''
+        try:
+            _resolved = socket.gethostbyname(record[:-1] if record[-1] == '.' else record)
+        except:
+            return
+
         resolver = dns.resolver.Resolver(configure=False)
         resolver.timeout = 10
         resolver.lifetime = 10
         resolver.nameservers = [
-            socket.gethostbyname(record[:-1] if record[-1] == '.' else record)
+            _resolved
         ]
         
         result = False
@@ -350,6 +355,7 @@ class ZONETAKEOVER:
                     pull.BOLD,
                     pull.YELLOW
                 )
+                pull.linebreak()
                 return
 
             pull.gthen(

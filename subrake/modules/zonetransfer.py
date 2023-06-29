@@ -26,18 +26,21 @@ class ZONETRANSFER:
             return False
 
         try:
-            print(self.domain)
-            print(hostname)
             zone = dns.zone.from_xfr(dns.query.xfr(hostname, self.domain))
             if zone:
                 pull.gthen(
                     "Zone transfer is enabled for the domain. Enumerating records => ",
+                    pull.BOLD,
+                    pull.RED
                 )
                 pull.linebreak()
                 for name, node in zone.nodes.items():
-                    pull.slasher(
-                        f"{name} - {node.rdtype} - {node.rddata}",
-                    )
+                    for line in node.to_text(name).split("\n"):
+                        pull.slasher(
+                            line,
+                            pull.BOLD,
+                            pull.YELLOW
+                        )
                 pull.linebreak()
                 return True
 
