@@ -5,12 +5,14 @@ import re
 from subrake.pull import PULLY
 
 pull = PULLY()
+__VERSION__ = "v4.1"
 
 class PARSER:
 
 	def __init__(self, _opts, _args):
 		#self.signal     = signal.signal( signal.SIGINT, self.sig_handler )
 		#self.sigalm     = signal.signal( signal.SIGALRM, self.exp_handler )
+		if _opts.version: print( __VERSION__ ); sys.exit(0)
 		self.help       = _opts.help
 		self.onlysublister = _opts.onlysublister
 		self.subcast       = _opts.subcast
@@ -23,7 +25,7 @@ class PARSER:
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.eeips      = self.parse_eeips(     _opts.eeips     )
 		self.filter     = _opts.filter
-		self.skipdns    = _opts.sdns
+		self.skipzone   = _opts.skipzone
 
 	def parse_domain(self, _dm):
 		if _dm:

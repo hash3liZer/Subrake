@@ -31,6 +31,8 @@ from subrake.handlers import THREATCROWD
 from subrake.handlers import CRTSEARCH
 from subrake.modules import SUBCAST
 from subrake.modules import TAKEOVER
+from subrake.modules import ZONETAKEOVER
+from subrake.modules import ZONETRANSFER
 from bs4 import BeautifulSoup as soup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -592,20 +594,21 @@ class WRITER:
 def main():
 	parser = optparse.OptionParser( add_help_option=False )
 
-	# Help MAnual. PArsing section
+	# Help MAnual. Parsing section
 	parser.add_option('-h', '--help', dest='help', action='store_true', default=False)
 	parser.add_option('-d', '--domain', dest="domain", type="string", default="")
 	parser.add_option('-w', '--wordlists', dest="wordlists", type="string", default="")
-	parser.add_option('-t', '--threads', dest="threads", type="int", default=20)
+	parser.add_option('-t', '--threads', dest="threads", type="int", default=25)
 	parser.add_option('-o', '--output', dest="output", type="string", default="")
 	parser.add_option('-c', '--csv', dest="csv", type="string", default="")
 	parser.add_option('-p', '--ports', dest="ports", type="string", default="")
 	parser.add_option('-s', '--skip-search', dest="online", action="store_false", default=True)
 	parser.add_option(''  , '--skip-subcast', dest="subcast", action="store_false", default=True)
 	parser.add_option(''  , '--only-sublister', dest="onlysublister", action="store_true", default=False)
+	parser.add_option(''  , '--skip-zone', dest="skipzone", action="store_true", default=False)
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
-	parser.add_option(''  , '--skip-dns'  , dest="sdns", action="store_true", default=False)
 	parser.add_option(''  , '--exclude-ips', dest="eeips", type=str, default="")
+	parser.add_option(''  , '--version', dest="version", action="store_true", default=False)
 
 	(options, args) = parser.parse_args()
 
@@ -618,15 +621,28 @@ def main():
 		pull.linebreak()
 		parser  = PARSER( options, args )
 		pull.gthen( "CREATED ENVIRONMENT. EVERYTHING IN PLACE", pull.BOLD, pull.DARKCYAN )
-		if not parser.skipdns:
-			pull.gthen( "DNS Records ->", pull.BOLD, pull.DARKCYAN )
-			pull.linebreak( 1 )
-			dnssec  = NAMESERVER( parser.domain, parser.eeips )
-			dnssec.push()
-			dnsrec  = dnssec.get()
-			pull.linebreak( 1 )
+		
+		pull.gthen( "DNS Records ->", pull.BOLD, pull.DARKCYAN )
+		pull.linebreak( 1 )
+		dnssec  = NAMESERVER( parser.domain, parser.eeips )
+		dnssec.push()
+		dnsrec  = dnssec.get()
+		pull.linebreak( 1 )
+
+		# Domain transfer check
+		if dnsrec:
+			pull.gthen( "Testing for Zone Transfer ->", pull.BOLD, pull.DARKCYAN )
+			domtr   = ZONETRANSFER( parser.domain, dnsrec )
+			domtr.engage()
 		else:
-			dnssec  = NMHANDLER( parser.domain, parser.eeips )
+			pull.gthen("Nothing found in records for the domain. Exiting!")
+			sys.exit(0)
+
+		if not parser.skipzone and dnsrec:
+			pull.gthen( "Testing for DNS Zone Takeover ->", pull.BOLD, pull.DARKCYAN )
+			zonetr  = ZONETAKEOVER( parser.domain, dnsrec, parser.threads )
+			zonetr.engage()
+			zonetr.guess_signature()
 
 		pull.gthen( "Looking for Possible False Positives ->", pull.BOLD, pull.DARKCYAN )
 		pull.linebreak( 1 )
