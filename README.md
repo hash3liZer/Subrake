@@ -33,8 +33,8 @@ It was designed primarily for bug bounty and infosec industry but can be leverag
 ### Features ⚖️
 * ⚙️ All in one automated solution. Its working cycle is:
     * 🪙 DNS Enumeration (DNS Records)
-    * **Zone Transfer Detection** and enumerate records if enabled
-    * **DNS Zone Takeover Detection**
+    * 🪜 **Zone Transfer Detection** and enumerate records if enabled
+    * 💲 **DNS Zone Takeover Detection**
     * 💴 False Positive Detection (Wildcard subdomains)
     * 💶 Getting results from other tools (Sublist3r, Knock.py)
     * 💷 Bruteforce using wordlists (Can work with multiple wordlists)
@@ -44,7 +44,10 @@ It was designed primarily for bug bounty and infosec industry but can be leverag
 * 🛍️ Automated and Manual Mode.
 * 🗄️ Can run concurrent sessions.
 * 🖼️ UI for Reports and results available in `csv` format.
-* 🛎️ Flexible and Fast. 
+* 🛎️ Flexible and Fast.
+
+## Execution
+
 
 # Installation 💾
 You can setup subrake by an automated mode or by manually cloning the repo and install through `setuptools`. The first provides more control and is flexible with a UI. But if you prefer a simple CLI mode or on `windows`, go through the `manual` section. 
