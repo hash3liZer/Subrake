@@ -9,7 +9,7 @@ pull = PULLY()
 
 class ZONETAKEOVER:
 
-    __NOT_RESPONSIVE = {}
+    __NOT_RESPONSIVE = []
     __GUESSED_SIGNATURES = set()
 
     # https://github.com/indianajson/can-i-take-over-dns
@@ -280,10 +280,13 @@ class ZONETAKEOVER:
         '''
             Check DNS Zone Takeover by checking for SOA record in each DNS Server of the domain
         '''
-        try:
-            _resolved = socket.gethostbyname(record[:-1] if record[-1] == '.' else record)
-        except:
-            return
+        for n in range(3):
+            try:
+                _resolved = socket.gethostbyname(record[:-1] if record[-1] == '.' else record)
+                break
+            except:
+                if n is 2:
+                    return
 
         resolver = dns.resolver.Resolver(configure=False)
         resolver.timeout = 10
@@ -306,7 +309,7 @@ class ZONETAKEOVER:
                 pull.BOLD,
                 pull.YELLOW
             )
-            self.__NOT_RESPONSIVE[record] = result
+            self.__NOT_RESPONSIVE.append(record)
 
     def engage(self):
         self.filter()

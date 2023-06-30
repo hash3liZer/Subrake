@@ -52,6 +52,9 @@ class ZONETRANSFER:
             
         except dns.query.TransferError:
             return False
+        
+        except:
+            return False
 
     def engage(self):
         self.filter()
@@ -63,4 +66,5 @@ class ZONETRANSFER:
 
         if not transfer:
             pull.gthen("Zone transfer is not enabled for the domain.", pull.BOLD, pull.GREEN)
+            pull.linebreak()
         
