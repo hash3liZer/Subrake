@@ -46,7 +46,7 @@ It was designed primarily for bug bounty and infosec industry but can be leverag
 * 🛎️ Flexible and Fast.
 
 ## Execution
-
+[subrake.webm](https://github.com/hash3liZer/Subrake/assets/29171692/994d8f80-efad-49ab-bcc4-69a9ac04c05a)
 
 # Installation 💾
 You can setup subrake by an automated mode or by manually cloning the repo and install through `setuptools`. The first provides more control and is flexible with a UI. But if you prefer a simple CLI mode or on `windows`, go through the `manual` section. 
