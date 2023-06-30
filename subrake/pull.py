@@ -39,12 +39,12 @@ Options:
                         sites.                                       FALSE
        --skip-subcast   Skip the usage of subcast module             FALSE
        --only-sublister Use only Sublist3r for subdomain enumeration FALSE
+       --skip-zone      Skip Zone takeover check                     FALSE
        --filter         Filter subdomains with same IP in CSV output FALSE
                         Helpful with larger scopes.
-       --skip-dns       Skip initial DNS enumeration phase           FALSE
        --exclude-ips    Exclude specified IPs from the final results
                         Helpful in removing False Positives          NONE
-	   --version        Show version                                 NONE
+       --version        Show version                                 NONE
 """
 
 class PULLY:

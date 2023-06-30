@@ -5,7 +5,7 @@ import re
 from subrake.pull import PULLY
 
 pull = PULLY()
-__VERSION__ = "v4.0"
+__VERSION__ = "v4.1"
 
 class PARSER:
 
@@ -25,7 +25,6 @@ class PARSER:
 		self.ports      = self.parse_ports(     _opts.ports     )
 		self.eeips      = self.parse_eeips(     _opts.eeips     )
 		self.filter     = _opts.filter
-		self.skipdns    = _opts.sdns
 		self.skipzone   = _opts.skipzone
 
 	def parse_domain(self, _dm):

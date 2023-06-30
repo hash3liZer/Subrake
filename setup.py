@@ -1,6 +1,7 @@
 import pathlib
 import os
 from setuptools import setup
+from subrake.parser import __VERSION__
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -11,7 +12,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="subrake",
-    version="3.3",
+    version=__VERSION__,
     zip_safe=False,
     description="A Subdomain Enumeration and Validation tool for Bug Bounty and Pentesters.",
     long_description=README,

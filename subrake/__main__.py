@@ -607,7 +607,6 @@ def main():
 	parser.add_option(''  , '--only-sublister', dest="onlysublister", action="store_true", default=False)
 	parser.add_option(''  , '--skip-zone', dest="skipzone", action="store_true", default=False)
 	parser.add_option(''  , '--filter', dest="filter", action="store_true", default=False)
-	parser.add_option(''  , '--skip-dns'  , dest="sdns", action="store_true", default=False)
 	parser.add_option(''  , '--exclude-ips', dest="eeips", type=str, default="")
 	parser.add_option(''  , '--version', dest="version", action="store_true", default=False)
 
@@ -622,15 +621,13 @@ def main():
 		pull.linebreak()
 		parser  = PARSER( options, args )
 		pull.gthen( "CREATED ENVIRONMENT. EVERYTHING IN PLACE", pull.BOLD, pull.DARKCYAN )
-		if not parser.skipdns:
-			pull.gthen( "DNS Records ->", pull.BOLD, pull.DARKCYAN )
-			pull.linebreak( 1 )
-			dnssec  = NAMESERVER( parser.domain, parser.eeips )
-			dnssec.push()
-			dnsrec  = dnssec.get()
-			pull.linebreak( 1 )
-		else:
-			dnssec  = NMHANDLER( parser.domain, parser.eeips )
+		
+		pull.gthen( "DNS Records ->", pull.BOLD, pull.DARKCYAN )
+		pull.linebreak( 1 )
+		dnssec  = NAMESERVER( parser.domain, parser.eeips )
+		dnssec.push()
+		dnsrec  = dnssec.get()
+		pull.linebreak( 1 )
 
 		# Domain transfer check
 		if dnsrec:
