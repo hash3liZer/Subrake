@@ -2,19 +2,18 @@
     <img src="https://user-images.githubusercontent.com/29171692/57197739-5392b300-6f84-11e9-9191-4e38f3edc583.png" alt="subrake" /> <br>    
     Subrake 🦅
 </h1>
-<h4 align="center">A DNS toolkit for pentesters.</h4>
+<h4 align="center">A DNS automated scanner and tool (Zone Transfer, DNS Zone Takeover, Subdomain Takeover).</h4>
 <p align="center">
     <a href="https://github.com/hash3liZer/Subrake/actions"><img src="https://github.com/hash3liZer/subrake/actions/workflows/demo.yml/badge.svg" alt="..."></a>
     <a href="https://www.linux.org/" target="_blank"><img src="https://img.shields.io/badge/platform-linux-important" alt="platform: linux" /></a>
     <a href="https://www.python.org/" target="_blank"><img src="https://img.shields.io/badge/Python-3-yellow.svg?logo=python" alt="Python: 3" /></a>
     <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="lisence" /></a>
 </p>
-
 <!--<img align="center" src="https://github.com/hash3liZer/Subrake/assets/29171692/956c0174-b8ee-4817-ac56-370bb517c991" alt="subrake" /><hr>
 <img align="center" src="https://github.com/hash3liZer/Subrake/assets/29171692/41790ef9-3a46-48de-9d34-2728242716fd" alt="subrake" />-->
-
-<img align="center" src="https://user-images.githubusercontent.com/29171692/206875533-0ac3ca1c-e183-4c4a-9bb2-b7206d1cfc50.png" alt="subrake" />
-<img align="center" src="https://user-images.githubusercontent.com/29171692/206875554-1f09c82a-d82d-4285-b30f-d84c67d99a9d.png" alt="subrake" />
+<!--<img align="center" src="https://user-images.githubusercontent.com/29171692/206875533-0ac3ca1c-e183-4c4a-9bb2-b7206d1cfc50.png" alt="subrake" />
+<img align="center" src="https://user-images.githubusercontent.com/29171692/206875554-1f09c82a-d82d-4285-b30f-d84c67d99a9d.png" alt="subrake" />-->
+<img align="center" src="https://github.com/hash3liZer/Subrake/assets/29171692/75abd71e-7765-4da0-8b08-1cc5e1e069c7" alt="subrake"/>
 
 # Background 📈
 Subrake, initially started as a personal project of mine for subdomain enumeration is a now a detailed DNS scanning tool that can help you identify **Zone Transfers**, **DNS Zone Takeover** and **Subdomain Takeovers** all in a single go. 
@@ -33,8 +32,8 @@ It was designed primarily for bug bounty and infosec industry but can be leverag
 ### Features ⚖️
 * ⚙️ All in one automated solution. Its working cycle is:
     * 🪙 DNS Enumeration (DNS Records)
-    * **Zone Transfer Detection** and enumerate records if enabled
-    * **DNS Zone Takeover Detection**
+    * 🪜 **Zone Transfer Detection** and enumerate records if enabled
+    * 💲 **DNS Zone Takeover Detection**
     * 💴 False Positive Detection (Wildcard subdomains)
     * 💶 Getting results from other tools (Sublist3r, Knock.py)
     * 💷 Bruteforce using wordlists (Can work with multiple wordlists)
@@ -44,7 +43,10 @@ It was designed primarily for bug bounty and infosec industry but can be leverag
 * 🛍️ Automated and Manual Mode.
 * 🗄️ Can run concurrent sessions.
 * 🖼️ UI for Reports and results available in `csv` format.
-* 🛎️ Flexible and Fast. 
+* 🛎️ Flexible and Fast.
+
+## Execution
+
 
 # Installation 💾
 You can setup subrake by an automated mode or by manually cloning the repo and install through `setuptools`. The first provides more control and is flexible with a UI. But if you prefer a simple CLI mode or on `windows`, go through the `manual` section. 
