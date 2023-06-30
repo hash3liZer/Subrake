@@ -285,7 +285,7 @@ class ZONETAKEOVER:
                 _resolved = socket.gethostbyname(record[:-1] if record[-1] == '.' else record)
                 break
             except:
-                if n is 2:
+                if n == 2:
                     return
 
         resolver = dns.resolver.Resolver(configure=False)
