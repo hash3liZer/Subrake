@@ -24,6 +24,8 @@ Subdomain Takeover unlike it sounds is the **takeover of the service** that the 
 
 DNS Zone Takeover as compared to Subdomain Takeover can be more severe if exploited. It is the takeover of one of the zones of the domain. This allows much more than just creating the service on the backend. You can actually setup your own DNS records and play with them as you line
 
+For more in-depth detail, you can read my blog here: [https://blog.shameerkashif.me/blog/2023/subrake-a-dns-automated-scanner/](A Guide to Zone Transfer, DNS Zone Takeover and Subdomain Takeover)
+
 # About Subrake 💰
 Subrake is DNS Assessment tool (mostly automated) with both a UI and CLI goes trough various phases in order to cover DNS issues. The tool is continuously undergoing changes and development and everybody is welcome to contribute to the project. 
 
@@ -46,7 +48,7 @@ It was designed primarily for bug bounty and infosec industry but can be leverag
 * 🛎️ Flexible and Fast.
 
 ## Execution
-[subrake.webm](https://github.com/hash3liZer/Subrake/assets/29171692/994d8f80-efad-49ab-bcc4-69a9ac04c05a)
+[Subrake Execution](https://github.com/hash3liZer/Subrake/assets/29171692/994d8f80-efad-49ab-bcc4-69a9ac04c05a)
 
 # Installation 💾
 You can setup subrake by an automated mode or by manually cloning the repo and install through `setuptools`. The first provides more control and is flexible with a UI. But if you prefer a simple CLI mode or on `windows`, go through the `manual` section. 
