@@ -1,4 +1,4 @@
 dnspython
 requests
-bs4
+bs4==0.0.2
 screeninfo
